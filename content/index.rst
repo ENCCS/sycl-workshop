@@ -16,12 +16,21 @@ Intro
    :widths: auto
    :delim: ;
 
-   20 min ; :doc:`filename`
+   20 min ; :doc:`what-is-sycl`
+   20 min ; :doc:`queues-cgs-kernels`
+   20 min ; :doc:`buffers-accessors`
+   20 min ; :doc:`unified-shared-memory`
 
 
 .. toctree::
+   :hidden
    :maxdepth: 1
    :caption: The lesson
+
+   what-is-sycl
+   queues-cgs-kernels
+   buffers-accessors
+   unified-shared-memory
 
 
 .. toctree::
@@ -29,6 +38,7 @@ Intro
    :caption: Reference
 
    quick-reference
+   zbibliography
    guide
 
 
@@ -38,7 +48,8 @@ Intro
 Who is the course for?
 ----------------------
 
-
+- A working knowledge of recent C++ standards.
+- Some familiarity with C++17. In particular, class template argument deduction (CTAD).
 
 
 
@@ -53,8 +64,10 @@ About the course
 See also
 --------
 
-
-
+- Reinders, J.; Ashbaugh, B.; Brodman, J.; Kinsner, M.; Pennycook, J.; Tian, X.
+  *Data Parallel C++: Mastering DPC++ for Programming of Heterogeneous Systems
+  Using C++ and SYCL* :cite:`Reinders2021-yx`
+- The `SYCL Academy <https://github.com/codeplaysoftware/syclacademy>`_ resources.
 
 
 Credits
