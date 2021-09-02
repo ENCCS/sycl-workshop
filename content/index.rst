@@ -1,5 +1,5 @@
-HIP and SYCL
-============
+SYCL
+====
 
 
 Intro
