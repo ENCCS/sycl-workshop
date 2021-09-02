@@ -1,7 +1,7 @@
-# HIP and SYCL
+# SYCL
 
-HIP and SYCL materials for ENCCS workshop
+SYCL materials for ENCCS workshop
 
 ## Credit and license
 
-- https://enccs.github.io/hip-and-sycl/#credits
+- https://enccs.github.io/sycl/#credits
