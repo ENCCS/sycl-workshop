@@ -17,11 +17,11 @@
 
 # -- Project information -----------------------------------------------------
 
-project = "HIP and SYCL"
+project = "SYCL"
 copyright = "2021, Roberto Di Remigio and individual contributors."
 author = "Roberto Di Remigio and individual contributors."
 github_user = "ENCCS"
-github_repo_name = "hip-and-sycl"
+github_repo_name = "sycl-workshop"
 github_version = "main"
 conf_py_path = "/content/"  # with leading and trailing slash
 
@@ -37,7 +37,9 @@ extensions = [
     # remove once sphinx_rtd_theme updated for contrast and accessibility:
     "sphinx_rtd_theme_ext_color_contrast",
     "sphinx.ext.todo",
+    "sphinxcontrib.bibtex",
 ]
+bibtex_bibfiles = ['bibliography.bib']
 
 # Settings for myst_nb:
 # https://myst-nb.readthedocs.io/en/latest/use/execute.html#triggering-notebook-execution
@@ -125,4 +127,4 @@ DIRECTIVES = [SignatureDirective, ParametersDirective, TypealongDirective]
 
 def setup(app):
     for obj in DIRECTIVES:
-        app.add_directive(obj.cssname(), obj)
+        app.add_directive(obj.get_cssname(), obj)
