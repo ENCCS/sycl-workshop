@@ -2,31 +2,44 @@ SYCL
 ====
 
 
-The high-performance computing landscape is increasingly dominated by machines whose high FLOP counts is delivered by _heterogeneous hardware_: large-core count CPUs in tandem with ever more powerful GPUs are now the norm in the HPC datacenter.
-This trend is likely to continue, with the appearance of new hardware architectures, sometimes tailored for specific operations.
+The high-performance computing landscape is increasingly dominated by machines
+whose high FLOP counts is delivered by *heterogeneous hardware*: large-core
+count CPUs in tandem with ever more powerful GPUs are now the norm in the HPC
+datacenter.  This trend is likely to continue, with the appearance of new
+hardware architectures, sometimes tailored for specific operations.
 
-Each new architecture comes equipped with its own, usually low-level, programming language. Adapting applications for a heterogeneous computing environment proceeds in tight cycles of profiling and porting. These are time-consuming, error-prone, and scarcely portable:
+Each new architecture comes equipped with its own, usually low-level,
+programming language. Adapting applications for a heterogeneous computing
+environment proceeds in tight cycles of profiling and porting. These are
+time-consuming, error-prone, and scarcely portable:
 
 * Mastering low-level programming languages may require years.
-* The codebase can _diverge_ significantly to work with different hardware.
+* The codebase can *diverge* significantly to work with different hardware.
 
-`SYCL <https://www.khronos.org/sycl/>`_ is a C++ abstraction layer for programming heterogeneous hardware in a **high-level**, **cross-platform** fashion using **standard** ISO C++. Furthermore, SYCL is a **single-source** approach: you can exppress host and device operations within the same source file.
+`SYCL <https://www.khronos.org/sycl/>`_ is a C++ abstraction layer for
+programming heterogeneous hardware in a **high-level**, **cross-platform**
+fashion using **standard** ISO C++. Furthermore, SYCL is a **single-source**
+approach: you can exppress host and device operations within the same source
+file.
 
 
 .. prereq::
 
-   prerequisites
+   Before attending this workshop, please make sure that you have access to a
+   computer with a hipSYCL compiler installed and a recent version of CMake.
+   Detailed instructions can be found on the :doc:`setup` page.
+
+   .. todo::
+
+      - Mention allocation on Vega.
 
 
 
-.. csv-table::
-   :widths: auto
-   :delim: ;
+.. toctree::
+   :hidden:
+   :maxdepth: 1
 
-   20 min ; :doc:`what-is-sycl`
-   20 min ; :doc:`queues-cgs-kernels`
-   20 min ; :doc:`buffers-accessors`
-   20 min ; :doc:`unified-shared-memory`
+   setup
 
 
 .. toctree::
@@ -49,20 +62,53 @@ Each new architecture comes equipped with its own, usually low-level, programmin
    guide
 
 
+.. see also the schedule in guide.rst
+
+.. csv-table::
+   :widths: auto
+   :delim: ;
+
+   20 min ; :doc:`what-is-sycl`
+   20 min ; :doc:`queues-cgs-kernels`
+   20 min ; :doc:`buffers-accessors`
+   20 min ; :doc:`unified-shared-memory`
+
+
 
 .. _learner-personas:
 
 Who is the course for?
 ----------------------
 
+This course is for students, researchers, engineers, and programmers that have
+heard of `SYCL`_ and want to learn how to use it effectively with projects they
+are working on.
+This course assumes no previous experience with `SYCL`_, however, participants
+should have some prior experience with or knowledge of the following topics (but
+no expertise is required):
+
 - A working knowledge of recent C++ standards.
 - Some familiarity with C++17. In particular, class template argument deduction (CTAD).
-
 
 
 About the course
 ----------------
 
+This lesson material is developed by the `EuroCC National Competence Center
+Sweden (ENCCS) <https://enccs.se/>`_, `CSC <https://www.csc.fi/>`_, and
+`IZUM <https://www.izum.si/en/home/>`_.
+It is taught in ENCCS workshops.
+It is aimed at researchers and developers who are curious about `SYCL`_ and how
+it can help them leverage heterogeneous hardware effectively.
+This lesson targets **SYCL 2020**.
+Each lesson episode has clearly defined learning objectives and includes
+multiple exercises along with solutions, and is therefore also useful for
+self-learning.
+The lesson material is licensed under `CC-BY-4.0
+<https://creativecommons.org/licenses/by/4.0/>`_ and can be reused in any form
+(with appropriate credit) in other courses and workshops.
+Instructors who wish to teach this lesson can refer to the :doc:`guide` for
+practical advice.
 
 
 Graphical and text conventions
@@ -73,25 +119,29 @@ We adopt a few conventions which help organize the material.
 Function signatures
    These are shown in a text block marked with a wrench emoji:
 
-   .. signature:: |cmake_minimum_required|
+   .. signature:: |struct plus|
 
-      .. code-block:: cmake
+      .. code-block:: c++
 
-         cmake_minimum_required(VERSION <min>[...<max>] [FATAL_ERROR])
+         template <typename T=void>
+         struct plus {
+           T operator()(const T& x, const T& y) const;
+         };
 
    The signature can be hidden by clicking the toggle.
 
-Command parameters
-   The description of the command parameters will appear in a separate text
+Function arguments
+   The description of the function arguments will appear in a separate text
    box. It will be marked with a laptop emoji:
 
    .. parameters::
 
-      ``VERSION``
-          Minimum and, optionally, maximum version of CMake to use.
-      ``FATAL_ERROR``
-          Raise a fatal error if the version constraint is not satisfied. This
-          option is ignored by CMake >=2.6
+      ``T``
+          Scalar type.
+      ``x``
+          First operand.
+      ``y``
+          Second operand.
 
    The description is hidden and will be shown by clicking the toggle.
 
@@ -101,11 +151,11 @@ Type-along
 
    .. typealong:: Let's look at an example
 
-      .. code-block:: cmake
+      .. code-block:: c++
 
-         cmake_minimum_required(VERSION 3.16)
-
-         project(Hello LANGUAGES CXX)
+         cgh.parallel_for(1024, [=](auto idx) {
+            writeResult[idx] = idx;
+         });
 
    The content can be hidden by clicking the toggle.
 

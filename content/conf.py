@@ -105,6 +105,7 @@ html_context = {
 #    #'matplotlib': ('https://matplotlib.org/', None),
 #    'seaborn': ('https://seaborn.pydata.org/', None),
 # }
+#
 
 # add few new directives
 from sphinx_lesson.directives import _BaseCRDirective
@@ -124,6 +125,12 @@ class TypealongDirective(_BaseCRDirective):
 
 DIRECTIVES = [SignatureDirective, ParametersDirective, TypealongDirective]
 
+# the epilog
+rst_epilog = f"""
+.. role:: red
+.. role:: blue
+.. _SYCL: https://www.khronos.org/sycl/
+"""
 
 def setup(app):
     for obj in DIRECTIVES:
