@@ -5,20 +5,34 @@ What is SYCL?
 
 .. questions::
 
-   - What is SYCL and why should I care?
+   - What is SYCL_ and why should I care?
 
 .. objectives::
 
-   - Learn how to write a simple C++ SYCL code.
-   - Learn how to compile with SYCL enabled.
-   - Learn about device discovery in SYCL code.
+   - Learn how to write a simple C++ SYCL_ code.
+   - Learn how to compile hipSYCL_.
+   - Learn about device discovery in SYCL_ code.
+
+
+The high-performance computing landscape is increasingly dominated by machines
+whose high FLOP counts is delivered by *heterogeneous hardware*: large-core
+count CPUs in tandem with ever more powerful GPUs are now the norm in the HPC
+datacenter.  This trend is likely to continue, with the appearance of new
+hardware architectures, sometimes tailored for specific operations.
+
+Each new architecture comes equipped with its own, usually low-level,
+programming language. Adapting applications for a heterogeneous computing
+environment proceeds in tight cycles of profiling and porting. These are
+time-consuming, error-prone, and scarcely portable:
+
+* Mastering low-level programming languages may require years.
+* The codebase can *diverge* significantly to work with different hardware.
 
 
 .. todo::
 
-   Write an intro
+   Complete intro:
 
-   - Computing platforms are and will be powered by heterogeneous hardware.
    - Standards-based, vendor-agnostic programming for heterogeneous hardware
    - Compilation model
    - Evolution in relation to C++ standard (Khronos group has a chart, I think)
@@ -29,7 +43,8 @@ Hello, SYCL!
 
 .. todo::
 
-   Highlight queues, command groups, kernels.
+   - Add two vectors example in OpenMP, SYCL, CUDA, and HIP.
+   - Highlight queues, command groups, kernels.
 
 .. typealong:: "Hello world" with SYCL
 
@@ -44,26 +59,6 @@ Hello, SYCL!
 
      tar xf hello-cxx_solution.tar.bz2
 
-
-Device discovery
-----------------
-
-.. todo::
-
-   How devices are indexed and handled
-
-
-.. challenge:: Finding your devices
-
-   Download the :download:`scaffold project <code/tarballs/01_libraries-cxx.tar.bz2>`.
-
-   #. Write a ``CMakeLists.txt`` to compile the source files
-      ``Message.hpp`` and  ``Message.cpp`` into a library. Do not specify
-      the type of library, shared or static, explicitly.
-   #. Add an executable from the ``hello-world.cpp`` source file.
-   #. Link the library into the executable.
-
-   You can download the :download:`complete, working example <code/tarballs/01_libraries-cxx_solution.tar.bz2>`.
 
 
 .. keypoints::

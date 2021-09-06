@@ -2,25 +2,17 @@ SYCL
 ====
 
 
-The high-performance computing landscape is increasingly dominated by machines
-whose high FLOP counts is delivered by *heterogeneous hardware*: large-core
-count CPUs in tandem with ever more powerful GPUs are now the norm in the HPC
-datacenter.  This trend is likely to continue, with the appearance of new
-hardware architectures, sometimes tailored for specific operations.
+SYCL_ is a C++ abstraction layer for programming heterogeneous hardware with a
+**single-source approach**. SYCL_ is **high-level**, **cross-platform**, and
+extends **standard** ISO C++17.
+You will learn to:
 
-Each new architecture comes equipped with its own, usually low-level,
-programming language. Adapting applications for a heterogeneous computing
-environment proceeds in tight cycles of profiling and porting. These are
-time-consuming, error-prone, and scarcely portable:
-
-* Mastering low-level programming languages may require years.
-* The codebase can *diverge* significantly to work with different hardware.
-
-`SYCL <https://www.khronos.org/sycl/>`_ is a C++ abstraction layer for
-programming heterogeneous hardware in a **high-level**, **cross-platform**
-fashion using **standard** ISO C++. Furthermore, SYCL is a **single-source**
-approach: you can exppress host and device operations within the same source
-file.
+* Use the hipSYCL_ compiler to generate executable for *multiple* hardware
+  targets.
+* Write hardware-agnostic code to express parallelism using the queue, command
+  group, and kernel abstractions.
+* Use buffer and accessors to handle memory across devices.
+* Evaluate drawbacks and advantages of unified shared memory.
 
 
 .. prereq::

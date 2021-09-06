@@ -130,6 +130,7 @@ rst_epilog = f"""
 .. role:: red
 .. role:: blue
 .. _SYCL: https://www.khronos.org/sycl/
+.. _hipSYCL: https://hipsycl.github.io
 """
 
 def setup(app):
