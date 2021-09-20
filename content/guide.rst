@@ -25,13 +25,13 @@ First iteration
     9:00 -  9:10 ; Welcome and introduction to the training course
     9:10 -  9:40 ; :ref:`what-is-sycl`
     9:40 -  9:45 ; Break
-    9:45 - 10:15 ; :ref:`queues-cgs-kernels`
-   10:15 - 10:25 ; Break
-   10:25 - 10:55 ; :ref:`queues-cgs-kernels`
-   10:55 - 11:00 ; Break
-   11:00 - 11:30 ; :ref:`buffers-accessors`
-   11:30 - 11:40 ; Break
-   11:40 - 12:10 ; :ref:`device-discovery`
+    9:45 - 10:25 ; :ref:`queues-cgs-kernels`
+   10:25 - 10:35 ; Break
+   10:35 - 11:05 ; :ref:`queues-cgs-kernels`
+   11:05 - 11:10 ; Break
+   11:10 - 11:40 ; :ref:`buffers-accessors`
+   11:40 - 11:50 ; Break
+   11:50 - 12:10 ; :ref:`device-discovery`
    12:10 - 12:15 ; Break
    12:15 - 12:30 ; Wrap-up
 

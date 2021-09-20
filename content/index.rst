@@ -35,14 +35,18 @@ You will learn to:
 
 
 .. toctree::
-   :hidden
+   :hidden:
    :maxdepth: 1
    :caption: The lesson
 
    what-is-sycl
    queues-cgs-kernels
    buffers-accessors
+   device-discovery
    unified-shared-memory
+   buffer-accessor-vs-usm
+   expressing-parallelism
+   data-and-dependencies
 
 
 .. toctree::
@@ -60,10 +64,15 @@ You will learn to:
    :widths: auto
    :delim: ;
 
-   20 min ; :doc:`what-is-sycl`
-   20 min ; :doc:`queues-cgs-kernels`
-   20 min ; :doc:`buffers-accessors`
-   20 min ; :doc:`unified-shared-memory`
+   30 min ; :doc:`what-is-sycl`
+   40 min ; :doc:`queues-cgs-kernels`
+   30 min ; :doc:`queues-cgs-kernels`
+   30 min ; :doc:`buffers-accessors`
+   20 min ; :doc:`device-discovery`
+   40 min ; :doc:`unified-shared-memory`
+   40 min ; :doc:`buffer-accessor-vs-usm`
+   40 min ; :doc:`expressing-parallelism`
+   40 min ; :doc:`data-and-dependencies`
 
 
 
@@ -111,7 +120,7 @@ We adopt a few conventions which help organize the material.
 Function signatures
    These are shown in a text block marked with a wrench emoji:
 
-   .. signature:: |struct plus|
+   .. signature:: ``struct plus``
 
       .. code-block:: c++
 
@@ -170,8 +179,8 @@ Credits
 
 The lesson file structure and browsing layout is inspired by and derived from
 `work <https://github.com/coderefinery/sphinx-lesson>`_ by `CodeRefinery
-<https://coderefinery.org/>`_ licensed under the `MIT license
-<http://opensource.org/licenses/mit-license.html>`_. We have copied and adapted
+<https://coderefinery.org/>`_ licensed under the `MIT
+<http://opensource.org/licenses/mit-license.html>`_ license. We have copied and adapted
 most of their license text.
 
 Instructional Material
@@ -216,5 +225,4 @@ Software
 
 Except where otherwise noted, the example programs and other software provided
 with this repository are made available under the `OSI <http://opensource.org/>`_-approved
-`MIT license <https://opensource.org/licenses/mit-license.html>`_.
-
+MIT_ license.

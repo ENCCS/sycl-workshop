@@ -37,6 +37,27 @@ time-consuming, error-prone, and scarcely portable:
    - Compilation model
    - Evolution in relation to C++ standard (Khronos group has a chart, I think)
 
+.. tabs::
+
+   .. tab:: CUDA
+
+      .. literalinclude:: code/snippets/saxpy.cu
+         :language: cuda
+
+   .. tab:: HIP
+
+      .. literalinclude:: code/snippets/saxpy.hip.cpp
+         :language: c++
+
+   .. tab:: OpenMP
+
+      .. literalinclude:: code/snippets/saxpy.omp.cpp
+         :language: c++
+
+   .. tab:: OpenACC
+
+      .. literalinclude:: code/snippets/saxpy.acc.c
+         :language: c
 
 Hello, SYCL!
 ------------
