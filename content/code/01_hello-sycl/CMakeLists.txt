@@ -9,9 +9,9 @@ find_package(hipSYCL CONFIG REQUIRED)
 
 add_executable(hello hello.cpp)
 
-target_compile_definitions(hello 
-  PUBLIC
-    SYCL_LANGUAGE_VERSION=2020
+target_compile_options(hello
+  PRIVATE
+    -O3
   )
 
 target_link_libraries(hello 
@@ -26,3 +26,9 @@ set_target_properties(hello
     CXX_EXTENSIONS OFF
   )
 
+add_sycl_to_target(
+  TARGET 
+    hello 
+  SOURCES 
+    hello.cpp
+  )
