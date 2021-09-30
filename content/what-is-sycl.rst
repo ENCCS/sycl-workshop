@@ -84,7 +84,12 @@ Hello, SYCL!
 
 .. keypoints::
 
-   - SYCL is an *open-source standard* to describe parallelism on heterogeneous
+   - SYCL_ is an *open-source standard* to describe parallelism on heterogeneous
      platforms using the C++ programming language.
-   - There are many implementations of the SYCL standard: Intel DPC++, hipSYCL,
-     CodePlay ComputeCPP.
+   - SYCL_ is *single-source*, *heterogeneous*, and *asynchronous*.
+   - There are many implementations of the SYCL_ standard:
+     * hipSYCL_,
+     * `Intel DPC++ <https://software.intel.com/content/www/us/en/develop/tools/oneapi/data-parallel-c-plus-plus.html#gs.cm2rrt>`_,
+     * `CodePlay ComputeCPP <https://developer.codeplay.com/products/computecpp/ce/home/>`_.
+     * `triSYCL <https://github.com/triSYCL/triSYCL>`_.
+     * `neoSYCL <https://dl.acm.org/doi/abs/10.1145/3432261.3432268>`_.

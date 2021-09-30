@@ -6,6 +6,17 @@ Setting up your system
    - How to get an account of Vega.
    - How to install hipSYCL locally.
 
+How to follow along
+-------------------
+
+This training material, including all exercises and solutions, is available on GitHub.
+To get the most out of it, we suggest that you clone it locally.
+
+.. code:: console
+
+   $ git clone https://github.com/ENCCS/sycl-workshop
+
+The source code will then be in the ``content/code`` folder.
 
 Working on Vega
 ---------------
@@ -14,13 +25,20 @@ The latest official release of hipSYCL_ is available as a module on Vega:
 
 .. code:: console
 
-   $ module load hipSYCL
+   $ module load CMake hipSYCL
 
 You can compile on the login node with:
 
 .. code:: console
 
    $ syclcc -o sycl_vadd sycl_vadd.cpp -O3 --hipsycl-targets="omp;cuda:sm_80"
+
+However, it will be more convenient to use the CMake scripts we provide with the source files:
+
+.. code:: console
+
+   $ cmake -S. -Bbuild -DHIPSYCL_TARGETS="omp;cuda:sm_80"
+   $ cmake --build build
 
 You can also request an interactive job with:
 
@@ -55,7 +73,7 @@ In general, it is preferable to queue the job using a submission script, like th
    set -o nounset  # Treat any unset variables as an error
 
    module --quiet purge  # Reset the modules to the system default
-   module load hipSYCL/0.9.1-gcccuda-2020b
+   module load CMake/3.18.4-GCCcore-10.2.0 hipSYCL/0.9.1-gcccuda-2020b
    module list
 
    # compile code
@@ -63,5 +81,10 @@ In general, it is preferable to queue the job using a submission script, like th
 
    # run executable
    ./sycl_vadd
+
+   # we can also use CMake to build
+   # cmake -S$SLURM_SUBMIT_DIR -Bbuild -DHIPSYCL_TARGETS="cuda:sm_80"
+   # and we run from the build folder
+   # ./build/sycl_vadd
 
    exit 0
