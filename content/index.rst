@@ -26,7 +26,6 @@ You will learn to:
       - Mention allocation on Vega.
 
 
-
 .. toctree::
    :hidden:
    :maxdepth: 1
@@ -50,6 +49,7 @@ You will learn to:
 
 
 .. toctree::
+   :hidden:
    :maxdepth: 1
    :caption: Reference
 

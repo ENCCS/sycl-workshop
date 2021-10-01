@@ -91,6 +91,10 @@ html_context = {
     "conf_py_path": conf_py_path,
 }
 
+# configure todos
+todo_include_todos = True
+todo_emit_warnings = True
+
 # Intersphinx mapping.  For example, with this you can use
 # :py:mod:`multiprocessing` to link straight to the Python docs of that module.
 # List all available references:
@@ -131,6 +135,10 @@ rst_epilog = f"""
 .. role:: blue
 .. _SYCL: https://www.khronos.org/sycl/
 .. _hipSYCL: https://hipsycl.github.io
+.. _CUDA: https://docs.nvidia.com/cuda/index.html
+.. _HIP: https://rocmdocs.amd.com/en/latest/
+.. _OpenMP: https://www.openmp.org/
+.. _OpenACC: https://www.openacc.org/
 """
 
 def setup(app):
