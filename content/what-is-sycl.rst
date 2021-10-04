@@ -34,34 +34,31 @@ Let's look at a simple example: the single-precision vector addition kernel
 
    .. tab:: CUDA
 
-      Implementation using the native language and API for Nvidia GPUs. This code is an example of *prescriptive* parallelism.
-
       .. literalinclude:: code/snippets/saxpy.cu
          :language: cuda
 
-   .. tab:: HIP
-
-      Implementation using the native language and API for AMD GPUs, but also compatible with Nvidia GPUs.
       This code is an example of *prescriptive* parallelism.
+
+   .. tab:: HIP
 
       .. literalinclude:: code/snippets/saxpy.hip.cpp
          :language: c++
 
-   .. tab:: OpenMP
+      This code is an example of *prescriptive* parallelism.
 
-      Implementation using standard ``pragma``s.
-      This code is an example of *descriptive* parallelism.
+   .. tab:: OpenMP
 
       .. literalinclude:: code/snippets/saxpy.omp.cpp
          :language: c++
 
-   .. tab:: OpenACC
-
-      Implementation using standard ``pragma``s.
       This code is an example of *descriptive* parallelism.
+
+   .. tab:: OpenACC
 
       .. literalinclude:: code/snippets/saxpy.acc.c
          :language: c
+
+      This code is an example of *descriptive* parallelism.
 
 
 There are few things to notice in this example:
@@ -109,25 +106,30 @@ Fortunately, there are many to choose from!
 .. figure:: img/sycl_impls+backends.svg
    :align: center
 
-   SYCL_ is an open standard for heterogeneous parallelism build on top of
-   modern ISO C++. The `Khronos group <https://www.khronos.org/>`_ spearheads the
-   standardization effort.  There are numerous compilers implementing the SYCL_
-   standard and they use different **backends* to target CPUs, GPUs, and even
-   specialized hardware such as field-programmable gate arrays (:term:`FPGA`)
-   and `vector engines <https://en.wikipedia.org/wiki/Vector_processor>`_.  The
-   figure shows the route, as of today, from SYCL_ source code to hardware
-   through the various implementations and backends.
-   The red, dashed lines show experimental backends, as of today.  The figure
-   was adapted `from here <https://www.khronos.org/sycl/>`_ and `here
-   <https://github.com/illuhad/hipSYCL/raw/develop/doc/img/sycl-targets.png>`_.
+   SYCL_ is an open standard for heterogeneous parallelism build on top of modern ISO C++.
+   The `Khronos group`_ spearheads the standardization effort.
+   There are numerous compilers implementing the SYCL_ standard and they use
+   different **backends** to target CPUs, GPUs, and even specialized hardware
+   such as field-programmable gate arrays (:term:`FPGA`) and :term:`vector engines`.
+   The figure shows the route, as of today, from SYCL_ source code to hardware
+   through the various implementations and backends.  The red, dashed lines show
+   experimental backends, as of today.  The figure was adapted `from here`_ and
+   here_.
+
+.. _`Khronos group`: https://www.khronos.org/
+.. _`from here`: https://www.khronos.org/sycl/
+.. _`here`: https://github.com/illuhad/hipSYCL/raw/develop/doc/img/sycl-targets.png
+
 
 
 Hello, SYCL!
 ------------
 
+Let's dig in with a "Hello, world" example.
+
 .. todo::
 
-   - Add two vectors example in OpenMP, SYCL, CUDA, and HIP.
+   - Add two vectors example in SYCL.
    - Highlight queues, command groups, kernels.
 
 .. typealong:: "Hello world" with SYCL
@@ -159,6 +161,6 @@ Hello, SYCL!
      * `neoSYCL <https://dl.acm.org/doi/abs/10.1145/3432261.3432268>`_.
 
 
-.. rubric::
+.. rubric:: Footnotes
 
 .. [#f1] Kokkos, Raja, and Alpaka are other frameworks with a similar approach to parallel programming.

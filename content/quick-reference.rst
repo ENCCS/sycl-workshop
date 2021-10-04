@@ -12,3 +12,9 @@ Quick Reference
       An integrated circuit designed to be configured *after* manifacturing.
       Check the `wikipedia page
       <https://en.wikipedia.org/wiki/Field-programmable_gate_array>`_.
+
+   queues
+      TODO
+
+   vector engines
+      TODO https://en.wikipedia.org/wiki/Vector_processor
