@@ -7,24 +7,27 @@
 
 #include <iostream>
 
-#include <CL/sycl.hpp>
+#include <sycl/sycl.hpp>
 
+int main() {
 using namespace sycl;
 
-const std::string secret {
+std::string secret {
   "Ifmmp-!xpsme\"\012J(n!tpssz-!Ebwf/!"
   "J(n!bgsbje!J!dbo(u!ep!uibu/!.!IBM\01" };
 
 const auto sz = secret.size();
 
-int main() {
   queue Q;
 
-  char *result = malloc_shared<char>(sz, Q);
-  std::memcpy(result,secret.data(),sz);
+    std::cout << "Device: " << Q.get_device().get_info<info::device::name>() << std::endl;
 
-  Q.parallel_for(sz,[=](auto& i) {
-      result[i] -= 1;
+
+  char *result = malloc_shared<char>(sz, Q);
+  std::memcpy(result, secret.data(), sz);
+
+  Q.parallel_for(range<1>{sz}, [=](id<1> tid) {
+      result[tid[0]] -= 1;
       }).wait();
 
   std::cout << result << "\n";
