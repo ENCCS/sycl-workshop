@@ -121,7 +121,6 @@ Fortunately, there are many to choose from!
 .. _`here`: https://github.com/illuhad/hipSYCL/raw/develop/doc/img/sycl-targets.png
 
 
-
 Hello, SYCL!
 ------------
 
@@ -132,19 +131,49 @@ Let's dig in with a "Hello, world" example.
    - Add two vectors example in SYCL.
    - Highlight queues, command groups, kernels.
 
-.. typealong:: "Hello world" with SYCL
+.. typealong:: "Hello, world" with SYCL
 
-   Download  :download:`scaffold project <code/tarballs/00_hello-cxx.tar.bz2>`.
+   This is our complete sample source file. You can find it in the
+   ``content/code/day-1/00_hello`` folder. Worry not about the details in the
+   code, we will dig into what is happening here at great length during the rest
+   of the lesson.
 
-   .. literalinclude:: code/day-1/00_hello-cxx/hello.cpp
+   .. literalinclude:: code/day-1/00_hello/hello.cpp
       :language: c++
+      :lines: 7-
 
-   You can download the :download:`complete, working example <code/tarballs/00_hello-cxx_solution.tar.bz2>`.
+   1. Log in onto `Vega <https://doc.vega.izum.si/login/>`_ and clone the repository for this workshop. Navigate to the correct folder. This contains a source file, ``hello.cpp``, and the CMake script to build it.
 
-   Then unpack the archive::
+   2. Load the necessary modules:
 
-     tar xf hello-cxx_solution.tar.bz2
+      .. code:: console
 
+         $ module load CMake hipSYCL
+
+   3. Configure and compile the code:
+
+      .. code:: console
+
+         $ cmake -S. -Bbuild -DHIPSYCL_TARGETS="omp"
+         $ cmake --build build -- VERBOSE=1
+
+   4. Run the code! What result do you get?
+
+      .. code:: console
+
+         ./build/hello
+
+   5. We can configure again to target the GPU:
+
+      .. code:: console
+
+         $ cmake -S. -Bbuild -DHIPSYCL_TARGETS="cuda:sm_80"
+         $ cmake --build build -- VERBOSE=1
+         $ ./build/hello
+
+      What output do you see? We will talk more about *device selection* in :ref:`device-discovery`.
+
+A closer look at this source code is in order:
 
 
 .. keypoints::
