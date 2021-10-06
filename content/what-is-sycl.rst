@@ -141,7 +141,7 @@ Let's dig in with a "Hello, world" example.
    .. literalinclude:: code/day-1/00_hello/hello.cpp
       :language: c++
       :lines: 7-
-      :emphasize-lines: 12,15-18
+      :emphasize-lines: 25-27
 
    1. Log in onto `Vega <https://doc.vega.izum.si/login/>`_ and clone the repository for this workshop. Navigate to the correct folder. This contains a source file, ``hello.cpp``, and the CMake script to build it.
 
@@ -243,13 +243,13 @@ This source code introduces a number of fundamental concepts in SYCL_:
 
 .. typealong:: SAXPY with SYCL
 
-   We will walk through a SAXPY implementation using ``buffer* and *accessors*.
+   We will walk through a SAXPY implementation using *buffer* and *accessors*.
    You can find the complete source code in the ``content/code/day-1/01_saxpy``
    folder.
    Worry not about the details in the code, we will dive deeper into these
    concepts in episode :ref:`buffers-accessors`.
 
-   .. literalinclude:: code/day-1/01_hello/saxpy.cpp
+   .. literalinclude:: code/day-1/01_saxpy/saxpy.cpp
       :language: c++
       :lines: 9-34
 

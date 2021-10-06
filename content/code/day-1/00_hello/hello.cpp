@@ -9,7 +9,9 @@
 
 #include <sycl/sycl.hpp>
 
-int main() {
+int
+main()
+{
   using namespace sycl;
 
   const std::string secret{"Ifmmp-!xpsme\"\012J(n!tpssz-!Ebwf/!"
@@ -25,7 +27,12 @@ int main() {
   char *result = malloc_shared<char>(sz, Q);
   std::memcpy(result, secret.data(), sz);
 
-  Q.parallel_for(range<1>{sz}, [=](id<1> tid) { result[tid[0]] -= 1; }).wait();
+  Q.parallel_for(
+     range<1> { sz },
+     [=](id<1> tid) {
+       result[tid[0]] -= 1;
+     })
+    .wait();
 
   std::cout << result << "\n";
 
