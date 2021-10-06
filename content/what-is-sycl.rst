@@ -141,6 +141,7 @@ Let's dig in with a "Hello, world" example.
    .. literalinclude:: code/day-1/00_hello/hello.cpp
       :language: c++
       :lines: 7-
+      :emphasize-lines: 12,15-18
 
    1. Log in onto `Vega <https://doc.vega.izum.si/login/>`_ and clone the repository for this workshop. Navigate to the correct folder. This contains a source file, ``hello.cpp``, and the CMake script to build it.
 
@@ -173,8 +174,93 @@ Let's dig in with a "Hello, world" example.
 
       What output do you see? We will talk more about *device selection* in :ref:`device-discovery`.
 
-A closer look at this source code is in order:
+This source code introduces a number of fundamental concepts in SYCL_:
 
+1. SYCL is a template library and its classes and functions are behind the
+   ``sycl::`` namespace.  The SYCL runtime is provided by an optimizing
+   compiler, in our case hipSYCL_:
+
+   .. code:: c++
+
+      #include <sycl/sycl.hpp>
+
+      using namespace sycl;
+
+2. Host and device code are in the same translation unit.
+3. Thanks to **unified shared memory** we can use a pointer-based approach to
+   memory management that transparently works *across* host and devices:
+
+   .. code:: c++
+
+      char *result = malloc_shared<char>(sz, Q);
+      std::memcpy(result, secret.data(), sz);
+
+   We still need to manage host-to-device and device-to-host memory migrations.
+   SYCL_ offers methods to avoid this, which we will cover in :ref:`buffers-accessors`.
+
+3. A **queue** is the mechanism by which we orchestrate work on our devices.
+   For example, getting the device on which our **actions** will run:
+
+   .. code:: c++
+
+      queue Q;
+      Q.get_device().get_info<info::device::name>();
+
+4. An **action** is submitted to a queue and it runs on a device. In this
+   example, our action is a ``parallel_for`` on a 1-dimensional **range** of work items
+
+   .. code:: c++
+
+      Q.parallel_for(
+         range<1>{sz},  /* range of work items */
+         ...
+      );
+
+5. Within actions, we execute ***kernels**:
+
+   .. code:: c++
+
+      [=](id<1> tid) {
+        result[tid[0]] -= 1;
+      }
+
+   the ``result`` array is indexed using an ``id`` object: a mapping between a
+   ``range`` of work items and available workers.
+
+6. Actions are executed **asynchronously**. The host enqueues work and moves on
+   with its tasks. If results are neeeded from an action, then we need to wait
+   for it:
+
+   .. code:: c++
+
+      Q.parallel_for(
+         range<1>{sz},     /* range of work items */
+         [=](id<1> tid) {     /* kernel code */
+           result[tid[0]] -= 1;
+         }
+      ).wait();
+
+
+.. typealong:: SAXPY with SYCL
+
+   We will walk through a SAXPY implementation using ``buffer* and *accessors*.
+   You can find the complete source code in the ``content/code/day-1/01_saxpy``
+   folder.
+   Worry not about the details in the code, we will dive deeper into these
+   concepts in episode :ref:`buffers-accessors`.
+
+   .. literalinclude:: code/day-1/01_hello/saxpy.cpp
+      :language: c++
+      :lines: 9-34
+
+   You should compile and execute the code and check that it outputs what you'd expect.
+
+The
+
+
+
+
+   
 
 .. keypoints::
 
