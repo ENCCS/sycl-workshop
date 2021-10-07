@@ -251,7 +251,9 @@ This source code introduces a number of fundamental concepts in SYCL_:
 
    .. literalinclude:: code/day-1/01_saxpy/saxpy.cpp
       :language: c++
-      :lines: 9-34
+      :lines: 9-39
+      :linenos:
+      :emphasize-lines: 14,15,20,22,24-26,28
 
    You should compile and execute the code and check that it outputs what you'd expect.
 

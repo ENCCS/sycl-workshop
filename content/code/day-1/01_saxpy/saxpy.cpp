@@ -6,13 +6,18 @@
 
 using namespace sycl;
 
-std::vector<float> saxpy(queue &Q, float alpha, const std::vector<float> &x,
-                    const std::vector<float> &y) {
+std::vector<float>
+saxpy(
+  queue &Q,
+  float alpha,
+  const std::vector<float> &x,
+  const std::vector<float> &y)
+{
   assert(x.size() == y.size());
 
   std::vector<float> z(x.size());
 
-  range<1> work_items{x.size()};
+  range<1> work_items { x.size() };
 
   {
     buffer<float> buff_x(x.data(), x.size());
@@ -33,9 +38,11 @@ std::vector<float> saxpy(queue &Q, float alpha, const std::vector<float> &x,
   return z;
 }
 
-int main() {
-  const std::vector<float> a{1., 2., 3., 4., 5.};
-  const std::vector<float> b{-1., 2., -3., 4., -5.};
+int
+main()
+{
+  const std::vector<float> a { 1., 2., 3., 4., 5. };
+  const std::vector<float> b { -1., 2., -3., 4., -5. };
 
   queue Q;
 
