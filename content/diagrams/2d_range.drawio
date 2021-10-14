@@ -1,15 +1,9 @@
-<mxfile host="app.diagrams.net" modified="2021-10-14T18:26:39.444Z" agent="5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.71 Safari/537.36" etag="cPKzoPo-KFXg85KStl-I" version="15.5.2" type="github">
+<mxfile host="app.diagrams.net" modified="2021-10-14T18:41:55.963Z" agent="5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.71 Safari/537.36" etag="hEzMocmrO3yv00h4mQ8C" version="15.5.2" type="github">
   <diagram id="T_vIvkkRDdqPUsJFXNAz" name="Page-1">
     <mxGraphModel dx="1024" dy="549" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
-        <mxCell id="2lAhy3hhc9lQTO_BXP1--1" value="" style="html=1;whiteSpace=wrap;shape=isoCube2;backgroundOutline=1;isoAngle=15;labelBackgroundColor=#97D077;fillColor=default;" parent="1" vertex="1">
-          <mxGeometry x="90" y="580" width="90" height="100" as="geometry" />
-        </mxCell>
-        <mxCell id="2lAhy3hhc9lQTO_BXP1--2" value="" style="html=1;whiteSpace=wrap;shape=isoCube2;backgroundOutline=1;isoAngle=15;labelBackgroundColor=#97D077;fillColor=default;" parent="1" vertex="1">
-          <mxGeometry x="90" y="530" width="90" height="100" as="geometry" />
-        </mxCell>
         <mxCell id="KtkFy-ws_OHmOeXaZ4xC-1" value="" style="whiteSpace=wrap;html=1;aspect=fixed;labelBackgroundColor=#97D077;sketch=0;fillStyle=solid;strokeWidth=1;fillColor=none;" vertex="1" parent="1">
           <mxGeometry x="200" y="80" width="40" height="40" as="geometry" />
         </mxCell>
