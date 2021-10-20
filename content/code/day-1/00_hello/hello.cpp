@@ -9,11 +9,11 @@
 
 #include <sycl/sycl.hpp>
 
+using namespace sycl;
+
 int
 main()
 {
-  using namespace sycl;
-
   const std::string secret { "Ifmmp-!xpsme\"\012J(n!tpssz-!Ebwf/!"
                              "J(n!bgsbje!J!dbo(u!ep!uibu/!.!IBM\01" };
 
