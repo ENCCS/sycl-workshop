@@ -14,7 +14,7 @@ What is SYCL?
 
 
 The high-performance computing landscape is increasingly dominated by machines
-whose high FLOP counts is delivered by *heterogeneous hardware*: large-core
+whose high FLOP count is delivered by *heterogeneous hardware*: large-core
 count CPUs in tandem with ever more powerful GPUs are now the norm in the HPC
 datacenter.  This trend is likely to continue, with the appearance of new
 hardware architectures, sometimes tailored for specific operations.
@@ -65,24 +65,25 @@ There are few things to notice in this example:
 
 - We work with *prescriptive* parallelism with CUDA_ and HIP_: we explicitly
   divide up the work between threads inside the kernel function.
-- Instead in the OpenMP_ and OpenACC_ models, we describe data movement and
-  worksharing, but rely on the compiler to generate correct code. Hence the
-  qualification of *descriptive* parallelism.
+- In the OpenMP_ and OpenACC_ models, we describe data movement and worksharing,
+  but rely on the compiler to generate correct code. Hence the qualification of
+  *descriptive* parallelism.
 - When using low-level APIs, a certain degree of code duplication between host
-  and device code **be inevitable**. Parallelization strategies between host
+  and device code **is inevitable**. Parallelization strategies between host
   and device will be different.  On top of this, the expressiveness of
   low-level language extensions is limited, which might increase the
   maintenance burden.
+- Low-level APIs might only be available with proprietary, vendor-specific
+  compilers. This limits both *functional* and *performance* portability.
 - ``pragma``-based schemes are standardized, but compiler support is not always
   optimal.
 
-When programming for heterogenous platforms, there is no silver bullet: we have
+When programming for heterogeneous platforms, there is no silver bullet: we have
 to carefully evaluate the tradeoffs between performance, productivity, and
 portability.
-
 SYCL_ is an attempt [#f1]_ at improving this state of affairs. It is a
 *standards-based* and *vendor-agnostic* domain-specific embedded language for
-parallel programming, not necessarily on heterogeneous architectures.
+parallel programming, for heterogeneous and homogeneous architectures.
 The SYCL_ standard is developed by the `Khronos group <https://www.khronos.org/>`_:
 
 * It is built as a **header-only** library for ISO C++17. SYCL_ code can be
@@ -90,18 +91,20 @@ The SYCL_ standard is developed by the `Khronos group <https://www.khronos.org/>
   does **not** require special compiler extensions.
 * It is a **single-source**-style framework. Host and device code are in the
   same *translation unit*.
-* It is **asynchronous**. We describe computations and memory operations, the
-  runtime generates a task graph and works its way through it when executing the
-  program.
+* It is **asynchronous**. The programmer describes computations, memory
+  allocations, and data migrations; the runtime generates a task graph and works
+  its way through it when executing the program.
 
 The SYCL compiler
 -----------------
 
-We will need a SYCL-aware compiler when working with SYCL.  These are to
-optimize our parallel code. ISO C++17 compilers will be unaware of how to
-generate optimal code for core abstractions, such as :term:`queues` and
-:term:`unified shared memory`.
-Fortunately, there are many to choose from!
+Despite the fact that SYCL is a header-only library for ISO C++17, we will still
+need a SYCL-aware compiler.
+ISO C++17 compilers will be unaware of how to generate optimal code for core
+abstractions, such as :term:`queues` and :term:`unified shared memory`.
+A SYCL compiler will be able to optimize our parallel code and will also be
+aware of which low-level framework to use to target specific architectures.
+Fortunately, there are many SYCL implementations to choose from!
 
 .. figure:: img/sycl_impls+backends.svg
    :align: center
@@ -133,7 +136,7 @@ Let's dig in with a "Hello, world" example.
 
 .. typealong:: "Hello, world" with SYCL
 
-   This is our complete sample source file. You can find it in the
+   You can find the file with the complete source code in the
    ``content/code/day-1/00_hello`` folder. Worry not about the details in the
    code, we will dig into what is happening here at great length during the rest
    of the lesson.
@@ -143,7 +146,9 @@ Let's dig in with a "Hello, world" example.
       :lines: 7-
       :emphasize-lines: 25-27
 
-   1. Log in onto `Vega <https://doc.vega.izum.si/login/>`_ and clone the repository for this workshop. Navigate to the correct folder. This contains a source file, ``hello.cpp``, and the CMake script to build it.
+   1. Log in onto `Vega <https://doc.vega.izum.si/login/>`_ and clone the
+      repository for this workshop. Navigate to the correct folder. This
+      contains a source file, ``hello.cpp``, and the CMake script to build it.
 
    2. Load the necessary modules:
 
@@ -196,9 +201,10 @@ This source code introduces a number of fundamental concepts in SYCL_:
       std::memcpy(result, secret.data(), sz);
 
    We still need to manage host-to-device and device-to-host memory migrations.
-   SYCL_ offers methods to avoid this, which we will cover in :ref:`buffers-accessors`.
+   SYCL_ offers methods to avoid this, which we will cover in
+   :ref:`buffers-accessors` and :ref:`unified-shared-memory`.
 
-3. A **queue** is the mechanism by which we orchestrate work on our devices.
+4. A **queue** is the mechanism by which we orchestrate work on our devices.
    For example, getting the device on which our **actions** will run:
 
    .. code:: c++
@@ -206,8 +212,12 @@ This source code introduces a number of fundamental concepts in SYCL_:
       queue Q;
       Q.get_device().get_info<info::device::name>();
 
-4. An **action** is submitted to a queue and it runs on a device. In this
-   example, our action is a ``parallel_for`` on a 1-dimensional **range** of work items
+   We will explore ``get_info`` and mechanisms for device selection in the
+   :ref:`device-discovery` section.
+
+5. An **action** is submitted to a queue and it runs on a device. In this
+   example, our action is a ``parallel_for`` on a 1-dimensional **range** of
+   work items
 
    .. code:: c++
 
@@ -216,7 +226,7 @@ This source code introduces a number of fundamental concepts in SYCL_:
          ...
       );
 
-5. Within actions, we execute ***kernels**:
+6. Within actions, we execute **kernels**:
 
    .. code:: c++
 
@@ -226,28 +236,39 @@ This source code introduces a number of fundamental concepts in SYCL_:
 
    the ``result`` array is indexed using an ``id`` object: a mapping between a
    ``range`` of work items and available workers.
+   Kernels are either `lambda functions
+  <https://en.cppreference.com/w/cpp/language/lambda>`_ or `function objects
+  <https://en.cppreference.com/w/cpp/utility/functional>`_.
 
-6. Actions are executed **asynchronously**. The host enqueues work and moves on
+7. Actions are executed **asynchronously**. The host enqueues work and moves on
    with its tasks. If results are neeeded from an action, then we need to wait
    for it:
 
    .. code:: c++
 
       Q.parallel_for(
-         range<1>{sz},     /* range of work items */
+         range<1>{sz},        /* range of work items */
          [=](id<1> tid) {     /* kernel code */
            result[tid[0]] -= 1;
          }
       ).wait();
 
 
+.. challenge:: SAXPY with SYCL
+
+   We will now write a SAXPY implementation in SYCL_. We will use :term:`unified
+   shared memory` and revisit this implementation in a later exercises to use
+   *buffers* and *accessors* instead.
+   We will dive deeper into these concepts in episodes
+   :ref:`unified-shared-memory` and :ref:`buffers-accessors`.
+   You can find the complete source code in the ``content/code/day-1/01_saxpy-usm``
+   folder.
+
 .. typealong:: SAXPY with SYCL
 
    We will walk through a SAXPY implementation using *buffer* and *accessors*.
    You can find the complete source code in the ``content/code/day-1/01_saxpy``
    folder.
-   Worry not about the details in the code, we will dive deeper into these
-   concepts in episode :ref:`buffers-accessors`.
 
    .. literalinclude:: code/day-1/01_saxpy/saxpy.cpp
       :language: c++
@@ -261,8 +282,6 @@ The
 
 
 
-
-   
 
 .. keypoints::
 
