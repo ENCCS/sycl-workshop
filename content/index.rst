@@ -3,9 +3,11 @@ SYCL
 
 
 SYCL_ is a C++ abstraction layer for programming heterogeneous hardware with a
-**single-source approach**. SYCL_ is **high-level**, **cross-platform**, and
-extends **standard** ISO C++17.
-You will learn to:
+**single-source approach**. SYCL_ is built on top of **standard** ISO C++17 and
+provides a **high-level** and **cross-platform** route for heterogeneous
+programming.
+
+In this workshop, you will learn to:
 
 * Use the hipSYCL_ compiler to generate executable for *multiple* hardware
   targets.
@@ -39,13 +41,14 @@ You will learn to:
    :caption: The lesson
 
    what-is-sycl
+   device-discovery
    queues-cgs-kernels
    buffers-accessors
-   device-discovery
    unified-shared-memory
-   buffer-accessor-vs-usm
+   heat-equation
    expressing-parallelism
-   data-and-dependencies
+   task-graphs-synchronization
+   buffer-accessor-vs-usm
 
 
 .. toctree::
@@ -65,14 +68,14 @@ You will learn to:
    :delim: ;
 
    30 min ; :doc:`what-is-sycl`
-   40 min ; :doc:`queues-cgs-kernels`
+   30 min ; :doc:`device-discovery`
    30 min ; :doc:`queues-cgs-kernels`
    30 min ; :doc:`buffers-accessors`
-   20 min ; :doc:`device-discovery`
-   40 min ; :doc:`unified-shared-memory`
-   40 min ; :doc:`buffer-accessor-vs-usm`
+   30 min ; :doc:`unified-shared-memory`
+   20 min ; :doc:`heat-equation`
    40 min ; :doc:`expressing-parallelism`
-   40 min ; :doc:`data-and-dependencies`
+   40 min ; :doc:`task-graphs-synchronization`
+   40 min ; :doc:`buffer-accessor-vs-usm`
 
 
 
@@ -85,11 +88,16 @@ This course is for students, researchers, engineers, and programmers that have
 heard of `SYCL`_ and want to learn how to use it effectively with projects they
 are working on.
 This course assumes no previous experience with `SYCL`_, however, participants
-should have some prior experience with or knowledge of the following topics (but
-no expertise is required):
+should have some prior experience with or knowledge of the following:
 
-- A working knowledge of recent C++ standards.
-- Some familiarity with C++17. In particular, class template argument deduction (CTAD).
+- A working knowledge of recent C++ standards, *e.g.* familiarity with `lambda
+  functions <https://en.cppreference.com/w/cpp/language/lambda>`_, `function
+  objects <https://en.cppreference.com/w/cpp/utility/functional>`_, and
+  `templates <https://en.cppreference.com/w/cpp/language/templates>`_.
+- Some familiarity with C++17, *e.g.* `class template argument deduction (CTAD)
+  <https://en.cppreference.com/w/cpp/language/class_template_argument_deduction>`_.
+  and `structured binding declaration
+  <https://en.cppreference.com/w/cpp/language/structured_binding>`_.
 
 
 About the course
@@ -172,6 +180,12 @@ See also
   *Data Parallel C++: Mastering DPC++ for Programming of Heterogeneous Systems
   Using C++ and SYCL* :cite:`Reinders2021-yx`
 - The `SYCL Academy <https://github.com/codeplaysoftware/syclacademy>`_ resources.
+- The `hipSYCL blog <https://hipsycl.github.io/>`_ and `GitHub repository
+  <https://github.com/illuhad/hipSYCL>`_.
+- The latest revision of the `SYCL 2020 standard
+  <https://www.khronos.org/registry/SYCL/specs/sycl-2020/html/sycl-2020.html>`_.
+- The `SYCL 2020 API reference guide
+  <https://www.khronos.org/files/sycl/sycl-2020-reference-guide.pdf>`_.
 
 
 Credits

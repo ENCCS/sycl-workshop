@@ -1,7 +1,7 @@
-.. _data-and-dependencies:
+.. _task-graphs-synchronization:
 
-Data and dependencies
-=====================
+The task graph: data, dependencies, synchronization
+===================================================
 
 .. questions::
 
