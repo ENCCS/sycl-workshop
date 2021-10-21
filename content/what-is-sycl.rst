@@ -146,30 +146,30 @@ Let's dig in with a "Hello, world" example.
       :lines: 7-
       :emphasize-lines: 25-27
 
-   1. Log in onto `Vega <https://doc.vega.izum.si/login/>`_ and clone the
+   #. Log in onto `Vega <https://doc.vega.izum.si/login/>`_ and clone the
       repository for this workshop. Navigate to the correct folder. This
       contains a source file, ``hello.cpp``, and the CMake script to build it.
 
-   2. Load the necessary modules:
+   #. Load the necessary modules:
 
       .. code:: console
 
          $ module load CMake hipSYCL
 
-   3. Configure and compile the code:
+   #. Configure and compile the code:
 
       .. code:: console
 
          $ cmake -S. -Bbuild -DHIPSYCL_TARGETS="omp"
          $ cmake --build build -- VERBOSE=1
 
-   4. Run the code! What result do you get?
+   #. Run the code! What result do you get?
 
       .. code:: console
 
          ./build/hello
 
-   5. We can configure again to target the GPU:
+   #. We can configure again to target the GPU:
 
       .. code:: console
 
@@ -181,7 +181,7 @@ Let's dig in with a "Hello, world" example.
 
 This source code introduces a number of fundamental concepts in SYCL_:
 
-1. SYCL is a template library and its classes and functions are behind the
+#. SYCL is a template library and its classes and functions are behind the
    ``sycl::`` namespace.  The SYCL runtime is provided by an optimizing
    compiler, in our case hipSYCL_:
 
@@ -191,8 +191,8 @@ This source code introduces a number of fundamental concepts in SYCL_:
 
       using namespace sycl;
 
-2. Host and device code are in the same translation unit.
-3. Thanks to **unified shared memory** we can use a pointer-based approach to
+#. Host and device code are in the same translation unit.
+#. Thanks to **unified shared memory** we can use a pointer-based approach to
    memory management that transparently works *across* host and devices:
 
    .. code:: c++
@@ -204,7 +204,7 @@ This source code introduces a number of fundamental concepts in SYCL_:
    SYCL_ offers methods to avoid this, which we will cover in
    :ref:`buffers-accessors` and :ref:`unified-shared-memory`.
 
-4. A **queue** is the mechanism by which we orchestrate work on our devices.
+#. A **queue** is the mechanism by which we orchestrate work on our devices.
    For example, getting the device on which our **actions** will run:
 
    .. code:: c++
@@ -215,7 +215,7 @@ This source code introduces a number of fundamental concepts in SYCL_:
    We will explore ``get_info`` and mechanisms for device selection in the
    :ref:`device-discovery` section.
 
-5. An **action** is submitted to a queue and it runs on a device. In this
+#. An **action** is submitted to a queue and it runs on a device. In this
    example, our action is a ``parallel_for`` on a 1-dimensional **range** of
    work items
 
@@ -226,7 +226,7 @@ This source code introduces a number of fundamental concepts in SYCL_:
          ...
       );
 
-6. Within actions, we execute **kernels**:
+#. Within actions, we execute **kernels**:
 
    .. code:: c++
 
@@ -240,9 +240,9 @@ This source code introduces a number of fundamental concepts in SYCL_:
   <https://en.cppreference.com/w/cpp/language/lambda>`_ or `function objects
   <https://en.cppreference.com/w/cpp/utility/functional>`_.
 
-7. Actions are executed **asynchronously**. The host enqueues work and moves on
+#. Actions are executed **asynchronously**. The host enqueues work and moves on
    with its tasks. If results are neeeded from an action, then we need to wait
-   for it:
+   for it to complete:
 
    .. code:: c++
 
@@ -252,6 +252,46 @@ This source code introduces a number of fundamental concepts in SYCL_:
            result[tid[0]] -= 1;
          }
       ).wait();
+
+We have introduced two functions to manage :term:`USM`:
+``sycl::malloc_shared`` and ``sycl::free``, for memory allocation and deallocation:
+
+.. signature:: ``sycl::malloc_shared``
+
+   .. code:: c++
+
+      template <typename T>
+      T* sycl::malloc_shared(size_t count,
+                             const queue& syclQueue,
+                             const property_list &propList = {})
+
+.. parameters::
+
+   ``T``
+       Type of the allocation.
+   ``count``
+       How many elements to allocate.
+   ``syclQueue``
+       Queue on which to perform the allocation.
+   ``propList``
+       Properties of the allocation.
+
+.. signature:: ``sycl::free``
+
+   .. code:: c++
+
+      void sycl::free(void* ptr, sycl::queue& syclQueue)
+
+.. parameters::
+
+   ``ptr``
+         Memory to deallocate. It **must** have been allocated using any of the
+         :term:`USM` functions.
+   ``syclQueue``
+         Queue on which to perform the deallocation.
+
+
+We have handled memory migration using ``std::memcpy``, which is part of the `C++ standard <https://en.cppreference.com/w/cpp/string/byte/memcpy>`_.
 
 
 .. challenge:: AXPY with SYCL
@@ -263,8 +303,28 @@ This source code introduces a number of fundamental concepts in SYCL_:
    a later exercises to use *buffers* and *accessors* instead.
    We will dive deeper into these concepts in episodes
    :ref:`unified-shared-memory` and :ref:`buffers-accessors`.
-   You can find the complete source code in the ``content/code/day-1/01_axpy-usm``
-   folder.
+
+   You can find a scaffold for the code in the
+   ``content/code/day-1/01_axpy-usm/axpy.cpp`` file, alongside the CMake script
+   to build the executable. You will have to complete the source code to compile
+   and run correctly: follow the hints in the source file.  The solution is in
+   the ``solution`` subfolder.
+
+   #. Load the necessary modules:
+
+      .. code:: console
+
+         $ module load CMake hipSYCL
+
+   #. Configure, compile, and run the code:
+
+      .. code:: console
+
+         $ cmake -S. -Bbuild -DHIPSYCL_TARGETS="omp"
+         $ cmake --build build -- VERBOSE=1
+         $ ./build/axpy
+
+      You can use ``cuda:sm_80`` to compile for the GPU.
 
 
 

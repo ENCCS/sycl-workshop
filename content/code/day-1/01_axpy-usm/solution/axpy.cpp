@@ -29,8 +29,13 @@ axpy(queue &Q, T alpha, const std::vector<T> &x, const std::vector<T> &y)
      })
     .wait();
 
+  free(x_d, Q);
+  free(y_d, Q);
+
   std::vector<T> z(sz);
   std::memcpy(z.data(), z_d, sizeof(T) * sz);
+
+  free(z_d, Q);
 
   return z;
 }

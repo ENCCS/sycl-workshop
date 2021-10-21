@@ -12,25 +12,32 @@ std::vector<T>
 axpy(queue &Q, T alpha, const std::vector<T> &x, const std::vector<T> &y)
 {
   assert(x.size() == y.size());
-  auto sz = x.size();
 
-  auto x_d = malloc_shared<T>(sz, Q);
-  std::memcpy(x_d, x.data(), sizeof(T) * sz);
+  // FIXME allocate array for x on the device
+  auto x_d = ...;
+  // FIXME copy x data to device
+  std::memcpy(...);
+  // FIXME allocate array for y on the device
+  auto y_d = ...;
+  // FIXME copy y data to device
+  std::memcpy(...);
 
-  auto y_d = malloc_shared<T>(sz, Q);
-  std::memcpy(y_d, y.data(), sizeof(T) * sz);
-
-  auto z_d = malloc_shared<T>(sz, Q);
+  // FIXME allocate result array
+  auto z_d = ...;
 
   Q.parallel_for(
-     range { sz },
-     [=](id<1> tid) {
-       z_d[tid[0]] = alpha * x_d[tid[0]] + y_d[tid[0]];
-     })
-    .wait();
+    ..., /* FIXME define execution range for the kernel */
+    [=](id<1> tid) {
+      ...; /* FIXME define AXPY action using x_d, y_d, alpha, and z_d */
+    })
+    /* FIXME should you wait? */;
 
   std::vector<T> z(sz);
-  std::memcpy(z.data(), z_d, sizeof(T) * sz);
+  // FIXME copy result array into std::vector
+  std::memcpy(...);
+
+  // FIXME free ALL allocated memory
+  free(...);
 
   return z;
 }
