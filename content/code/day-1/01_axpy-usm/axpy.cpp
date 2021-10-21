@@ -9,7 +9,7 @@ using namespace sycl;
 
 template <typename T>
 std::vector<T>
-saxpy(queue &Q, T alpha, const std::vector<T> &x, const std::vector<T> &y)
+axpy(queue &Q, T alpha, const std::vector<T> &x, const std::vector<T> &y)
 {
   assert(x.size() == y.size());
   auto sz = x.size();
@@ -20,9 +20,7 @@ saxpy(queue &Q, T alpha, const std::vector<T> &x, const std::vector<T> &y)
   auto y_d = malloc_shared<T>(sz, Q);
   std::memcpy(y_d, y.data(), sizeof(T) * sz);
 
-  std::vector<T> z(sz);
   auto z_d = malloc_shared<T>(sz, Q);
-  std::memcpy(z_d, z.data(), sizeof(T) * sz);
 
   Q.parallel_for(
      range { sz },
@@ -30,6 +28,9 @@ saxpy(queue &Q, T alpha, const std::vector<T> &x, const std::vector<T> &y)
        z_d[tid[0]] = alpha * x_d[tid[0]] + y_d[tid[0]];
      })
     .wait();
+
+  std::vector<T> z(sz);
+  std::memcpy(z.data(), z_d, sizeof(T) * sz);
 
   return z;
 }
@@ -51,7 +52,7 @@ main()
   std::cout << "Running on: " << Q.get_device().get_info<info::device::name>()
             << std::endl;
 
-  auto c = saxpy(Q, 1.0, a, b);
+  auto c = axpy(Q, 1.0, a, b);
 
   std::cout << "Checking results..." << std::endl;
   auto message = "Nice job!";
@@ -59,6 +60,7 @@ main()
     if (std::abs(x - 1023.0) >= 1.0e-13) {
       std::cout << "Uh-oh!" << std::endl;
       message = "Not quite there yet :(";
+      break;
     }
   }
   std::cout << message << std::endl;
