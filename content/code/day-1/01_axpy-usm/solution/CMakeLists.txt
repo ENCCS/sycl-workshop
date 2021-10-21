@@ -24,7 +24,7 @@ target_compile_options(axpy
 # find threading library...
 find_package(Threads REQUIRED)
 # ...and link against it
-target_link_libraries(axpy 
+target_link_libraries(axpy
   PRIVATE 
     Threads::Threads
   )
@@ -32,7 +32,7 @@ target_link_libraries(axpy
 # the SYCL secret sauce :)
 add_sycl_to_target(
   TARGET 
-    axpy 
+    axpy
   SOURCES 
     axpy.cpp
   )
