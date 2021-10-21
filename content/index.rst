@@ -95,7 +95,7 @@ should have some prior experience with or knowledge of the following:
   objects <https://en.cppreference.com/w/cpp/utility/functional>`_, and
   `templates <https://en.cppreference.com/w/cpp/language/templates>`_.
 - Some familiarity with C++17, *e.g.* `class template argument deduction (CTAD)
-  <https://en.cppreference.com/w/cpp/language/class_template_argument_deduction>`_.
+  <https://en.cppreference.com/w/cpp/language/class_template_argument_deduction>`_
   and `structured binding declaration
   <https://en.cppreference.com/w/cpp/language/structured_binding>`_.
 
