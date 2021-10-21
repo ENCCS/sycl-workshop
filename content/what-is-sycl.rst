@@ -129,11 +129,6 @@ Hello, SYCL!
 
 Let's dig in with a "Hello, world" example.
 
-.. todo::
-
-   - Add two vectors example in SYCL.
-   - Highlight queues, command groups, kernels.
-
 .. typealong:: "Hello, world" with SYCL
 
    You can find the file with the complete source code in the
@@ -236,9 +231,8 @@ This source code introduces a number of fundamental concepts in SYCL_:
 
    the ``result`` array is indexed using an ``id`` object: a mapping between a
    ``range`` of work items and available workers.
-   Kernels are either `lambda functions
-  <https://en.cppreference.com/w/cpp/language/lambda>`_ or `function objects
-  <https://en.cppreference.com/w/cpp/utility/functional>`_.
+   Kernels are either `lambda functions <https://en.cppreference.com/w/cpp/language/lambda>`_ or
+   `function objects <https://en.cppreference.com/w/cpp/utility/functional>`_.
 
 #. Actions are executed **asynchronously**. The host enqueues work and moves on
    with its tasks. If results are neeeded from an action, then we need to wait
