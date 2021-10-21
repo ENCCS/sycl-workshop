@@ -254,31 +254,17 @@ This source code introduces a number of fundamental concepts in SYCL_:
       ).wait();
 
 
-.. challenge:: SAXPY with SYCL
+.. challenge:: AXPY with SYCL
 
-   We will now write a SAXPY implementation in SYCL_. We will use :term:`unified
-   shared memory` and revisit this implementation in a later exercises to use
-   *buffers* and *accessors* instead.
+   We will now write an AXPY implementation in SYCL_. This will be a generic
+   implementation: it will work with any arithmetic type, thanks to C++
+   templates.
+   We will use :term:`unified shared memory` and revisit this implementation in
+   a later exercises to use *buffers* and *accessors* instead.
    We will dive deeper into these concepts in episodes
    :ref:`unified-shared-memory` and :ref:`buffers-accessors`.
-   You can find the complete source code in the ``content/code/day-1/01_saxpy-usm``
+   You can find the complete source code in the ``content/code/day-1/01_axpy-usm``
    folder.
-
-.. typealong:: SAXPY with SYCL
-
-   We will walk through a SAXPY implementation using *buffer* and *accessors*.
-   You can find the complete source code in the ``content/code/day-1/01_saxpy``
-   folder.
-
-   .. literalinclude:: code/day-1/01_saxpy/saxpy.cpp
-      :language: c++
-      :lines: 9-39
-      :linenos:
-      :emphasize-lines: 14,15,20,22,24-26,28
-
-   You should compile and execute the code and check that it outputs what you'd expect.
-
-The
 
 
 
