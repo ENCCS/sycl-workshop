@@ -26,8 +26,9 @@ target_compile_options(heat
     -O3
   )
 
-find_package(PNG)
+find_package(PNG QUIET)
 if(TARGET PNG::PNG)
+  message(STATUS "Found PNG: enable saving time-evolution snapshots to PNG.")
   target_compile_definitions(heat
     PRIVATE
       HAVE_PNG

@@ -2,12 +2,13 @@
 #define PNGWRITER_H_
 
 #if __cplusplus
-  extern "C" {
+extern "C"
+{
 #endif
 
-int save_png(double *data, const int nx, const int ny, const char *fname);
+  int save_png(double *data, const int nx, const int ny, const char *fname);
 
 #if __cplusplus
-  }
+}
 #endif
 #endif
