@@ -39,24 +39,34 @@ main()
   free(result, Q);
 
   queue hostQ{host_selector{}};
-  std::cout << "host_selector, running on: " << hostQ.get_device().get_info<info::device::name>()
+  std::cout << "host_selector, running on: " 
+	  << hostQ.get_device().get_info<info::device::vendor>() << " "
+	  << hostQ.get_device().get_info<info::device::name>()
             << std::endl;
 
   queue defaultQ{default_selector{}};
-  std::cout << "default_selector, running on: " << defaultQ.get_device().get_info<info::device::name>()
+  std::cout << "default_selector, running on: " 
+	  << defaultQ.get_device().get_info<info::device::vendor>() << " "
+	  << defaultQ.get_device().get_info<info::device::name>()
             << std::endl;
 
   queue cpuQ{cpu_selector{}};
-  std::cout << "cpu_selector, running on: " << cpuQ.get_device().get_info<info::device::name>()
+  std::cout << "cpu_selector, running on: "
+	  << cpuQ.get_device().get_info<info::device::vendor>() << " " 
+	  << cpuQ.get_device().get_info<info::device::name>() 
             << std::endl;
 
   queue gpuQ{gpu_selector{}};
-  std::cout << "gpu_selector, running on: " << gpuQ.get_device().get_info<info::device::name>()
+  std::cout << "gpu_selector, running on: " 
+	  << gpuQ.get_device().get_info<info::device::vendor>() << " "
+	  << gpuQ.get_device().get_info<info::device::name>()
             << std::endl;
 
   // NOTE not available in hipSYCL 0.9.1
   //queue acceleratorQ{accelerator_selector{}};
-  //std::cout << "accelerator_selector, running on: " << acceleratorQ.get_device().get_info<info::device::name>()
+  //std::cout << "accelerator_selector, running on: " 
+  //           << acceleratorQ.get_device().get_info<info::device::vendor>() << " "
+  //           << acceleratorQ.get_device().get_info<info::device::name>()
   //          << std::endl;
 
   return 0;

@@ -38,5 +38,26 @@ main()
 
   free(result, Q);
 
+  // FIXME define a queue with the host selector
+  queue hostQ{ ... };
+  // FIXME print out vendor and name of selected device
+  std::cout << "host_selector, running on: " << hostQ.get_device().get_info<...>()            << std::endl;
+
+  // FIXME define a queue with the default selector
+  queue defaultQ{ ... ;
+  // FIXME print out vendor and name of selected device
+
+  // FIXME define a queue with the default selector
+  queue defaultQ{ ... ;
+  // FIXME print out vendor and name of selected device
+
+  // FIXME define a queue with the CPU selector
+  queue cpuQ{ ... };
+  // FIXME print out vendor and name of selected device
+
+  // FIXME define a queue with the GPU selector
+  queue gpuQ{ ... };
+  // FIXME print out vendor and name of selected device
+
   return 0;
 }
