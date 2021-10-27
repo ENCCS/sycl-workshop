@@ -6,49 +6,252 @@ Device discovery
 .. questions::
 
    - How can we make SYCL_ aware of the available hardware?
+   - Is it possible to specialize our code for the available hardware?
 
 .. objectives::
 
-   - Learn how to query platform and/or device information.
-   - Learn to use device selectors.
+   - Learn how to query device information with ``get_info``.
+   - Learn how to use and write :term:`selectors`.
 
 
-.. todo::
+The examples in the :ref:`what-is-sycl` episode highlighted the importance of
+the :term:`queue` abstraction in SYCL_. All device code is **submitted** to a
+:term:`queue` as *actions*:
 
-   How devices are indexed and handled
+.. code:: c++
+
+   queue Q;
+
+   Q.submit(
+     /* device code action */
+   );
+
+the runtime **schedules** the actions and executes them **asynchronously**.
+
+One queue maps to one device: the mapping happens upon construction of a
+``queue`` object and cannot be changed subsequently.
+It is not possible to use a single ``queue`` object to:
+
+- manage more than one device, as this would be ambiguous for the runtime to
+  decide which device should actually do the work that has been enqueued.
+- spead enqueued work over multiple devices.
+
+While these might appear as limitations, we are free to declare as many
+``queue`` object as we like in our program. We will discuss queues in further
+detail in :ref:`queues-cgs-kernels`.
+
+We have five strategies to run our device code:
+
+Somewhere
+   This is what we have done so far and it's achieved by simply using the
+   ``queue`` object default constructor:
+
+   .. code:: c++
+
+      queue Q;
+
+   Most likely you want to have more control on what device queues in your code
+   will use, especially as your SYCL code matures.
+
+In order to gain more control, we will use the following constructor:
+
+.. signature:: ``queue`` constructor
+
+   .. code:: c++
+
+      template <typename DeviceSelector>
+      explicit queue(const DeviceSelector &deviceSelector,
+                     const property_list &propList = {});
+
+The **selector** passed as first parameter lets us specify *how* the runtime
+should go about mapping the queue to a device.
+
+On the *host device*
+   A standards-compliant SYCL implementation will always define a host device
+   and we can bind a queue to it by passing the ``host_selector`` object to its
+   constructor:
+
+   .. code:: c++
+
+      queue Q{host_selector{}};
+
+   The host device makes the host CPU "look like" an *independent* device, such
+   that device code will run regardless of whether the hardware is available.
+   This is especially useful in three scenarios:
+
+   1. Developing heterogeneous code on a machine without hardware.
+   2. Debugging device code using CPU tooling.
+   3. Fallback option to guarantee functional portability.
+
+On a *specific* class of devices
+   Such as GPUs or FPGAs. The SYCL_ standard defines a few *selectors* for this
+   use case.
+
+   .. code:: c++
+
+      queue Q_cpu{default_selector{}};
+
+      queue Q_cpu{cpu_selector{}};
+
+      queue Q_device{gpu_selector{}};
+
+      queue Q_accelerator{accelerator_selector{}};
 
 
-.. challenge:: Compiling for different targets
+   - ``default_selector`` is the implementation-defined default device. This is
+     not portable between SYCL compilers.
+   - ``cpu_selector`` a CPU device.
+   - ``gpu_selector`` a GPU device.
+   - ``accelerator_selector`` an accelerator device, including FPGAs.
+
+On a *specific* device in a *specific* class
+   For example on a GPU with well-defined compute capabilities. SYCL_ defines
+   the ``device_selector`` base class, which we can inherit from and customize
+   to our needs.
+
+   .. code:: c++
+
+      class special_device_selector : public device_selector {
+        /* we will look at what goes here soon! */
+      };
+
+      queue Q{special_device_selector{}};
+
+
+   Coincidentally, this is the most flexible and portable way of
+   *parameterizing* our code to work on a diverse set of devices.
+
+
+.. challenge:: hipSYCL and ``HIPSYCL_TARGETS``
 
    SYCL_ is all about being able to write code *once* and execute it on
-   different hardware. It is quite simple to achieve this with hipSYCL_: when
-   configuring use a different argument for the ``HIPSYCL_TARGETS`` CMake
-   option.
-
-   Take the previous example and:
+   different hardware. Take the sample code in folder
+   ``content/code/day-1/02_hello-selectors`` used the default queue constructor:
+   essentially, the runtime decides which device will be used for us.
+   Let us explore how that works with hipSYCL_. When
+   configuring the code we can set the ``HIPSYCL_TARGETS`` CMake
+   option to influence the behavior.
 
    1. Compile to target the GPU, using ``-DHIPSYCL_TARGETS="cuda:sm_80"`` in the
       configuration step.  What output do you see? Is the code running on the
       device you expect?
    2. Compile to target the GPU *and* the host device using OpenMP with
       ``-DHIPSYCL_TARGETS="cuda:sm_80;omp"``. What output do you see now?
+   3. Extend the code to create multiple queues, each using one of the standard
+      selectors, and compile with ``-DHIPSYCL_TARGETS="cuda:sm_80;omp"``.
+      What output do you expect to see?
+
+   .. note::
+
+      ``accelerator_selector`` is not implemented in hipSYCL_ 0.9.1
 
    To learn more about the compilation model in hipSYCL_, check out `its
    documentation
    <https://github.com/illuhad/hipSYCL/blob/develop/doc/compilation.md>`_.
 
 
+Writing your own selector
+-------------------------
+
+Using inheritance
+~~~~~~~~~~~~~~~~~
+
+All the standard selectors are derived types of the abstract ``device_selector`` class. This class defines, among other things, a pure virtual overload of the function-call operator:
+
+.. code:: c++
+
+   virtual int operator()(const device &dev) const = 0;
+
+The method takes a ``device`` object and return a **score** for it, an integer
+value, and the highest score gets selected.
+The runtime will call this method exactly once for each device that it has
+access too, in order to build the ranking of device scores.
+Devices might be completely excluded from the ranking if their score is a
+*negative* number.
+We can write our own selector by simply inheriting from this abstract base class
+and implementing our own custom logic for scoring devices:
+
+.. literalinclude:: code/snippets/inherit-device_selector.cpp
+   :language: c++
 
 
-.. challenge:: Finding your devices
+.. challenge:: Write a custom selector
 
-   .. todo::
+   It's not that far of a stretch to imagine that in a not-so-distant future, a
+   node in a cluster might be equipped with accelarators from different vendors.
+   In this exercise, you'll write a selector to score GPUs from different
+   vendors according to your preferences.
 
-      write me!
+   You can find a scaffold for the code in the
+   ``content/code/day-1/03_custom-selectors/custom-selectors.cpp`` file,
+   alongside the CMake script to build the executable. You will have to complete
+   the source code to compile and run correctly: follow the hints in the source
+   file.  The solution is in the ``solution`` subfolder.
+
+   #. Load the necessary modules:
+
+      .. code:: console
+
+         $ module load CMake hipSYCL
+
+   #. Configure, compile, and run the code:
+
+      .. code:: console
+
+         $ cmake -S. -Bbuild -DHIPSYCL_TARGETS="omp"
+         $ cmake --build build -- VERBOSE=1
+         $ ./build/custom-selectors
+
+
+   Try compiling and executing on a non-GPU node. What happens? How can you make
+   the code more robust?
+
+
+Using aspects
+~~~~~~~~~~~~~
+
+The standard defines the ``aspect_selector`` free function, which
+return a selectors based on desired device **aspects**:
+
+.. signature:: ``aspect_selector``
+
+   .. code:: c++
+
+      template <class... aspectListTN>
+      auto aspect_selector(aspectListTN... aspectList);
+
+Available aspects are defined in the ``aspect`` enumeration and can be probed
+using the ``has`` method of the ``device`` class. For example,
+``dev.has(aspect::gpu)`` is equivalent to ``dev.is_gpu()``.
+A selector for GPUs supporting half-precision floating-point numbers (FP16) and :term:`USM` device allocations can be implemented with a one-liner:
+
+.. code:: c++
+
+   auto my_selector = aspect_selector(aspect::usm_device_allocations, aspect::fp16);
+
+The aspects available, according to the standard, are `available here
+<https://www.khronos.org/registry/SYCL/specs/sycl-2020/html/sycl-2020.html#sec:device-aspects>`_.
+Currently, we cannot use aspects to filter devices based on vendors.
+
+Using ``get_info``
+------------------
+
+It is not a good idea to parameterize our queues.
+
+There are many elements in the ``info::device`` namespace: we will not list them
+all here, as a complete list is `available on the webpage of the standard
+<https://www.khronos.org/registry/SYCL/specs/sycl-2020/html/sycl-2020.html#_device_information_descriptors>`_.
+
 
 
 .. keypoints::
 
-   .. todo::
-
-      Write me
+   - One queue maps to one device, such that there is no ambiguity in
+     spreading work.
+   - A program can have as many queues as desired. Multiple queues can use the
+     same device: the queue-device mapping is many-to-one.
+   - Device selection is essential to tailor execution to the available hardware
+     and is achieved using the ``device_selector`` abstraction.
+   - Custom selectors with complex logic can be implemented with inheritance.
+   - You should use ``get_info`` to probe your system. Device selection should
+     be done based on compute capabilities, not on vendor and/or device names.

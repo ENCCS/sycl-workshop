@@ -22,6 +22,30 @@ Queues, command groups, and kernels
    - SYCL runtime and implicit scheduling.
 
 
+The :term:`queue` is a central abstraction in SYCL_. All device code is
+**submitted** to a queue as *actions*:
+
+.. code:: c++
+
+   queue Q;
+
+   Q.submit(
+     /* device code action */
+   );
+
+the runtime **schedules** the actions and executes them **asynchronously**.
+
+One queue maps to one device: the mapping happens upon construction of a
+``queue`` object and cannot be changed subsequently.
+It is not possible to use a single ``queue`` object to:
+- manage more than one device, as this would be ambiguous for the runtime to
+  decide which device should actually do the work that has been enqueued.
+- spead enqueued work over multiple devices.
+
+While these might appear as limitations, we are free to declare as many
+``queue`` object as we like in our program. It is also valid to create multiple
+queues to the *same* device.
+
 
 
 .. keypoints::

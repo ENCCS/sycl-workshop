@@ -13,7 +13,12 @@ Quick Reference
       Check the `wikipedia page
       <https://en.wikipedia.org/wiki/Field-programmable_gate_array>`_.
 
+   queue
    queues
+      TODO
+
+   selector
+   selectors
       TODO
 
    vector engines
