@@ -18,6 +18,16 @@ Queues, command groups, and kernels
 
    Write an intro
 
+As we mentioned the queues connect a host program to a single device. Then
+the program submit tasks to a device via queue and it could monitor the queue
+until it is completed. The task is initiated by submitting a command group to 
+a queue. A command group defines a kernel function, the requirements to execute 
+the kernel function, and its index space.
+
+The runtime implements many components such as device management, task graph management, 
+execution, data management, backend management, scheduling and task synchronization. 
+
+
    - Relation between queues, command groups, and kernels.
    - SYCL runtime and implicit scheduling.
 
