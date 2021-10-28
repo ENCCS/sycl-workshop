@@ -236,13 +236,85 @@ Currently, we cannot use aspects to filter devices based on vendors.
 Using ``get_info``
 ------------------
 
-It is not a good idea to parameterize our queues.
+It is not a good idea to depend explicitly on vendor and/or device names in our program: for maximum portability, our device code should rather be parameterized on *compute capabilities*, *available memory*, and so forth.
+Introspection into such parameters is done using the ``get_info`` template function:
 
-There are many elements in the ``info::device`` namespace: we will not list them
-all here, as a complete list is `available on the webpage of the standard
+.. signature:: ``get_info``
+
+   .. code:: c++
+
+      template <typename param>
+      typename param::return_type get_info() const;
+
+This is a method available for many of the classes defined by the SYCL standard
+including ``device``, of course. The template parameter specifies which
+information we would like to obtain.
+In the previous examples, we have used ``info::device::vendor`` and ``info::device::name`` to build our selectors.
+Valid ``get_info`` queries for devices are in the ```info::device`` namespace and can be roughly classified in two groups:
+
+#. Queries which can help decide whether a kernel can run correctly on a given
+   device. For example, querying for ``info::device::global_mem_size`` and
+   ``info::device::local_mem_size`` would return the size, in bytes, of the
+   global and local memory, respectively.
+#. Queries which can help tune kernel code to a given device. For example,
+   querying ``info::device::local_mem_type`` would return which kind of local
+   memory is available on the device: none, dedicated local storage, or an
+   abstraction built using global memory.
+
+we will not list all possible device queries here: a complete list is `available
+on the webpage of the standard
 <https://www.khronos.org/registry/SYCL/specs/sycl-2020/html/sycl-2020.html#_device_information_descriptors>`_.
 
 
+.. challenge:: Nosing around on our system
+
+   We will write a chatty program to report properties of all devices available
+   on our system. We will have to keep the `list of queries
+   <https://www.khronos.org/registry/SYCL/specs/sycl-2020/html/sycl-2020.html#_device_information_descriptors>`_
+   at hand for this task.
+
+   You can find a scaffold for the code in the
+   ``content/code/day-1/04_platform-devices/platform-devices.cpp`` file,
+   alongside the CMake script to build the executable. You will have to complete
+   the source code to compile and run correctly: follow the hints in the source
+   file.  The solution is in the ``solution`` subfolder.
+
+   The code is a double loop:
+
+   #. First over all *platforms*
+
+      .. code:: c++
+
+         for (const auto & p : platform::get_platforms()) {
+           ...
+         }
+
+      A ``platform`` is an abstraction mapping to a backend.
+
+   #. Then over all *devices* available on each platform:
+
+      .. code:: c++
+
+         for (const auto& d: p.get_devices()) {
+           ...
+         }
+
+   #. We will query the device with ``get_info`` in the inner loop. For example:
+
+      .. code:: c++
+
+         std::cout << "name: " << d.get_info<info::device::name>() << std::endl;
+
+   #. Add queries and print out information on global and local memory, work
+      items, and work groups.
+
+
+The ``info::`` namespace is **vast!** You can query many aspects of a SYCL code
+at runtime using ``get_info``, not just devices. The classes ``platform``,
+``context``, ``queue``, ``event``, and ``kernel`` also offer a ``get_info``
+method. The queries in the ``info::kernel_device_specific``  `namespace
+<https://www.khronos.org/registry/SYCL/specs/sycl-2020/html/sycl-2020.html#table.kernel.devicespecificinfo>`_
+can be helpful with performance tuning.
 
 .. keypoints::
 
