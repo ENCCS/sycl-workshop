@@ -298,6 +298,8 @@ We have handled memory migration using ``std::memcpy``, which is part of the `C+
    We will dive deeper into these concepts in episodes
    :ref:`unified-shared-memory` and :ref:`buffers-accessors`.
 
+   **Don't do this at home, use optimized BLAS!**
+
    You can find a scaffold for the code in the
    ``content/code/day-1/01_axpy-usm/axpy.cpp`` file, alongside the CMake script
    to build the executable. You will have to complete the source code to compile
