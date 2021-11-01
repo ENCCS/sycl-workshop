@@ -288,7 +288,7 @@ We have introduced two functions to manage :term:`USM`:
 We have handled memory migration using ``std::memcpy``, which is part of the `C++ standard <https://en.cppreference.com/w/cpp/string/byte/memcpy>`_.
 
 
-.. challenge:: AXPY with SYCL
+.. exercise:: AXPY with SYCL
 
    We will now write an AXPY implementation in SYCL_. This will be a generic
    implementation: it will work with any arithmetic type, thanks to C++

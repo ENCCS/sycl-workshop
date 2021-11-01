@@ -27,18 +27,9 @@ the :term:`queue` abstraction in SYCL_. All device code is **submitted** to a
    );
 
 the runtime **schedules** the actions and executes them **asynchronously**.
-
-One queue maps to one device: the mapping happens upon construction of a
-``queue`` object and cannot be changed subsequently.
-It is not possible to use a single ``queue`` object to:
-
-- manage more than one device, as this would be ambiguous for the runtime to
-  decide which device should actually do the work that has been enqueued.
-- spead enqueued work over multiple devices.
-
-While these might appear as limitations, we are free to declare as many
-``queue`` object as we like in our program. We will discuss queues in further
-detail in :ref:`queues-cgs-kernels`.
+We will discuss queues in further detail in :ref:`queues-cgs-kernels`. At this
+point, it is important to stress that a queue can be mapped to one device only.
+The mapping happens at queue construction and cannot be changed afterwards.
 
 We have five strategies to run our device code:
 
@@ -122,7 +113,7 @@ On a *specific* device in a *specific* class
    *parameterizing* our code to work on a diverse set of devices.
 
 
-.. challenge:: hipSYCL and ``HIPSYCL_TARGETS``
+.. exercise:: hipSYCL and ``HIPSYCL_TARGETS``
 
    SYCL_ is all about being able to write code *once* and execute it on
    different hardware. Take the sample code in folder
@@ -156,7 +147,9 @@ Writing your own selector
 Using inheritance
 ~~~~~~~~~~~~~~~~~
 
-All the standard selectors are derived types of the abstract ``device_selector`` class. This class defines, among other things, a pure virtual overload of the function-call operator:
+All the standard selectors are derived types of the abstract ``device_selector``
+class. This class defines, among other things, a pure virtual overload of the
+function-call operator:
 
 .. code:: c++
 
@@ -175,7 +168,7 @@ and implementing our own custom logic for scoring devices:
    :language: c++
 
 
-.. challenge:: Write a custom selector
+.. exercise:: Write a custom selector
 
    It's not that far of a stretch to imagine that in a not-so-distant future, a
    node in a cluster might be equipped with accelarators from different vendors.
@@ -233,11 +226,13 @@ The aspects available, according to the standard, are `available here
 <https://www.khronos.org/registry/SYCL/specs/sycl-2020/html/sycl-2020.html#sec:device-aspects>`_.
 Currently, we cannot use aspects to filter devices based on vendors.
 
-Using ``get_info``
-------------------
+Introspection with ``get_info``
+-------------------------------
 
-It is not a good idea to depend explicitly on vendor and/or device names in our program: for maximum portability, our device code should rather be parameterized on *compute capabilities*, *available memory*, and so forth.
-Introspection into such parameters is done using the ``get_info`` template function:
+It is not a good idea to depend explicitly on vendor and/or device names in our
+program: for maximum portability, our device code should rather be parameterized
+on *compute capabilities*, *available memory*, and so forth.
+Introspection into such parameters is achieved with the ``get_info`` template function:
 
 .. signature:: ``get_info``
 
@@ -249,24 +244,26 @@ Introspection into such parameters is done using the ``get_info`` template funct
 This is a method available for many of the classes defined by the SYCL standard
 including ``device``, of course. The template parameter specifies which
 information we would like to obtain.
-In the previous examples, we have used ``info::device::vendor`` and ``info::device::name`` to build our selectors.
-Valid ``get_info`` queries for devices are in the ```info::device`` namespace and can be roughly classified in two groups:
+In the previous examples, we have used ``info::device::vendor`` and
+``info::device::name`` to build our selectors.
+Valid ``get_info`` queries for devices are in the ```info::device`` namespace
+and can be roughly classified in two groups of queries, which can:
 
-#. Queries which can help decide whether a kernel can run correctly on a given
-   device. For example, querying for ``info::device::global_mem_size`` and
+#. decide whether a kernel can run correctly on a given device. For example,
+   querying for ``info::device::global_mem_size`` and
    ``info::device::local_mem_size`` would return the size, in bytes, of the
    global and local memory, respectively.
-#. Queries which can help tune kernel code to a given device. For example,
-   querying ``info::device::local_mem_type`` would return which kind of local
-   memory is available on the device: none, dedicated local storage, or an
-   abstraction built using global memory.
+#. help tune kernel code to a given device. For example, querying
+   ``info::device::local_mem_type`` would return which kind of local memory is
+   available on the device: none, dedicated local storage, or an abstraction
+   built using global memory.
 
-we will not list all possible device queries here: a complete list is `available
+We will not list all possible device queries here: a complete list is `available
 on the webpage of the standard
 <https://www.khronos.org/registry/SYCL/specs/sycl-2020/html/sycl-2020.html#_device_information_descriptors>`_.
 
 
-.. challenge:: Nosing around on our system
+.. exercise:: Nosing around on our system
 
    We will write a chatty program to report properties of all devices available
    on our system. We will have to keep the `list of queries
@@ -318,10 +315,6 @@ can be helpful with performance tuning.
 
 .. keypoints::
 
-   - One queue maps to one device, such that there is no ambiguity in
-     spreading work.
-   - A program can have as many queues as desired. Multiple queues can use the
-     same device: the queue-device mapping is many-to-one.
    - Device selection is essential to tailor execution to the available hardware
      and is achieved using the ``device_selector`` abstraction.
    - Custom selectors with complex logic can be implemented with inheritance.

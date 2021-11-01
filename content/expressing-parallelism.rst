@@ -37,7 +37,7 @@ Simple data-parallel kernels
 
    A 2-dimensional range.
 
-.. challenge:: Naïve MatMul
+.. exercise:: Naïve MatMul
 
    .. figure:: img/naive_matmul.svg
       :align: center
@@ -59,7 +59,7 @@ ND-range kernels
    ND-range.
 
 
-.. challenge:: Less naïve MatMul
+.. exercise:: Less naïve MatMul
 
    .. figure:: img/less_naive_matmul.svg
       :align: center
