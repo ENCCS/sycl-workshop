@@ -82,9 +82,11 @@ program. We will only consider two ways of writing kernels in SYCL:
 
   .. demo:: +1 as a lambda
 
-     [=](id<1> idx) -> void {
-       data_acc[idx] += 1;
-     }
+     .. code:: c++
+
+        [=](id<1> idx) -> void {
+          data_acc[idx] += 1;
+        }
 
 
 `function objects <https://en.cppreference.com/w/cpp/utility/functional>`_
@@ -94,17 +96,19 @@ program. We will only consider two ways of writing kernels in SYCL:
 
   .. demo:: +1 as a function object
 
-     class PlusOne {
-       public:
-        PlusOne(accessor<int> acc) : data_acc_(acc) {}
+     .. code:: c++
 
-        void operator()(id<1> idx) {
-          data_acc[idx] += 1;
-        }
+        class PlusOne {
+          public:
+           PlusOne(accessor<int> acc) : data_acc_(acc) {}
 
-       private:
-        accessor<int> data_acc_;
-     };
+           void operator()(id<1> idx) {
+             data_acc[idx] += 1;
+           }
+
+          private:
+           accessor<int> data_acc_;
+        };
 
 
 There are no technical reasons to prefer one style over the other, it will ultimately boil down to personal preference. Regardless of the chosen style, kernel code has some restrictions:
