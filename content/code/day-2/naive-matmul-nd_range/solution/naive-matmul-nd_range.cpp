@@ -13,7 +13,9 @@
 
 using namespace sycl;
 
-int main() {
+int
+main()
+{
   // set up queue on any available device
   queue Q;
 
@@ -21,37 +23,41 @@ int main() {
   constexpr size_t N = 256;
   std::vector<double> a(N * N), b(N * N), c(N * N);
 
-// fill a and b with random numbers in the unit interval
-std::random_device rd;
-std::mt19937 mt(rd());
-std::uniform_real_distribution<double> dist(0.0, 1.0);
+  // fill a and b with random numbers in the unit interval
+  std::random_device rd;
+  std::mt19937 mt(rd());
+  std::uniform_real_distribution<double> dist(0.0, 1.0);
 
-std::generate(a.begin(), a.end(), [&dist, &mt]() { return dist(mt); });
-std::generate(b.begin(), b.end(), [&dist, &mt]() { return dist(mt); });
+  std::generate(a.begin(), a.end(), [&dist, &mt]() {
+    return dist(mt);
+  });
+  std::generate(b.begin(), b.end(), [&dist, &mt]() {
+    return dist(mt);
+  });
 
-// zero-out c
+  // zero-out c
   std::fill(c.begin(), c.end(), 0.0);
 
   {
     // Create buffers associated with inputs and output
     buffer<double, 2> a_buf(a.data(), range<2>(N, N)),
-        b_buf(b.data(), range<2>(N, N)), c_buf(c.data(), range<2>(N, N));
+      b_buf(b.data(), range<2>(N, N)), c_buf(c.data(), range<2>(N, N));
 
     // Submit the kernel to the queue
     Q.submit([&](handler& cgh) {
-      accessor a{a_buf, cgh};
-      accessor b{b_buf, cgh};
-      accessor c{c_buf, cgh};
+      accessor a { a_buf, cgh };
+      accessor b { b_buf, cgh };
+      accessor c { c_buf, cgh };
 
       // declere global and local ranges
-      range global{N, N};
-      range local{N, N};
+      range global { N, N };
+      range local { N, N };
 
-      cgh.parallel_for(nd_range{global, local}, [=](nd_item<2> it) {
-		      auto j = it.get_global_id(0);
-		      auto i = it.get_global_id(1);
+      cgh.parallel_for(nd_range { global, local }, [=](nd_item<2> it) {
+        auto j = it.get_global_id(0);
+        auto i = it.get_global_id(1);
         for (int k = 0; k < N; ++k) {
-          c[j][i] += a[j][k] * b[k][i]; 
+          c[j][i] += a[j][k] * b[k][i];
         }
       });
     });
