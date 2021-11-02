@@ -81,7 +81,7 @@ There are few things to notice in this example:
 When programming for heterogeneous platforms, there is no silver bullet: we have
 to carefully evaluate the tradeoffs between performance, productivity, and
 portability.
-SYCL_ is an attempt [#f1]_ at improving this state of affairs. It is a
+SYCL_ is an attempt at improving this state of affairs. [*]_ It is a
 *standards-based* and *vendor-agnostic* domain-specific embedded language for
 parallel programming, for heterogeneous and homogeneous architectures.
 The SYCL_ standard is developed by the `Khronos group <https://www.khronos.org/>`_:
@@ -341,4 +341,4 @@ We have handled memory migration using ``std::memcpy``, which is part of the `C+
 
 .. rubric:: Footnotes
 
-.. [#f1] Kokkos, Raja, and Alpaka are other frameworks with a similar approach to parallel programming.
+.. [*] Kokkos, Raja, and Alpaka are other frameworks with a similar approach to parallel programming.

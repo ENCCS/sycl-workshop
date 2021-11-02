@@ -13,4 +13,4 @@ public:
   }
 };
 
-auto Q = queue{ special_device_selector {} };
+auto Q = queue { special_device_selector {} };

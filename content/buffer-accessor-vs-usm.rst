@@ -14,8 +14,10 @@ Buffer-accessor model *vs* unified shared memory
 
 .. todo::
 
-   Should we mention the interoperability of the two models in hipSYCL_?
-   https://hipsycl.github.io/hipsycl/extension/hipsycl-091-buffer-usm-interop/
+   - Here we have a rather large section all in breakout rooms where we port the
+     heat equation mini-app.
+   - Should we mention the interoperability of the two models in hipSYCL_?
+     https://hipsycl.github.io/hipsycl/extension/hipsycl-091-buffer-usm-interop/
 
 .. keypoints::
 

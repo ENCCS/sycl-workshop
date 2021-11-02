@@ -12,6 +12,11 @@ The task graph: data, dependencies, synchronization
    - Learn how to handle data movements in SYCL_.
 
 
+.. todo::
+
+   - In-order queues
+   - Out-of-order queues
+   - Group collectives: tiled matmul as exercise
 
 
 .. keypoints::
