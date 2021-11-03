@@ -13,6 +13,14 @@ Quick Reference
       Check the `wikipedia page
       <https://en.wikipedia.org/wiki/Field-programmable_gate_array>`_.
 
+   RAII
+   resource acquisition is initialization
+      A programming pattern for safe and automated management of resources, *i.e.* memory, files, etc.
+
+   STL
+   standard template library
+      Collection of generic data structures and algorithms described in the C++ standard.
+
    queue
    queues
       TODO

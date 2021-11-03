@@ -288,43 +288,6 @@ We have introduced two functions to manage :term:`USM`:
 We have handled memory migration using ``std::memcpy``, which is part of the `C++ standard <https://en.cppreference.com/w/cpp/string/byte/memcpy>`_.
 
 
-.. exercise:: AXPY with SYCL
-
-   We will now write an AXPY implementation in SYCL_. This will be a generic
-   implementation: it will work with any arithmetic type, thanks to C++
-   templates.
-   We will use :term:`unified shared memory` and revisit this implementation in
-   a later exercises to use *buffers* and *accessors* instead.
-   We will dive deeper into these concepts in episodes
-   :ref:`unified-shared-memory` and :ref:`buffers-accessors`.
-
-   **Don't do this at home, use optimized BLAS!**
-
-   You can find a scaffold for the code in the
-   ``content/code/day-1/01_axpy-usm/axpy.cpp`` file, alongside the CMake script
-   to build the executable. You will have to complete the source code to compile
-   and run correctly: follow the hints in the source file.  The solution is in
-   the ``solution`` subfolder.
-
-   #. Load the necessary modules:
-
-      .. code:: console
-
-         $ module load CMake hipSYCL
-
-   #. Configure, compile, and run the code:
-
-      .. code:: console
-
-         $ cmake -S. -Bbuild -DHIPSYCL_TARGETS="omp"
-         $ cmake --build build -- VERBOSE=1
-         $ ./build/axpy
-
-      You can use ``cuda:sm_80`` to compile for the GPU.
-
-
-
-
 .. keypoints::
 
    - SYCL_ is an *open-source standard* to describe parallelism on heterogeneous

@@ -24,14 +24,14 @@
      inkscape:document-units="mm"
      showgrid="true"
      inkscape:zoom="0.58781078"
-     inkscape:cx="322.38266"
-     inkscape:cy="563.95699"
-     inkscape:window-width="1902"
-     inkscape:window-height="1125"
-     inkscape:window-x="7"
-     inkscape:window-y="64"
+     inkscape:cx="293.46178"
+     inkscape:cy="528.23121"
+     inkscape:window-width="2542"
+     inkscape:window-height="1339"
+     inkscape:window-x="1927"
+     inkscape:window-y="998"
      inkscape:window-maximized="1"
-     inkscape:current-layer="g31704-6"
+     inkscape:current-layer="layer1"
      fit-margin-top="2.5"
      fit-margin-left="2.5"
      fit-margin-right="2.5"
@@ -44,7 +44,8 @@
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
      id="layer1"
-     transform="translate(33.689295,-62.533076)">
+     transform="translate(33.689295,-62.533076)"
+     style="display:inline">
     <g
        id="g30838"
        transform="translate(-104.63036,-18.852159)">
@@ -132,7 +133,7 @@
     </g>
     <g
        id="g30888"
-       transform="translate(-66.18271,69.692932)">
+       transform="translate(-66.18271,70.498825)">
       <rect
          style="fill:#f27700;fill-opacity:1;stroke:#000000;stroke-width:0.188836;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none"
          id="rect1344-0-7-0-9-93-3"
@@ -2473,182 +2474,156 @@
          ry="0.37202683"
          transform="matrix(0.8660253,-0.50000017,0,1,0,0)" />
     </g>
-    <g
-       id="g31709"
-       transform="translate(0.91551778,24.127442)">
-      <path
-         style="fill:none;stroke:#000000;stroke-width:0.79375;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-         d="M 13.229167,216.95833 V 269.875"
-         id="path31525" />
-      <path
-         style="fill:none;stroke:#000000;stroke-width:0.79375;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-         d="M 59.021567,296.39347 13.229167,269.875"
-         id="path31525-4" />
-      <path
-         style="fill:none;stroke:#000000;stroke-width:0.79375;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-         d="M 104.37837,269.13666 59.021567,296.39347"
-         id="path31525-4-3" />
-    </g>
-    <g
-       id="g31704"
-       transform="translate(1.1119318,24.127442)">
-      <path
-         style="fill:none;stroke:#000000;stroke-width:0.79375;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-         d="m 13.032753,140.5461 v 32.98392"
-         id="path31525-1" />
-      <path
-         style="fill:none;stroke:#000000;stroke-width:0.79375;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-         d="M 41.575993,190.05948 13.032753,173.53002"
-         id="path31525-4-4" />
-      <path
-         style="fill:none;stroke:#000000;stroke-width:0.79375;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-         d="M 69.847725,173.0698 41.575993,190.05948"
-         id="path31525-4-3-6" />
-    </g>
-    <g
-       id="g31704-6"
-       transform="translate(1.0552826,-63.761882)">
-      <path
-         style="fill:none;stroke:#000000;stroke-width:0.79375;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-         d="M 41.632642,214.18692 13.089402,197.65746"
-         id="path31525-4-4-1" />
-      <text
-         xml:space="preserve"
-         style="font-weight:800;font-size:10.5833px;line-height:1.25;font-family:'Podkova VF Beta';-inkscape-font-specification:'Podkova VF Beta weight=693';letter-spacing:0px;word-spacing:0px;stroke-width:0.264583"
-         x="107.27252"
-         y="338.72321"
-         id="text38140"><tspan
-           sodipodi:role="line"
-           id="tspan38138"
-           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-family:Comfortaa;-inkscape-font-specification:'Comfortaa Bold';stroke-width:0.264583"
-           x="107.27252"
-           y="338.72321">ND-Range</tspan></text>
-      <text
-         xml:space="preserve"
-         style="font-weight:800;font-size:7.05556px;line-height:1.25;font-family:'Podkova VF Beta';-inkscape-font-specification:'Podkova VF Beta weight=693';letter-spacing:0px;word-spacing:0px;stroke-width:0.264583"
-         x="185.11737"
-         y="308.98322"
-         id="text38140-9-8"
-         transform="rotate(31.174015)"><tspan
-           sodipodi:role="line"
-           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:7.05556px;font-family:Comfortaa;-inkscape-font-specification:'Comfortaa Bold';stroke-width:0.264583"
-           x="185.11737"
-           y="308.98322"
-           id="tspan62074-3">dimension 2</tspan></text>
-      <text
-         xml:space="preserve"
-         style="font-weight:800;font-size:10.5833px;line-height:1.25;font-family:'Podkova VF Beta';-inkscape-font-specification:'Podkova VF Beta weight=693';letter-spacing:0px;word-spacing:0px;stroke-width:0.264583"
-         x="108.2356"
-         y="253.03337"
-         id="text38140-7"><tspan
-           sodipodi:role="line"
-           id="tspan38138-9"
-           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-family:Comfortaa;-inkscape-font-specification:'Comfortaa Bold';stroke-width:0.264583"
-           x="108.2356"
-           y="253.03337">Work-group</tspan></text>
-      <text
-         xml:space="preserve"
-         style="font-weight:800;font-size:10.5833px;line-height:1.25;font-family:'Podkova VF Beta';-inkscape-font-specification:'Podkova VF Beta weight=693';letter-spacing:0px;word-spacing:0px;stroke-width:0.264583"
-         x="107.7276"
-         y="199.35013"
-         id="text38140-7-6"><tspan
-           sodipodi:role="line"
-           id="tspan38138-9-0"
-           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-family:Comfortaa;-inkscape-font-specification:'Comfortaa Bold';stroke-width:0.264583"
-           x="107.7276"
-           y="199.35013">Sub-group</tspan></text>
-      <text
-         xml:space="preserve"
-         style="font-weight:800;font-size:10.5833px;line-height:1.25;font-family:'Podkova VF Beta';-inkscape-font-specification:'Podkova VF Beta weight=693';letter-spacing:0px;word-spacing:0px;stroke-width:0.264583"
-         x="108.2356"
-         y="162.08133"
-         id="text38140-7-6-4"><tspan
-           sodipodi:role="line"
-           id="tspan38138-9-0-1"
-           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-family:Comfortaa;-inkscape-font-specification:'Comfortaa Bold';stroke-width:0.264583"
-           x="108.2356"
-           y="162.08133">Work-item</tspan></text>
-      <text
-         xml:space="preserve"
-         style="font-weight:800;font-size:7.05556px;line-height:1.25;font-family:'Podkova VF Beta';-inkscape-font-specification:'Podkova VF Beta weight=693';letter-spacing:0px;word-spacing:0px;stroke-width:0.264583"
-         x="-154.04384"
-         y="363.45712"
-         id="text38140-9-0"
-         transform="rotate(-33.292389)"><tspan
-           sodipodi:role="line"
-           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:7.05556px;font-family:Comfortaa;-inkscape-font-specification:'Comfortaa Bold';stroke-width:0.264583"
-           x="-154.04384"
-           y="363.45712"
-           id="tspan62074-1">dimension 0</tspan></text>
-      <text
-         xml:space="preserve"
-         style="font-weight:800;font-size:7.05556px;line-height:1.25;font-family:'Podkova VF Beta';-inkscape-font-specification:'Podkova VF Beta weight=693';letter-spacing:0px;word-spacing:0px;stroke-width:0.264583"
-         x="-52.018353"
-         y="301.14789"
-         id="text74858"><tspan
-           sodipodi:role="line"
-           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:7.05556px;font-family:'Podkova VF Beta';-inkscape-font-specification:'Podkova VF Beta Bold';stroke-width:0.264583"
-           x="-52.018353"
-           y="301.14789"
-           id="tspan79592" /></text>
-      <text
-         xml:space="preserve"
-         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:7.05556px;line-height:1.25;font-family:'Podkova VF Beta';-inkscape-font-specification:'Podkova VF Beta Bold';letter-spacing:0px;word-spacing:0px;stroke-width:0.264583"
-         x="-32.625374"
-         y="335.67996"
-         id="text81196"><tspan
-           sodipodi:role="line"
-           id="tspan81194"
-           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:7.05556px;font-family:Comfortaa;-inkscape-font-specification:'Comfortaa Bold';stroke-width:0.264583"
-           x="-32.625374"
-           y="335.67996">dimension 1</tspan></text>
-      <text
-         xml:space="preserve"
-         style="font-weight:800;font-size:7.05556px;line-height:1.25;font-family:'Podkova VF Beta';-inkscape-font-specification:'Podkova VF Beta weight=693';letter-spacing:0px;word-spacing:0px;stroke-width:0.264583"
-         x="134.20572"
-         y="224.83199"
-         id="text38140-9-8-8"
-         transform="rotate(31.174015)"><tspan
-           sodipodi:role="line"
-           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:7.05556px;font-family:Comfortaa;-inkscape-font-specification:'Comfortaa Bold';stroke-width:0.264583"
-           x="134.20572"
-           y="224.83199"
-           id="tspan62074-3-9">dimension 2</tspan></text>
-      <text
-         xml:space="preserve"
-         style="font-weight:800;font-size:7.05556px;line-height:1.25;font-family:'Podkova VF Beta';-inkscape-font-specification:'Podkova VF Beta weight=693';letter-spacing:0px;word-spacing:0px;stroke-width:0.264583"
-         x="101.3021"
-         y="170.44601"
-         id="text38140-9-8-8-2"
-         transform="rotate(31.174015)"><tspan
-           sodipodi:role="line"
-           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:7.05556px;font-family:Comfortaa;-inkscape-font-specification:'Comfortaa Bold';stroke-width:0.264583"
-           x="101.3021"
-           y="170.44601"
-           id="tspan62074-3-9-5">dimension 0</tspan></text>
-      <text
-         xml:space="preserve"
-         style="font-weight:800;font-size:7.05556px;line-height:1.25;font-family:'Podkova VF Beta';-inkscape-font-specification:'Podkova VF Beta weight=693';letter-spacing:0px;word-spacing:0px;stroke-width:0.264583"
-         x="-114.43742"
-         y="264.62161"
-         id="text38140-9-0-1"
-         transform="rotate(-33.292389)"><tspan
-           sodipodi:role="line"
-           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:7.05556px;font-family:Comfortaa;-inkscape-font-specification:'Comfortaa Bold';stroke-width:0.264583"
-           x="-114.43742"
-           y="264.62161"
-           id="tspan62074-1-5">dimension 0</tspan></text>
-      <text
-         xml:space="preserve"
-         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:7.05556px;line-height:1.25;font-family:'Podkova VF Beta';-inkscape-font-specification:'Podkova VF Beta Bold';letter-spacing:0px;word-spacing:0px;stroke-width:0.264583"
-         x="-32.306221"
-         y="247.03525"
-         id="text81196-4"><tspan
-           sodipodi:role="line"
-           id="tspan81194-9"
-           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:7.05556px;font-family:Comfortaa;-inkscape-font-specification:'Comfortaa Bold';stroke-width:0.264583"
-           x="-32.306221"
-           y="247.03525">dimension 1</tspan></text>
-    </g>
+    <path
+       style="fill:none;stroke:#000000;stroke-width:0.79375;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="M 41.360957,147.66758 12.817717,131.13812"
+       id="path31525-4-4-1" />
+    <text
+       xml:space="preserve"
+       style="font-weight:800;font-size:10.5833px;line-height:1.25;font-family:'Podkova VF Beta';-inkscape-font-specification:'Podkova VF Beta weight=693';letter-spacing:0px;word-spacing:0px;stroke-width:0.264583"
+       x="108.3278"
+       y="274.96133"
+       id="text38140"><tspan
+         sodipodi:role="line"
+         id="tspan38138"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-family:Comfortaa;-inkscape-font-specification:'Comfortaa Bold';stroke-width:0.264583"
+         x="108.3278"
+         y="274.96133">ND-Range</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-weight:800;font-size:6.35px;line-height:1.25;font-family:'Podkova VF Beta';-inkscape-font-specification:'Podkova VF Beta weight=693';letter-spacing:0px;word-spacing:0px;stroke-width:0.264583"
+       x="178.50142"
+       y="244.769"
+       id="text38140-9-8"
+       transform="rotate(32.929356)"><tspan
+         sodipodi:role="line"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:6.35px;font-family:Comfortaa;-inkscape-font-specification:'Comfortaa Bold';stroke-width:0.264583"
+         x="178.50142"
+         y="244.769"
+         id="tspan62074-3">dimension 2</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-weight:800;font-size:10.5833px;line-height:1.25;font-family:'Podkova VF Beta';-inkscape-font-specification:'Podkova VF Beta weight=693';letter-spacing:0px;word-spacing:0px;stroke-width:0.264583"
+       x="109.29089"
+       y="189.27148"
+       id="text38140-7"><tspan
+         sodipodi:role="line"
+         id="tspan38138-9"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-family:Comfortaa;-inkscape-font-specification:'Comfortaa Bold';stroke-width:0.264583"
+         x="109.29089"
+         y="189.27148">Work-group</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-weight:800;font-size:10.5833px;line-height:1.25;font-family:'Podkova VF Beta';-inkscape-font-specification:'Podkova VF Beta weight=693';letter-spacing:0px;word-spacing:0px;stroke-width:0.264583"
+       x="108.78288"
+       y="135.58824"
+       id="text38140-7-6"><tspan
+         sodipodi:role="line"
+         id="tspan38138-9-0"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-family:Comfortaa;-inkscape-font-specification:'Comfortaa Bold';stroke-width:0.264583"
+         x="108.78288"
+         y="135.58824">Sub-group</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-weight:800;font-size:10.5833px;line-height:1.25;font-family:'Podkova VF Beta';-inkscape-font-specification:'Podkova VF Beta weight=693';letter-spacing:0px;word-spacing:0px;stroke-width:0.264583"
+       x="109.29089"
+       y="98.31945"
+       id="text38140-7-6-4"><tspan
+         sodipodi:role="line"
+         id="tspan38138-9-0-1"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-family:Comfortaa;-inkscape-font-specification:'Comfortaa Bold';stroke-width:0.264583"
+         x="109.29089"
+         y="98.31945">Work-item</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-weight:800;font-size:6.35px;line-height:1.25;font-family:'Podkova VF Beta';-inkscape-font-specification:'Podkova VF Beta weight=693';letter-spacing:0px;word-spacing:0px;stroke-width:0.264583"
+       x="-104.11954"
+       y="224.42409"
+       id="text38140-9-0"
+       transform="rotate(-31.310788)"><tspan
+         sodipodi:role="line"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:6.35px;font-family:Comfortaa;-inkscape-font-specification:'Comfortaa Bold';stroke-width:0.264583"
+         x="-104.11954"
+         y="224.42409"
+         id="tspan62074-1">dimension 0</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-weight:800;font-size:7.05556px;line-height:1.25;font-family:'Podkova VF Beta';-inkscape-font-specification:'Podkova VF Beta weight=693';letter-spacing:0px;word-spacing:0px;stroke-width:0.264583"
+       x="-50.96307"
+       y="237.386"
+       id="text74858"><tspan
+         sodipodi:role="line"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:7.05556px;font-family:'Podkova VF Beta';-inkscape-font-specification:'Podkova VF Beta Bold';stroke-width:0.264583"
+         x="-50.96307"
+         y="237.386"
+         id="tspan79592" /></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:6.35px;line-height:1.25;font-family:'Podkova VF Beta';-inkscape-font-specification:'Podkova VF Beta Bold';letter-spacing:0px;word-spacing:0px;stroke-width:0.264583"
+       x="-23.775719"
+       y="273.16348"
+       id="text81196"><tspan
+         sodipodi:role="line"
+         id="tspan81194"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:6.35px;font-family:Comfortaa;-inkscape-font-specification:'Comfortaa Bold';stroke-width:0.264583"
+         x="-23.775719"
+         y="273.16348">dimension 1</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-weight:800;font-size:6.35px;line-height:1.25;font-family:'Podkova VF Beta';-inkscape-font-specification:'Podkova VF Beta weight=693';letter-spacing:0px;word-spacing:0px;stroke-width:0.264583"
+       x="113.52571"
+       y="168.31761"
+       id="text38140-9-8-8"
+       transform="rotate(31.174015)"><tspan
+         sodipodi:role="line"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:6.35px;font-family:Comfortaa;-inkscape-font-specification:'Comfortaa Bold';stroke-width:0.264583"
+         x="113.52571"
+         y="168.31761"
+         id="tspan62074-3-9">dimension 2</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-weight:800;font-size:6.35px;line-height:1.25;font-family:'Podkova VF Beta';-inkscape-font-specification:'Podkova VF Beta weight=693';letter-spacing:0px;word-spacing:0px;stroke-width:0.264583"
+       x="70.241638"
+       y="113.25594"
+       id="text38140-9-8-8-2"
+       transform="rotate(31.174015)"><tspan
+         sodipodi:role="line"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:6.35px;font-family:Comfortaa;-inkscape-font-specification:'Comfortaa Bold';stroke-width:0.264583"
+         x="70.241638"
+         y="113.25594"
+         id="tspan62074-3-9-5">dimension 0</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-weight:800;font-size:6.35px;line-height:1.25;font-family:'Podkova VF Beta';-inkscape-font-specification:'Podkova VF Beta weight=693';letter-spacing:0px;word-spacing:0px;stroke-width:0.264583"
+       x="-71.741341"
+       y="160.38037"
+       id="text38140-9-0-1"
+       transform="rotate(-33.292389)"><tspan
+         sodipodi:role="line"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:6.35px;font-family:Comfortaa;-inkscape-font-specification:'Comfortaa Bold';stroke-width:0.264583"
+         x="-71.741341"
+         y="160.38037"
+         id="tspan62074-1-5">dimension 0</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:6.35px;line-height:1.25;font-family:'Podkova VF Beta';-inkscape-font-specification:'Podkova VF Beta Bold';letter-spacing:0px;word-spacing:0px;stroke-width:0.264583"
+       x="-20.200102"
+       y="186.88843"
+       id="text81196-4"><tspan
+         sodipodi:role="line"
+         id="tspan81194-9"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:6.35px;font-family:Comfortaa;-inkscape-font-specification:'Comfortaa Bold';stroke-width:0.264583"
+         x="-20.200102"
+         y="186.88843">dimension 1</tspan></text>
+    <path
+       id="rect7043-5"
+       style="fill:none;fill-opacity:0.5;stroke:#000000;stroke-width:0.79375;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none"
+       d="M 64.095075,322.74265 22.540273,297.86531 c -2.879757,-1.72401 -5.314706,-5.50253 -5.314706,-8.72493 v -42.25524 c 0,-3.2224 2.600898,-4.12714 5.314706,-5.81662 L 61.149348,217.0326"
+       sodipodi:nodetypes="cssssc" />
+    <path
+       id="rect7043-5-3"
+       style="display:inline;fill:none;fill-opacity:0.5;stroke:#000000;stroke-width:0.79375;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none"
+       d="M 48.2616,216.35738 23.62279,202.43303 c -1.769847,-1.00021 -3.219069,-3.33283 -3.219069,-5.28461 V 171.5548 c 0,-1.95177 1.575756,-2.4991 3.219069,-3.52307 l 20.835121,-12.9826"
+       sodipodi:nodetypes="cssssc" />
   </g>
 </svg>
