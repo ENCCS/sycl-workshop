@@ -21,6 +21,7 @@ main()
 
   // initialize input and output memory on the host
   constexpr size_t N = 256;
+  constexpr size_t B = 4;
   std::vector<double> a(N * N), b(N * N), c(N * N);
 
   // fill a and b with random numbers in the unit interval
@@ -51,7 +52,7 @@ main()
 
       // declere global and local ranges
       range global { N, N };
-      range local { N, N };
+      range local { B, B };
 
       cgh.parallel_for(nd_range { global, local }, [=](nd_item<2> it) {
         auto j = it.get_global_id(0);
@@ -67,7 +68,7 @@ main()
   bool passed = true;
   for (int j = 0; j < N; ++j) {
     for (int i = 0; i < N; ++i) {
-      double gold = 0;
+      double gold = 0.0;
       for (int k = 0; k < N; ++k) {
         gold += a[j * N + k] * b[k * N + i];
       }
