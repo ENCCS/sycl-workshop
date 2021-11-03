@@ -208,14 +208,13 @@ addressed one element in the output matrix and would load a full (contiguous)
 row of the left operand and a full (non-contiguous) column of the right operand.
 Loading of operands would happen *multiple* times.
 
-ND-ranges are represented with objects of type ``nd_range``:
+ND-ranges are represented with objects of type ``nd_range``, templated over the number of dimensions:
 
-.. signature:: ``nd_range``
+.. signature:: ``nd_range`` constructor
 
    .. code:: c++
 
-      template <int dimensions = 1>
-      class nd_range(range<dimensions> globalSize, range<dimensions> localSize);
+      nd_range(range<dimensions> globalSize, range<dimensions> localSize);
 
 these are constructed using with *two* ``range`` objects, representing the
 *global* and *local* execution ranges:

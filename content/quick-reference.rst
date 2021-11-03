@@ -3,6 +3,10 @@ Quick Reference
 
 .. glossary::
 
+   CTAD
+   class template argument deduction
+      Since C++17, the compiler can deduce template arguments during instantiation.
+
    unified shared memory
    USM
       A pointer-based framework for memory management in SYCL_.

@@ -60,8 +60,164 @@ In this episode, we will look at the buffer and accessor API, while the next
 episode :ref:`unified-shared-memory` will discuss of USM. We will compare the
 two methods in :ref:`buffer-accessor-vs-usm`.
 
-   - Implicit memory management with buffers and accessors.
-   - Dependencies in relation with the scheduling done by the SYCL runtime.
+
+Buffers and memory allocation
+-----------------------------
+
+Buffers are *views* into already allocated memory: a data abstraction the
+runtime uses to represent objects of given C++ types. These view is onto a 1-,
+2-, or 3-dimensional array of data. The fact that buffers do not own their
+memory has two consequences for their usage:
+
+#. We do not allocate buffers, but rather initialize them from already existing
+   objects.  Only `trivially copyable
+   <https://en.cppreference.com/w/cpp/named_req/TriviallyCopyable>`_ C++ objects
+   can be represented in a buffer: the runtime needs to be able to take
+   byte-by-byte copies.
+#. We do not access buffers *directly*, *e.g.* with a subscript operator or
+   getters/setters. Rather we use **accessor** objects.
+
+We construct buffers by specifying their size and what memory they should
+provide a view for. The ``buffer`` class is templated over the type of the
+underlying memory and its dimensionality (1, 2, or 3). We give the size as an
+object of ``range`` type: ranges are also used to express parallelism, but we
+postpone giving those details until episode :ref:`expressing-parallelism`.
+
+.. signature:: Some ``buffer`` constructors
+
+   #. We can construct a ``buffer`` using just a ``range``. Data must be
+      initialized the data in some other fashion:
+
+      .. code:: c++
+
+         buffer(const range<dimensions> &bufferRange,
+                const property_list &propList={});
+
+   #. We can set the data at construction passing a host pointer and a ``range``:
+
+      .. code:: c++
+
+         buffer(T *hostData,
+                const range<dimensions> &bufferRange,
+                const property_list &propList={});
+
+   #. We can also pass a ``std::shared_ptr`` and a ``range``:
+
+      .. code:: c++
+
+         buffer(const std::shared_ptr<T> &hostData,
+                const range<dimensions> &bufferRange,
+                const property_list &propList={});
+
+   #. For a one-dimensional ``buffer``, a pair of iterators can suffice:
+
+      .. code:: c++
+
+         template <typename InputIterator>
+         buffer(InputIterator first,
+                InputIterator last,
+                const property_list &propList={});
+
+.. warning::
+
+   When using a host pointer, we are promising the runtime that we will not
+   touch the memory during the lifetime of the buffer. It is the programmer's
+   responsibility to keep that promise!
+
+Creation of buffers is just one side of the coin. We cannot manipulate the
+underlying data of a buffer directly: that is achieved with *accessors*.
+
+Buffers, accessors, and data movement
+-------------------------------------
+
+A ``buffer`` object "tells" the runtime how the data is laid out, while
+``accessor`` objects "tell" it how we are going to read from and write to the
+underlying memory. This information is crucial for the runtime to correctly
+schedule tasks and their execution. Accessor objects are templated over five
+parameters:
+
+- the type and the dimension, which will be the same as for the underlying
+  buffer.
+- the **access mode**: how do we intend to access the data in the
+  buffer? The possible values are ``read``, ``write``, and ``read_write`` for
+  read-only (default for ``const`` data types), for write-only, and for
+  read-write (default for non-``const`` data types) access, respectively.
+- the **access target**: what memory and where do we intend to access? The
+  default is ``global_memory`` stating that the data resides in the device
+  global memory space.
+- the **placeholder** status: is this accessor a placeholder or not? We will not
+  look at this parameter in detail.
+
+Device accessors can be created within a command group, for example:
+
+.. code:: c++
+
+   buffer<double> A{range{42}};
+
+   Q.submit([&](handler &cgh){
+      accessor aA{A, cgh};
+   });
+
+you can notice that :term:`CTAD` and default template parameters help out here
+and avoid us the tedious task of specifying all template parameters.  The
+accessor ``aA`` is in ``read_write`` mode, with target ``global_memory``.
+This is crucial information for the runtime: these are the data dependencies
+providing edges between the nodes in the task graph.
+The SYCL standard provides access *tags* to specify access mode and target upon
+construction.
+
+.. table:: Available access tags
+
+   .. csv-table::
+      :widths: auto
+      :header: "Tag value" ; "Access mode" ; "Access target"
+      :delim: ;
+
+      ``read_write`` ; ``read_write`` ; default
+      ``read_only``  ; ``read``       ; default
+      ``write_only`` ; ``write``      ; default
+
+This avoids having to give the template arguments explicitly and
+saves quite a bit of typing!
+
+.. code:: c++
+
+   buffer<double> A{range{42}};
+
+   Q.submit([&](handler &cgh){
+      auto aAA = accessor(A, cgh, write_only, no_init);
+   });
+
+The ``no_init`` property tells the runtime to discard whatever previous contents
+of the underlying buffer and it can lead to fewer data movements.
+
+Finally, we use objects of type ``host_accessor`` to read data on the host from
+a buffer that has been accessed on a device:
+
+.. code:: c++
+
+   buffer<double> A{range{42}};
+
+   Q.submit([&](handler &cgh){
+      accessor aA{A, cgh};
+
+      // fill buffer
+      cgh.parallel_for(range{42}, [=](id<1> & idx){
+        aA[idx] = 42.0;
+      })
+   });
+
+   host_accessor result{A};
+   for (int i = 0; i < N; i++) {
+     assert(result[i] == N);
+   }
+
+These objects are similar to device accessors, but you will note that they are
+constructed with just a buffer as argument. Further, note that we inspect the
+contents of the buffer directly, even though we didn't put buffer and queue
+submission in a separate scope, nor did we wait on the queue.
+The constructor for the ``host_accessor`` implicitly waits for the data to be
+available.
 
 
 .. exercise:: AXPY with SYCL buffers and accessors
