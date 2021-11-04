@@ -1,43 +1,26 @@
 #include <cassert>
 #include <iostream>
-#include <numeric>
-#include <vector>
 
 #include <sycl/sycl.hpp>
 
 using namespace sycl;
 
 template <typename T>
-std::vector<T>
-axpy(queue &Q, T alpha, const std::vector<T> &x, const std::vector<T> &y)
+T*
+axpy(queue& Q, size_t sz, T alpha, const T* x, const T* y)
 {
-  assert(x.size() == y.size());
+  // FIXME allocate the result array
+  // should it be host, device or shared?
+  auto z = ...;
 
-  // FIXME allocate array for x on the device
-  auto x_d = ...;
-  // FIXME copy x data to device
-  std::memcpy(...);
-  // FIXME allocate array for y on the device
-  auto y_d = ...;
-  // FIXME copy y data to device
-  std::memcpy(...);
-
-  // FIXME allocate result array
-  auto z_d = ...;
-
-  Q.parallel_for(
-    ..., /* FIXME define execution range for the kernel */
-    [=](id<1> tid) {
-      ...; /* FIXME define AXPY action using x_d, y_d, alpha, and z_d */
-    })
-    /* FIXME should you wait? */;
-
-  std::vector<T> z(sz);
-  // FIXME copy result array into std::vector
-  std::memcpy(...);
-
-  // FIXME free ALL allocated memory
-  free(...);
+  Q.submit([&](handler& cgh) {
+     cgh.parallel_for(range { sz }, [=](id<1> tid) {
+       // FIXME define the AXPY kernel.
+       // you need to extract an integer index from the id object. Hint: it can
+       // be done with the subscript operator
+     });
+   })
+    .wait();
 
   return z;
 }
@@ -47,28 +30,39 @@ main()
 {
   constexpr auto sz = 1024;
 
-  // fill vector a with 0, 1, 2, ..., sz-1
-  std::vector<double> a(sz, 0.0);
-  std::iota(a.begin(), a.end(), 0.0);
-  // fill vector b with sz-1, sz-2, ..., 1, 0
-  std::vector<double> b(sz, 0.0);
-  std::iota(b.rbegin(), b.rend(), 0.0);
+  constexpr auto alpha = 1.0;
 
   queue Q;
 
   std::cout << "Running on: " << Q.get_device().get_info<info::device::name>()
             << std::endl;
 
-  auto c = axpy(Q, 1.0, a, b);
+  // FIXME allocate space for the x array
+  // should it be host, device or shared?
+  auto x = ...;
+  // FIXME fill array with 0, 1, 2, ..., sz-1
+
+  // FIXME allocate space for the y array
+  // should it be host, device or shared?
+  auto y = ...;
+  // FIXME fill array with sz-1, sz-2, ..., 1, 0
+
+  auto z = axpy(Q, sz, alpha, x, y);
+
+  free(x, Q);
+  free(y, Q);
 
   std::cout << "Checking results..." << std::endl;
   auto message = "Nice job!";
-  for (const auto x : c) {
-    if (std::abs(x - 1023.0) >= 1.0e-13) {
+  for (auto i = 0; i < sz; ++i) {
+    if (std::abs(z[i] - (sz - 1)) >= 1.0e-13) {
       std::cout << "Uh-oh!" << std::endl;
+      std::cout << z[i] << std::endl;
       message = "Not quite there yet :(";
       break;
     }
   }
   std::cout << message << std::endl;
+
+  free(z, Q);
 }

@@ -274,36 +274,35 @@ Implicit
 
 .. exercise:: AXPY with SYCL and USM
 
-   .. tabs::
-
-      .. tab:: Using the ``malloc`` API and "raw" arrays
-
-      .. tab:: Using the ``usm_allocator`` API and ``std::vector``
-
    We will now write an AXPY implementation in SYCL, using unified shared
    memory. This will be a generic implementation: it will work with any
    arithmetic type, thanks to C++ templates.
 
    **Don't do this at home, use optimized BLAS!**
 
-   You can find a scaffold for the code in the
-   ``content/code/day-1/05_axpy-usm/axpy.cpp`` file, alongside the CMake script
-   to build the executable. You will have to complete the source code to compile
-   and run correctly: follow the hints in the source file.  The solution is in
-   the ``solution`` subfolder.
+   .. tabs::
 
-   The code fills two ``std::vector`` objects and passes them to the ``axpy``
-   function, which accepts a ``queue`` object as first parameter.
-   You have to complete this function:
+      .. tab:: Using the ``malloc`` API and "raw" arrays
 
-   #. Define buffers to view into the input and output vectors.
-   #. Schedule work on the ``queue`` using a command group.
-   #. Define accessors to the input and output vectors, with proper access mode
-      and target.
-   #. Write the AXPY kernel as a lambda function.
-   #. Return the computed value.
+         You can find a scaffold for the code in the
+         ``content/code/day-1/05_axpy-usm/axpy.cpp`` file, alongside the CMake script
+         to build the executable. You will have to complete the source code to compile
+         and run correctly: follow the hints in the source file.  The solution is in
+         the ``solution`` subfolder.
 
-   A working solution is in the ``solution`` subfolder.
+         The code fills two raw arrays and passes them to the ``axpy``
+         function, which accepts a ``queue`` object as first parameter.
+         You have to allocate the ``x`` and ``y`` operands and complete the
+         ``axpy`` function:
+
+         #. Define raw and allocate raw arrays for the operands.
+            Should these allocations be of host, device or shared type?
+         #. Fill the operands such that their sum is equal to ``sz - 1``.
+         #. Complete the ``axpy`` function.
+
+         A working solution is in the ``solution`` subfolder.
+
+      .. tab:: Using the ``usm_allocator`` API and ``std::vector``
 
 
 .. keypoints::
