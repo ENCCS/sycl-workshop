@@ -116,8 +116,8 @@ On a *specific* device in a *specific* class
 .. exercise:: hipSYCL and ``HIPSYCL_TARGETS``
 
    SYCL_ is all about being able to write code *once* and execute it on
-   different hardware. Take the sample code in folder
-   ``content/code/day-1/02_hello-selectors`` used the default queue constructor:
+   different hardware. The sample code in folder
+   ``content/code/day-1/01_hello-selectors`` used the default queue constructor:
    essentially, the runtime decides which device will be used for us.
    Let us explore how that works with hipSYCL_. When
    configuring the code we can set the ``HIPSYCL_TARGETS`` CMake
@@ -176,7 +176,7 @@ and implementing our own custom logic for scoring devices:
    vendors according to your preferences.
 
    You can find a scaffold for the code in the
-   ``content/code/day-1/03_custom-selectors/custom-selectors.cpp`` file,
+   ``content/code/day-1/02_custom-selectors/custom-selectors.cpp`` file,
    alongside the CMake script to build the executable. You will have to complete
    the source code to compile and run correctly: follow the hints in the source
    file.  The solution is in the ``solution`` subfolder.
@@ -271,7 +271,7 @@ on the webpage of the standard
    at hand for this task.
 
    You can find a scaffold for the code in the
-   ``content/code/day-1/04_platform-devices/platform-devices.cpp`` file,
+   ``content/code/day-1/03_platform-devices/platform-devices.cpp`` file,
    alongside the CMake script to build the executable. You will have to complete
    the source code to compile and run correctly: follow the hints in the source
    file.  The solution is in the ``solution`` subfolder.
