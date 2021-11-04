@@ -23,14 +23,15 @@ axpy(
   range<1> work_items { sz };
 
   {
-    buffer<T> buff_x(x.data(), sz);
-    buffer<T> buff_y(y.data(), sz);
-    buffer<T> buff_z(z.data(), sz);
+	  // we can avoid using the second template parameter, as 1-dimensional buffers are the default
+    buffer<T, 1> buff_x(x.data(), work_items);
+    buffer<T, 1> buff_y(y.data(), work_items);
+    buffer<T, 1> buff_z(z.data(), work_items);
 
     Q.submit([&](handler &cgh) {
-      auto access_x = buff_x.template get_access<access::mode::read>(cgh);
-      auto access_y = buff_y.template get_access<access::mode::read>(cgh);
-      auto access_z = buff_z.template get_access<access::mode::write>(cgh);
+      auto access_x = accessor(buff_x, cgh, read_only);
+      auto access_y = accessor(buff_y, cgh, read_only);
+      auto access_z = accessor(buff_z, cgh, write_only, no_init);
 
       cgh.parallel_for<class vector_add>(work_items, [=](id<1> tid) {
         access_z[tid] = alpha * access_x[tid] + access_y[tid];
