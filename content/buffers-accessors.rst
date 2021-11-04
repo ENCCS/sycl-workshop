@@ -119,7 +119,7 @@ postpone giving those details until episode :ref:`expressing-parallelism`.
                 const property_list &propList={});
 
 It is worth mentioning that buffer destructors are **blocking**. Thus, in
-:term:`RAAI` fashion, defining SYCL work within a ``{}`` block (a new scope)
+:term:`RAII` fashion, defining SYCL work within a ``{}`` block (a new scope)
 will ensure that buffers are updated after their data is accessed in a kernel!
 
 .. warning::
@@ -241,7 +241,7 @@ burdensome aspect of heterogeneous programming.
    ``content/code/day-1/04_axpy-buf_acc/axpy.cpp`` file, alongside the CMake script
    to build the executable. You will have to complete the source code to compile
    and run correctly: follow the hints in the source file.
-   The code fills two ``std::vector`` objects and passed them to the ``axpy``
+   The code fills two ``std::vector`` objects and passes them to the ``axpy``
    function, which accepts a ``queue`` object as first parameter.
    You have to complete this function:
 

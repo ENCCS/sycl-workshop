@@ -60,8 +60,8 @@ Explicit memory operations.
    class:
 
    - ``copy``: copies data.
-   - ``update_host``: updates data in the :term:`buffer` on the host-side.
-   - ``fill``: initializes data in a :term:`buffer` to the given value.
+   - ``update_host``: updates data in the buffer on the host-side.
+   - ``fill``: initializes data in a buffer to the given value.
 
 We have given a high-level overview of the abstractions in the execution model:
 from the queue to the execution on a device, passing through submission of work,

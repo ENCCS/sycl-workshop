@@ -21,6 +21,5 @@ Buffer-accessor model *vs* unified shared memory
 
 .. keypoints::
 
-   .. todo::
-
-      Write me
+   - USM might bring better performance and more opportunities for fine-grained
+     performance tuning.

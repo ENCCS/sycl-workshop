@@ -195,9 +195,8 @@ This source code introduces a number of fundamental concepts in SYCL_:
       char *result = malloc_shared<char>(sz, Q);
       std::memcpy(result, secret.data(), sz);
 
-   We still need to manage host-to-device and device-to-host memory migrations.
-   SYCL_ offers methods to avoid this, which we will cover in
-   :ref:`buffers-accessors` and :ref:`unified-shared-memory`.
+   We will cover memory management in :ref:`buffers-accessors` and
+   :ref:`unified-shared-memory`.
 
 #. A **queue** is the mechanism by which we orchestrate work on our devices.
    For example, getting the device on which our **actions** will run:
@@ -248,16 +247,16 @@ This source code introduces a number of fundamental concepts in SYCL_:
       ).wait();
 
 We have introduced two functions to manage :term:`USM`:
-``sycl::malloc_shared`` and ``sycl::free``, for memory allocation and deallocation:
+``malloc_shared`` and ``free``, for memory allocation and deallocation:
 
-.. signature:: ``sycl::malloc_shared``
+.. signature:: ``malloc_shared``
 
    .. code:: c++
 
       template <typename T>
-      T* sycl::malloc_shared(size_t count,
-                             const queue& syclQueue,
-                             const property_list &propList = {})
+      T* malloc_shared(size_t count,
+                       const queue& syclQueue,
+                       const property_list &propList = {})
 
 .. parameters::
 
@@ -270,11 +269,11 @@ We have introduced two functions to manage :term:`USM`:
    ``propList``
        Properties of the allocation.
 
-.. signature:: ``sycl::free``
+.. signature:: ``free``
 
    .. code:: c++
 
-      void sycl::free(void* ptr, sycl::queue& syclQueue)
+      void free(void* ptr, sycl::queue& syclQueue)
 
 .. parameters::
 
