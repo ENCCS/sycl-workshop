@@ -118,6 +118,10 @@ postpone giving those details until episode :ref:`expressing-parallelism`.
                 InputIterator last,
                 const property_list &propList={});
 
+It is worth mentioning that buffer destructors are **blocking**. Thus, in
+:term:`RAAI` fashion, defining SYCL work within a ``{}`` block (a new scope)
+will ensure that buffers are updated after their data is accessed in a kernel!
+
 .. warning::
 
    When using a host pointer, we are promising the runtime that we will not
@@ -127,7 +131,7 @@ postpone giving those details until episode :ref:`expressing-parallelism`.
 Creation of buffers is just one side of the coin. The buffer is only a view into
 memory and no migration of data occurs when we construct one and we cannot
 manipulate the underlying data of a buffer directly: both goals are achieved
-with **accessors**.
+with ***accessors**.
 
 Buffers, accessors, and data movement
 -------------------------------------
@@ -234,27 +238,21 @@ burdensome aspect of heterogeneous programming.
    ***Don't do this at home, use optimized BLAS!**
 
    You can find a scaffold for the code in the
-   ``content/code/day-1/04_axpy-usm/axpy.cpp`` file, alongside the CMake script
+   ``content/code/day-1/04_axpy-buf_acc/axpy.cpp`` file, alongside the CMake script
    to build the executable. You will have to complete the source code to compile
-   and run correctly: follow the hints in the source file.  The solution is in
-   the ``solution`` subfolder.
+   and run correctly: follow the hints in the source file.
+   The code fills two ``std::vector`` objects and passed them to the ``axpy``
+   function, which accepts a ``queue`` object as first parameter.
+   You have to complete this function:
 
-   #. Load the necessary modules:
+   #. Define buffers to view into the input and output vectors.
+   #. Schedule work on the ``queue`` using a command group.
+   #. Define accessors to the input and output vectors, with proper access mode
+      and target.
+   #. Write the AXPY kernel as a lambda function.
+   #. Return the computed value.
 
-      .. code:: console
-
-         $ module load CMake hipSYCL
-
-   #. Configure, compile, and run the code:
-
-      .. code:: console
-
-         $ cmake -S. -Bbuild -DHIPSYCL_TARGETS="omp"
-         $ cmake --build build -- VERBOSE=1
-         $ ./build/axpy
-
-      You can use ``cuda:sm_80`` to compile for the GPU.
-
+   A working solution is in the ``solution`` subfolder.
 
 .. keypoints::
 

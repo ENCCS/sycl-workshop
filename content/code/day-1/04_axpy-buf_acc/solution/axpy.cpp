@@ -1,7 +1,7 @@
 #include <cassert>
 #include <iostream>
-#include <vector>
 #include <numeric>
+#include <vector>
 
 #include <sycl/sycl.hpp>
 
@@ -9,11 +9,7 @@ using namespace sycl;
 
 template <typename T>
 std::vector<T>
-axpy(
-  queue &Q,
-  T alpha,
-  const std::vector<T> &x,
-  const std::vector<T> &y)
+axpy(queue &Q, T alpha, const std::vector<T> &x, const std::vector<T> &y)
 {
   assert(x.size() == y.size());
   auto sz = x.size();
@@ -22,23 +18,31 @@ axpy(
 
   range<1> work_items { sz };
 
+  // buffer destructors are blocking. Scoping all SYCL work introduces an
+  // implicit wait
   {
-	  // we can avoid using the second template parameter, as 1-dimensional buffers are the default
-    buffer<T, 1> buff_x(x.data(), work_items);
-    buffer<T, 1> buff_y(y.data(), work_items);
-    buffer<T, 1> buff_z(z.data(), work_items);
+    // we can avoid using the second template parameter, as 1-dimensional
+    // buffers are the default
+    buffer<T, 1> bx(x.data(), work_items);
+    buffer<T, 1> by(y.data(), work_items);
+    buffer<T, 1> bz(z.data(), work_items);
 
     Q.submit([&](handler &cgh) {
-      auto access_x = accessor(buff_x, cgh, read_only);
-      auto access_y = accessor(buff_y, cgh, read_only);
-      auto access_z = accessor(buff_z, cgh, write_only, no_init);
+      // access x: read-only and in global memory
+      auto ax = accessor(bx, cgh, read_only);
+      // access y: read-only and in global memory
+      auto ay = accessor(by, cgh, read_only);
+      // access z: write-only, in global memory, and discarding previous
+      // contents
+      auto az = accessor(bz, cgh, write_only, no_init);
 
-      cgh.parallel_for<class vector_add>(work_items, [=](id<1> tid) {
-        access_z[tid] = alpha * access_x[tid] + access_y[tid];
+      cgh.parallel_for(work_items, [=](id<1> tid) {
+        az[tid] = alpha * ax[tid] + ay[tid];
       });
     });
-  }
+  } // close the scope: we implicitly wait on the queue to complete
 
+  // no need for an explicit copy
   return z;
 }
 

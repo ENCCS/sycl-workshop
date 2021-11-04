@@ -19,6 +19,9 @@ main()
   // set up queue on any available device
   queue Q;
 
+  std::cout << "Running on: " << Q.get_device().get_info<info::device::name>()
+            << std::endl;
+
   // initialize input and output memory on the host
   constexpr size_t N = 256;
   std::vector<double> a(N * N), b(N * N), c(N * N);

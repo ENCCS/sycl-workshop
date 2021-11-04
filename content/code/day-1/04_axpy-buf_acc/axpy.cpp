@@ -1,7 +1,7 @@
 #include <cassert>
 #include <iostream>
-#include <vector>
 #include <numeric>
+#include <vector>
 
 #include <sycl/sycl.hpp>
 
@@ -9,11 +9,7 @@ using namespace sycl;
 
 template <typename T>
 std::vector<T>
-axpy(
-  queue &Q,
-  T alpha,
-  const std::vector<T> &x,
-  const std::vector<T> &y)
+axpy(queue &Q, T alpha, const std::vector<T> &x, const std::vector<T> &y)
 {
   assert(x.size() == y.size());
   auto sz = x.size();
@@ -22,22 +18,25 @@ axpy(
 
   range<1> work_items { sz };
 
-  {
-    buffer<T> buff_x(x.data(), sz);
-    buffer<T> buff_y(y.data(), sz);
-    buffer<T> buff_z(z.data(), sz);
+  // FIXME declare buffer to view into x
+  buffer<T> bx(..., ...);
+  // FIXME declare buffer to view into y
+  // FIXME declare buffer to view into z
 
-    Q.submit([&](handler &cgh) {
-      auto access_x = buff_x.template get_access<access::mode::read>(cgh);
-      auto access_y = buff_y.template get_access<access::mode::read>(cgh);
-      auto access_z = buff_z.template get_access<access::mode::write>(cgh);
+  Q.submit([&](handler &cgh) {
+    // FIXME declare accessor into bx. read-only and in global memory
+    auto ax = accessor(...);
+    // FIXME declare accessor into by. read-only and in global memory
+    // FIXME declare accessor into bz. write-only and in global memory
 
-      cgh.parallel_for<class vector_add>(work_items, [=](id<1> tid) {
-        access_z[tid] = alpha * access_x[tid] + access_y[tid];
-      });
+    cgh.parallel_for(work_items, [=](id<1> tid) {
+      // FIXME perform AXPY operation. Hint: we can index accessor directly with an id object
+      az[tid] = ...;
     });
-  }
+  });
+  // FIXME make sure the vector z on the host is up-to-date
 
+  // no need for an explicit copy
   return z;
 }
 
