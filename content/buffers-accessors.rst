@@ -235,7 +235,7 @@ burdensome aspect of heterogeneous programming.
    accessor API.  This will be a generic implementation: it will work with any
    arithmetic type, thanks to C++ templates.
 
-   ***Don't do this at home, use optimized BLAS!**
+   **Don't do this at home, use optimized BLAS!**
 
    You can find a scaffold for the code in the
    ``content/code/day-1/04_axpy-buf_acc/axpy.cpp`` file, alongside the CMake script
