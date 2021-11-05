@@ -45,9 +45,9 @@ In this workshop, you will learn to:
    queues-cgs-kernels
    buffers-accessors
    unified-shared-memory
-   heat-equation
    expressing-parallelism
    task-graphs-synchronization
+   heat-equation
    buffer-accessor-vs-usm
 
 
