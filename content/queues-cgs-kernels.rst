@@ -202,7 +202,7 @@ A command group handler contains:
                          cgh);
 
    You can find a scaffold for the code in the
-   ``content/code/day-1/single-task/single-task.cpp`` file,
+   ``content/code/day-1/04_single-task/single-task.cpp`` file,
    alongside the CMake script to build the executable. You will have to complete
    the source code to compile and run correctly: follow the hints in the source
    file.  The solution is in the ``solution`` subfolder.

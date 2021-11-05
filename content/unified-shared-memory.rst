@@ -285,7 +285,7 @@ Implicit
       .. tab:: Using the ``malloc`` and "raw" arrays
 
          You can find a scaffold for the code in the
-         ``content/code/day-1/05_axpy-usm/axpy.cpp`` file, alongside the CMake script
+         ``content/code/day-1/06_axpy-usm/axpy.cpp`` file, alongside the CMake script
          to build the executable. You will have to complete the source code to compile
          and run correctly: follow the hints in the source file.
 
@@ -321,7 +321,7 @@ Implicit
          for details.
 
          You can find a scaffold for the code in the
-         ``content/code/day-1/06_axpy-usm_allocator/axpy.cpp`` file, alongside
+         ``content/code/day-1/07_axpy-usm_allocator/axpy.cpp`` file, alongside
          the CMake script to build the executable. You will have to complete the
          source code to compile and run correctly: follow the hints in the
          source file.

@@ -238,7 +238,7 @@ burdensome aspect of heterogeneous programming.
    **Don't do this at home, use optimized BLAS!**
 
    You can find a scaffold for the code in the
-   ``content/code/day-1/04_axpy-buf_acc/axpy.cpp`` file, alongside the CMake script
+   ``content/code/day-1/05_axpy-buf_acc/axpy.cpp`` file, alongside the CMake script
    to build the executable. You will have to complete the source code to compile
    and run correctly: follow the hints in the source file.
    The code fills two ``std::vector`` objects and passes them to the ``axpy``
