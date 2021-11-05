@@ -5,19 +5,33 @@
 
 using namespace sycl;
 
+// shortcut for USM host allocator class
 template <typename T>
-T*
-axpy(queue& Q, size_t sz, T alpha, const T* x, const T* y)
+using host_allocator = usm_allocator<T, usm::alloc::host>;
+// FIXME define shortcut for USM shared allocator class
+using shared_allocator = ...;
+
+template <typename T>
+// FIXME what should be the second template argument of the return type?
+std::vector<T, ...>
+axpy(
+  queue& Q,
+  T alpha,
+  // FIXME what should be the second template argument of the input types?
+  const std::vector<T, ...>& x,
+  const std::vector<T, ...>& y)
 {
-  // FIXME allocate the result array
-  // should it be host, device or shared?
-  auto z = ...;
+  assert(x.size() == y.size());
+  auto sz = x.size();
+
+  // FIXME allocate output vector
+  std::vector z(...);
+  // NOTE why do we take the address of the output vector?
+  auto ptrZ = z.data();
 
   Q.submit([&](handler& cgh) {
      cgh.parallel_for(range { sz }, [=](id<1> tid) {
-       // FIXME define the AXPY kernel.
-       // you need to extract an integer index from the id object. Hint: it can
-       // be done with the subscript operator
+       // FIXME implement AXPY kernel
      });
    })
     .wait();
@@ -37,20 +51,18 @@ main()
   std::cout << "Running on: " << Q.get_device().get_info<info::device::name>()
             << std::endl;
 
-  // FIXME allocate space for the x array
-  // should it be host, device or shared?
-  auto x = ...;
-  // FIXME fill array with 0, 1, 2, ..., sz-1
+  // FIXME create an allocator object on the queue for the operands.
+  // Should it be host or shared?
+  auto alloc = ...;
 
-  // FIXME allocate space for the y array
-  // should it be host, device or shared?
-  auto y = ...;
-  // FIXME fill array with sz-1, sz-2, ..., 1, 0
+  // FIXME create and fill vector x with 0, 1, 2, ..., sz-1
+  std::vector x(...);
+  std::iota(x.begin(), x.end(), 0.0);
+  // FIXME create and fill vector y with sz-1, sz-2, ..., 1, 0
+  std::vector y(...);
+  std::iota(y.rbegin(), y.rend(), 0.0);
 
-  auto z = axpy(Q, sz, alpha, x, y);
-
-  free(x, Q);
-  free(y, Q);
+  auto z = axpy(Q, alpha, x, y);
 
   std::cout << "Checking results..." << std::endl;
   auto message = "Nice job!";
@@ -63,6 +75,4 @@ main()
     }
   }
   std::cout << message << std::endl;
-
-  free(z, Q);
 }

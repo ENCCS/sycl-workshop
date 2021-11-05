@@ -282,30 +282,41 @@ Implicit
 
    .. tabs::
 
-      .. tab:: Using the ``malloc`` API and "raw" arrays
+      .. tab:: Using the ``malloc`` and "raw" arrays
 
          You can find a scaffold for the code in the
          ``content/code/day-1/05_axpy-usm/axpy.cpp`` file, alongside the CMake script
          to build the executable. You will have to complete the source code to compile
-         and run correctly: follow the hints in the source file.  The solution is in
-         the ``solution`` subfolder.
+         and run correctly: follow the hints in the source file.
 
          The code fills two raw arrays and passes them to the ``axpy``
          function, which accepts a ``queue`` object as first parameter.
          You have to allocate the ``x`` and ``y`` operands and complete the
          ``axpy`` function:
 
-         #. Define raw and allocate raw arrays for the operands.
+         #. Define and allocate raw arrays for the operands.
             Should these allocations be of host, device or shared type?
          #. Fill the operands such that their sum is equal to ``sz - 1``.
          #. Complete the ``axpy`` function.
 
          A working solution is in the ``solution`` subfolder.
 
-      .. tab:: Bonus: using the ``usm_allocator`` API and ``std::vector``
+      .. tab:: Bonus: using ``usm_allocator`` with ``std::vector``
 
-         One can combine :term:`STL` objects and USM by means of the ``usm_allocator`` object.
-         Refer to the `page in the standard
+         In this bonus exercise, we'll implement AXPY to use USM and
+         ``std::vector``.
+         Containers in the C++ :term:`STL` can be constructed to use custom
+         allocators. For example:
+
+         .. code:: c++
+
+            std::vector x(count, value, alloc);
+
+         will create a vector with ``count`` elements initialized to ``value``,
+         with memory managed by the ``alloc`` object.
+         The SYCL standard already defines the ``usm_allocator`` class, which
+         conforms to the C++ allocator interface.  Refer to the `page in the
+         standard
          <https://www.khronos.org/registry/SYCL/specs/sycl-2020/html/sycl-2020.html#_c_allocator_interface>`_
          for details.
 
@@ -313,17 +324,13 @@ Implicit
          ``content/code/day-1/06_axpy-usm_allocator/axpy.cpp`` file, alongside
          the CMake script to build the executable. You will have to complete the
          source code to compile and run correctly: follow the hints in the
-         source file.  The solution is in the ``solution`` subfolder.
+         source file.
 
-         The code fills two raw arrays and passes them to the ``axpy``
-         function, which accepts a ``queue`` object as first parameter.
-         You have to allocate the ``x`` and ``y`` operands and complete the
-         ``axpy`` function:
-
-         #. Define raw and allocate raw arrays for the operands.
-            Should these allocations be of host, device or shared type?
-         #. Fill the operands such that their sum is equal to ``sz - 1``.
-         #. Complete the ``axpy`` function.
+         #. Create ``std::vector`` objects for the operands and fill them such
+            that their sum is equal to ``sz - 1``.
+            Should these allocations be of host or shared type?
+         #. Complete the ``axpy`` function. Why do we take the address of the
+            output vector before submitting the kernel?
 
          A working solution is in the ``solution`` subfolder.
 

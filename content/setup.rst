@@ -58,13 +58,14 @@ In general, it is preferable to queue the job using a submission script, like th
 
    - Add info about reservation!
 
-.. code:: text
+.. code:: bash
 
    #!/usr/bin/env bash
 
    #SBATCH --partition=gpu
    #SBATCH --job-name=test
    #SBATCH --mem=4G
+   #SBATCH --reservation=sycl
    #SBATCH --time=00-01:00:00
    #SBATCH --output=test_out.log
    #SBATCH --error=test_err.log
@@ -73,7 +74,7 @@ In general, it is preferable to queue the job using a submission script, like th
    set -o nounset  # Treat any unset variables as an error
 
    module --quiet purge  # Reset the modules to the system default
-   module load CMake/3.18.4-GCCcore-10.2.0 hipSYCL/0.9.1-gcccuda-2020b
+   module load hipSYCL/0.9.1-gcccuda-2020b
    module list
 
    # compile code
@@ -83,6 +84,7 @@ In general, it is preferable to queue the job using a submission script, like th
    ./sycl_vadd
 
    # we can also use CMake to build
+   # module load CMake/3.18.4-GCCcore-10.2.0
    # cmake -S$SLURM_SUBMIT_DIR -Bbuild -DHIPSYCL_TARGETS="cuda:sm_80"
    # and we run from the build folder
    # ./build/sycl_vadd
