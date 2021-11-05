@@ -44,12 +44,12 @@ First iteration
 
 
     9:00 -  9:10 ; What did we cover yesterday?
-    9:10 -  9:30 ; :ref:`heat-equation`
-    9:30 -  9:35 ; Break
-    9:35 - 10:15 ; :ref:`expressing-parallelism`
-   10:15 - 10:25 ; Break
-   10:25 - 11:05 ; :ref:`task-graphs-synchronization`
-   11:05 - 11:15 ; Break
+    9:10 -  9:50 ; :ref:`expressing-parallelism`
+    9:50 - 10:00 ; Break
+   10:00 - 10:40 ; :ref:`task-graphs-synchronization`
+   10:40 - 10:50 ; Break
+   10:50 - 11:10 ; :ref:`heat-equation`
+   11:10 - 11:15 ; Break
    11:15 - 11:55 ; :ref:`buffer-accessor-vs-usm`
-   11:55 - 12:05 ; Break
-   12:05 - 12:30 ; Wrap-up
+   11:55 - 12:00 ; Break
+   12:00 - 12:30 ; Wrap-up

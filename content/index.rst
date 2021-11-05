@@ -72,9 +72,9 @@ In this workshop, you will learn to:
    30 min ; :doc:`queues-cgs-kernels`
    30 min ; :doc:`buffers-accessors`
    30 min ; :doc:`unified-shared-memory`
-   20 min ; :doc:`heat-equation`
    40 min ; :doc:`expressing-parallelism`
    40 min ; :doc:`task-graphs-synchronization`
+   20 min ; :doc:`heat-equation`
    40 min ; :doc:`buffer-accessor-vs-usm`
 
 
