@@ -302,7 +302,30 @@ Implicit
 
          A working solution is in the ``solution`` subfolder.
 
-      .. tab:: Using the ``usm_allocator`` API and ``std::vector``
+      .. tab:: Bonus: using the ``usm_allocator`` API and ``std::vector``
+
+         One can combine :term:`STL` objects and USM by means of the ``usm_allocator`` object.
+         Refer to the `page in the standard
+         <https://www.khronos.org/registry/SYCL/specs/sycl-2020/html/sycl-2020.html#_c_allocator_interface>`_
+         for details.
+
+         You can find a scaffold for the code in the
+         ``content/code/day-1/06_axpy-usm_allocator/axpy.cpp`` file, alongside
+         the CMake script to build the executable. You will have to complete the
+         source code to compile and run correctly: follow the hints in the
+         source file.  The solution is in the ``solution`` subfolder.
+
+         The code fills two raw arrays and passes them to the ``axpy``
+         function, which accepts a ``queue`` object as first parameter.
+         You have to allocate the ``x`` and ``y`` operands and complete the
+         ``axpy`` function:
+
+         #. Define raw and allocate raw arrays for the operands.
+            Should these allocations be of host, device or shared type?
+         #. Fill the operands such that their sum is equal to ``sz - 1``.
+         #. Complete the ``axpy`` function.
+
+         A working solution is in the ``solution`` subfolder.
 
 
 .. keypoints::

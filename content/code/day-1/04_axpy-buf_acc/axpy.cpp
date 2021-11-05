@@ -46,10 +46,10 @@ main()
   constexpr auto sz = 1024;
 
   // fill vector a with 0, 1, 2, ..., sz-1
-  std::vector<double> a(sz, 0.0);
+  std::vector a(sz, 0.0);
   std::iota(a.begin(), a.end(), 0.0);
   // fill vector b with sz-1, sz-2, ..., 1, 0
-  std::vector<double> b(sz, 0.0);
+  std::vector b(sz, 0.0);
   std::iota(b.rbegin(), b.rend(), 0.0);
 
   queue Q;

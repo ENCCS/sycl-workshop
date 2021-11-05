@@ -21,11 +21,11 @@ axpy(queue &Q, T alpha, const std::vector<T> &x, const std::vector<T> &y)
   // buffer destructors are blocking. Scoping all SYCL work introduces an
   // implicit wait
   {
-    // we can avoid using the second template parameter, as 1-dimensional
+    // we skip the second template parameter, as 1-dimensional
     // buffers are the default
-    buffer<T, 1> bx(x.data(), work_items);
-    buffer<T, 1> by(y.data(), work_items);
-    buffer<T, 1> bz(z.data(), work_items);
+    buffer<T> bx(x.data(), work_items);
+    buffer<T> by(y.data(), work_items);
+    buffer<T> bz(z.data(), work_items);
 
     Q.submit([&](handler &cgh) {
       // access x: read-only and in global memory
@@ -52,10 +52,10 @@ main()
   constexpr auto sz = 1024;
 
   // fill vector a with 0, 1, 2, ..., sz-1
-  std::vector<double> a(sz, 0.0);
+  std::vector a(sz, 0.0);
   std::iota(a.begin(), a.end(), 0.0);
   // fill vector b with sz-1, sz-2, ..., 1, 0
-  std::vector<double> b(sz, 0.0);
+  std::vector b(sz, 0.0);
   std::iota(b.rbegin(), b.rend(), 0.0);
 
   queue Q;
