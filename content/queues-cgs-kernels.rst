@@ -183,11 +183,35 @@ A command group handler contains:
       });
 
 
-.. exercise:: An exercise here??
+.. exercise:: ``single_task`` and streams
 
-   .. todo::
+   We'll walk through the use of the ``single_task`` method to create work on a
+   device.
+   As the name suggests, this will create a task for sequential execution:
+   probably not a method you will use often, but definitely something to be
+   aware of!
+   The task we would like to perform is a print-out on the device. If you are
+   familiar with CUDA/HIP, you probably know that ``printf`` can be used in
+   device code. In keeping with C++, the SYCL standard defines a ``stream``
+   class, which works similar to the standard streams. A SYCL stream needs a ``handler`` object on construction:
 
-      Write me
+   .. code:: c++
+
+      auto out = stream(1024, /* maximum size of output per kernel invocation */
+                         256, /* maximum size before flushing the stream */
+                         cgh);
+
+   You can find a scaffold for the code in the
+   ``content/code/day-1/single-task/single-task.cpp`` file,
+   alongside the CMake script to build the executable. You will have to complete
+   the source code to compile and run correctly: follow the hints in the source
+   file.  The solution is in the ``solution`` subfolder.
+
+   #. Create a queue object. You're free to use any of the device selection
+      strategies we have encountered in the previous episode.
+   #. Submit work to the queue using a command handler group.
+   #. Create a ``stream`` object.
+   #. Create a single task on the ``handler`` printing a string to the stream.
 
 
 .. keypoints::
