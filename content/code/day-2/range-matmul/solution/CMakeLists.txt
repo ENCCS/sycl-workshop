@@ -1,22 +1,22 @@
 cmake_minimum_required(VERSION 3.14)
 
-project(naive-matmul-nd_range LANGUAGES CXX)
+project(range-matmul LANGUAGES CXX)
 
 # find hipSYCL compiler
 find_package(hipSYCL CONFIG REQUIRED)
 
 # declare executable
-add_executable(naive-matmul-nd_range naive-matmul-nd_range.cpp)
+add_executable(range-matmul range-matmul.cpp)
 
 # compile with ISO C++17
 set(CMAKE_CXX_EXTENSIONS OFF)
-target_compile_features(naive-matmul-nd_range
+target_compile_features(range-matmul
   PRIVATE
     cxx_std_17
   )
 
 # compile with optimizations on
-target_compile_options(naive-matmul-nd_range
+target_compile_options(range-matmul
   PRIVATE
     -O3
   )
@@ -24,7 +24,7 @@ target_compile_options(naive-matmul-nd_range
 # find threading library...
 find_package(Threads REQUIRED)
 # ...and link against it
-target_link_libraries(naive-matmul-nd_range 
+target_link_libraries(range-matmul 
   PRIVATE 
     Threads::Threads
   )
@@ -32,7 +32,7 @@ target_link_libraries(naive-matmul-nd_range
 # the SYCL secret sauce :)
 add_sycl_to_target(
   TARGET 
-    naive-matmul-nd_range 
+    range-matmul 
   SOURCES 
-    naive-matmul-nd_range.cpp
+    range-matmul.cpp
   )
