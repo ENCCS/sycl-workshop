@@ -16,14 +16,18 @@ using namespace sycl;
 int
 main()
 {
-  // set up queue on any available device
-  queue Q;
+  // FIXME set up queue to use the GPU
+
+  std::cout << "Running on: " << 
+    Q.get_device().get_info<info::device::vendor>()
+      << " " << Q.get_device().get_info<info::device::name>() << std::endl;
 
   // initialize input and output memory on the host
   constexpr size_t N = 256;
 
-  auto A = malloc_host<double>(N * N, Q);
-  auto B = malloc_host<double>(N * N, Q);
+  // FIXME allocate operands of N*N size
+  auto A = ...;
+  auto B = ...;
 
   // fill a and b with random numbers in the unit interval
   std::random_device rd;
@@ -35,31 +39,25 @@ main()
     B[i] = dist(mt);
   }
 
-  auto C = malloc_shared<double>(N * N, Q);
-  // zero-out c
-  Q.fill(C, 0.0, N * N).wait();
+  // FIXME allocate result of N*N size
+  auto C = ...;
+  // FIXME zero-out c, should we wait?
+  Q.fill(...);
 
-  // declare global and local ranges
-  constexpr size_t L = 4;
-  range global { N, N };
-  range local { L, L };
-
+  // FIXME submit work to queue. You can use a command group if you prefer!
   Q.parallel_for(
-     nd_range { global, local },
-     [=](nd_item<2> it) {
-       auto j = it.get_global_id(0);
-       auto i = it.get_global_id(1);
-       for (int k = 0; k < N; ++k) {
-         C[j * N + i] += A[j * N + k] * B[k * N + i];
-       }
-     })
-    .wait();
+     ...,
+     [=](...) {
+       // FIXME define matrix multiplication kernel
+       ...
+     });
+  // FIXME should we wait?
 
   // Check that all outputs match serial execution
   bool passed = true;
   for (int j = 0; j < N; ++j) {
     for (int i = 0; i < N; ++i) {
-      double gold = 0.0;
+      double gold = 0;
       for (int k = 0; k < N; ++k) {
         gold += A[j * N + k] * B[k * N + i];
       }

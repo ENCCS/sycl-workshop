@@ -172,18 +172,20 @@ When to use ``id`` and when to use ``item`` as arguments in the kernel function?
       .. tab:: Using buffers and accessors
 
          You can find a scaffold for the code in the
-         ``content/code/day-2/naive-matmul-range/naive-matmul-range.cpp`` file,
+         ``content/code/day-2/00_range-matmul/range-matmul.cpp`` file,
          alongside the CMake script to build the executable. You will have to complete
          the source code to compile and run correctly: follow the hints in the source
          file.  The solution is in the ``solution`` subfolder.
 
-         #. We first declare the operands as ``std::vector<double>`` the right-hand size operands are filled with random numbers, while the result matrix is zeroed out:
+         #. We first create a queue and map it to the GPU.
+         #. We declare the operands as ``std::vector<double>`` the
+            right-hand size operands are filled with random numbers, while the
+            result matrix is zeroed out:
 
-            .. literalinclude:: code/day-2/naive-matmul-range/naive-matmul-range.cpp
+            .. literalinclude:: code/day-2/00_range-matmul/solution/range-matmul.cpp
                :language: c++
-               :lines: 23-39
+               :lines: 30-39,42
 
-         #. We create a queue and map it to the GPU.
          #. We define buffers to the operands in our matrix multiplication.
          #. We submit work to the queue through a command group handler.
          #. Within the handler, we launch a ``parallel_for``.
@@ -191,9 +193,23 @@ When to use ``id`` and when to use ``item`` as arguments in the kernel function?
 
       .. tab:: Using USM
 
-         .. todo::
+         You can find a scaffold for the code in the
+         ``content/code/day-2/01_usm-range-matmul/usm-range-matmul.cpp`` file,
+         alongside the CMake script to build the executable. You will have to complete
+         the source code to compile and run correctly: follow the hints in the source
+         file.  The solution is in the ``solution`` subfolder.
 
-            WRITE ME!!!
+         #. We first create a queue and map it to the GPU.
+         #. We allocate the operands as USM buffers and fill them with random
+            numbers. We can do this with untyped or typed ``malloc``-style or
+            ``usm_allocator`` APIs. Should operands be host, device, or shared
+            allocations?
+         #. We allocate the result as USM buffer and zero it out.  We can do
+            this with untyped or typed ``malloc``-style or ``usm_allocator``
+            APIs. Should this be host, device, or shared allocation?
+         #. We submit work to the queue. Note that we need to linearize indices
+            for row-major access to our buffers!
+         #. Check that your results are correct.
 
 
 ND-range data-parallel kernels
@@ -324,19 +340,14 @@ from the returned ``group`` (``sub_group``) objects.
       .. tab:: Using buffers and accessors
 
          You can find a scaffold for the code in the
-         ``content/code/day-2/naive-matmul-nd_range/naive-matmul-nd_range.cpp`` file,
+         ``content/code/day-2/02_nd_range-matmul/nd_range-matmul.cpp`` file,
          alongside the CMake script to build the executable. You will have to complete
          the source code to compile and run correctly: follow the hints in the source
          file.  The solution is in the ``solution`` subfolder.
 
          #. We first declare the operands as ``std::vector<double>`` the
             right-hand size operands are filled with random numbers, while the
-            result matrix is zeroed out:
-
-            .. literalinclude:: code/day-2/naive-matmul-nd_range/naive-matmul-nd_range.cpp
-               :language: c++
-               :lines: 23-39
-
+            result matrix is zeroed out.
          #. We create a queue and map it to the GPU.
          #. We define buffers to the operands in our matrix multiplication.
          #. We submit work to the queue through a command group handler.
@@ -345,9 +356,23 @@ from the returned ``group`` (``sub_group``) objects.
 
       .. tab:: Using USM
 
-         .. todo::
+         You can find a scaffold for the code in the
+         ``content/code/day-2/03_usm-nd_range-matmul/usm-nd_range-matmul.cpp`` file,
+         alongside the CMake script to build the executable. You will have to complete
+         the source code to compile and run correctly: follow the hints in the source
+         file.  The solution is in the ``solution`` subfolder.
 
-            WRITE ME!!!
+         #. We first create a queue and map it to the GPU.
+         #. We allocate the operands as USM buffers and fill them with random
+            numbers. We can do this with untyped or typed ``malloc``-style or
+            ``usm_allocator`` APIs. Should operands be host, device, or shared
+            allocations?
+         #. We allocate the result as USM buffer and zero it out.  We can do
+            this with untyped or typed ``malloc``-style or ``usm_allocator``
+            APIs. Should this be host, device, or shared allocation?
+         #. We submit work to the queue. Note that we need to linearize indices
+            for row-major access to our buffers!
+         #. Check that your results are correct.
 
 
 .. keypoints::
