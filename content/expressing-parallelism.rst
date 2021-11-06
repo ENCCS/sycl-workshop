@@ -175,7 +175,7 @@ When to use ``id`` and when to use ``item`` as arguments in the kernel function?
          ``content/code/day-2/00_range-matmul/range-matmul.cpp`` file,
          alongside the CMake script to build the executable. You will have to complete
          the source code to compile and run correctly: follow the hints in the source
-         file.  The solution is in the ``solution`` subfolder.
+         file.  A working solution is in the ``solution`` subfolder.
 
          #. We first create a queue and map it to the GPU.
          #. We declare the operands as ``std::vector<double>`` the
@@ -197,7 +197,7 @@ When to use ``id`` and when to use ``item`` as arguments in the kernel function?
          ``content/code/day-2/01_usm-range-matmul/usm-range-matmul.cpp`` file,
          alongside the CMake script to build the executable. You will have to complete
          the source code to compile and run correctly: follow the hints in the source
-         file.  The solution is in the ``solution`` subfolder.
+         file.  A working solution is in the ``solution`` subfolder.
 
          #. We first create a queue and map it to the GPU.
          #. We allocate the operands as USM buffers and fill them with random
@@ -343,7 +343,7 @@ from the returned ``group`` (``sub_group``) objects.
          ``content/code/day-2/02_nd_range-matmul/nd_range-matmul.cpp`` file,
          alongside the CMake script to build the executable. You will have to complete
          the source code to compile and run correctly: follow the hints in the source
-         file.  The solution is in the ``solution`` subfolder.
+         file.  A working solution is in the ``solution`` subfolder.
 
          #. We first declare the operands as ``std::vector<double>`` the
             right-hand size operands are filled with random numbers, while the
@@ -360,7 +360,7 @@ from the returned ``group`` (``sub_group``) objects.
          ``content/code/day-2/03_usm-nd_range-matmul/usm-nd_range-matmul.cpp`` file,
          alongside the CMake script to build the executable. You will have to complete
          the source code to compile and run correctly: follow the hints in the source
-         file.  The solution is in the ``solution`` subfolder.
+         file.  A working solution is in the ``solution`` subfolder.
 
          #. We first create a queue and map it to the GPU.
          #. We allocate the operands as USM buffers and fill them with random

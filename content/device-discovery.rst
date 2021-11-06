@@ -179,7 +179,7 @@ and implementing our own custom logic for scoring devices:
    ``content/code/day-1/02_custom-selectors/custom-selectors.cpp`` file,
    alongside the CMake script to build the executable. You will have to complete
    the source code to compile and run correctly: follow the hints in the source
-   file.  The solution is in the ``solution`` subfolder.
+   file.  A working solution is in the ``solution`` subfolder.
 
    #. Load the necessary modules:
 
@@ -274,7 +274,7 @@ on the webpage of the standard
    ``content/code/day-1/03_platform-devices/platform-devices.cpp`` file,
    alongside the CMake script to build the executable. You will have to complete
    the source code to compile and run correctly: follow the hints in the source
-   file.  The solution is in the ``solution`` subfolder.
+   file.  A working solution is in the ``solution`` subfolder.
 
    The code is a double loop:
 
