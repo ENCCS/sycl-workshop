@@ -139,6 +139,8 @@ rst_epilog = f"""
 .. _HIP: https://rocmdocs.amd.com/en/latest/
 .. _OpenMP: https://www.openmp.org/
 .. _OpenACC: https://www.openacc.org/
+.. _CSC: https://www.csc.fi/
+.. _IZUM: https://www.izum.si/en/home/
 """
 
 def setup(app):

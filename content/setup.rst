@@ -1,31 +1,47 @@
 Setting up your system
 ======================
 
-.. todo::
+Thanks to IZUM_, we will have an allocation on the Vega supercomputer for the
+whole duration of the workshop.
+The required software stack is already installed and available through the
+module system on the supercomputer.
 
-   - How to get an account of Vega.
-   - How to install hipSYCL locally.
+If you prefer to install the required software locally, we refer you to the
+`official hipSYCL installation instructions
+<https://github.com/illuhad/hipSYCL/tree/develop/install/scripts#readme>`_.
+
+.. warning::
+
+   Your mileage may vary with a local installation: building some of the
+   dependencies is an *extremely* time consuming process.  We will **not**
+   provide support for local installations during the workshop.
 
 How to follow along
 -------------------
 
-This training material, including all exercises and solutions, is available on GitHub.
-To get the most out of it, we suggest that you clone it locally.
+This training material, including all exercises and solutions, is available on
+`GitHub <https://github.com/ENCCS/sycl-workshop>`_.  To get the most out of it,
+we suggest that you clone it locally:
 
 .. code:: console
 
    $ git clone https://github.com/ENCCS/sycl-workshop
 
-The source code will then be in the ``content/code`` folder.
+The source code for all exercises and typealongs will then be in the
+``content/code`` folder.
 
 Working on Vega
 ---------------
 
-The latest official release of hipSYCL_ is available as a module on Vega:
+You should have received your username in the days leading up to the workshop.
+If not, please let us know.
+
+The latest official release of hipSYCL_ and CMake are available as modules on
+Vega:
 
 .. code:: console
 
-   $ module load CMake hipSYCL
+   $ module load hipSYCL CMake
 
 You can compile on the login node with:
 
@@ -33,7 +49,8 @@ You can compile on the login node with:
 
    $ syclcc -o sycl_vadd sycl_vadd.cpp -O3 --hipsycl-targets="omp;cuda:sm_80"
 
-However, it will be more convenient to use the CMake scripts we provide with the source files:
+However, it will be more convenient to use the CMake scripts we provide with the
+source files:
 
 .. code:: console
 
@@ -53,10 +70,6 @@ where you ask for:
 * a bash interactive prompt once the job starts (``--pty bash -i``)
 
 In general, it is preferable to queue the job using a submission script, like the following:
-
-.. todo::
-
-   - Add info about reservation!
 
 .. code:: bash
 

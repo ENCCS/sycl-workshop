@@ -20,12 +20,12 @@ In this workshop, you will learn to:
 .. prereq::
 
    Before attending this workshop, please make sure that you have access to a
-   computer with a hipSYCL compiler installed and a recent version of CMake.
-   Detailed instructions can be found on the :doc:`setup` page.
+   machine with the hipSYCL compiler (v0.9.1) and CMake (>=3.14) installed.
 
-   .. todo::
-
-      - Mention allocation on Vega.
+   This workshop is organized in collaboration with `CSC`_ and `IZUM`_. We will
+   work on the exercises using the `Vega supercomputer
+   <https://doc.vega.izum.si/>`_, a `EuroHPC Joint Undertaking
+   <https://eurohpc-ju.europa.eu/>`_ petascale system.
 
 
 .. toctree::
@@ -104,8 +104,7 @@ About the course
 ----------------
 
 This lesson material is developed by the `EuroCC National Competence Center
-Sweden (ENCCS) <https://enccs.se/>`_, `CSC <https://www.csc.fi/>`_, and
-`IZUM <https://www.izum.si/en/home/>`_.
+Sweden (ENCCS) <https://enccs.se/>`_, CSC_, and IZUM_.
 It is taught in ENCCS workshops.
 It is aimed at researchers and developers who are curious about `SYCL`_ and how
 it can help them leverage heterogeneous hardware effectively.
@@ -163,7 +162,7 @@ Type-along
       .. code-block:: c++
 
          cgh.parallel_for(1024, [=](auto idx) {
-            writeResult[idx] = idx;
+            x[idx] = idx;
          });
 
    The content can be hidden by clicking the toggle.
