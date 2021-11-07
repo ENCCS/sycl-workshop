@@ -119,6 +119,7 @@ arranged in *row-major order*: dimension :math:`N-1` is contiguous.
    element in the range is of type ``item<2>`` and is indexed by an object of
    type ``id<2>``. Items are instances of the kernel. An :math:`N`-dimensional
    range is in row-major order: dimension :math:`N-1` is contiguous.
+   Figure adapted from :cite:`Reinders2021-yx`.
 
 In basic data-parallel kernels, the kernel function passed as second argument to
 the ``parallel_for`` invocation can accept either objects of ``id`` or of
@@ -164,6 +165,7 @@ When to use ``id`` and when to use ``item`` as arguments in the kernel function?
       :math:`C_{ij} = \sum_{k}A_{ik}B_{kj}`. Each kernel instance will compute
       an element in the result matrix :math:`\mathbf{C}` by accessing a full row
       of :math:`\mathbf{A}` and a full column of :math:`\mathbf{B}`.
+      Figure adapted from :cite:`Reinders2021-yx`.
 
    **Don't do this at home, use optimized BLAS!**
 
@@ -179,7 +181,7 @@ When to use ``id`` and when to use ``item`` as arguments in the kernel function?
 
          #. We first create a queue and map it to the GPU.
          #. We declare the operands as ``std::vector<double>`` the
-            right-hand size operands are filled with random numbers, while the
+            right-hand side operands are filled with random numbers, while the
             result matrix is zeroed out:
 
             .. literalinclude:: code/day-2/00_range-matmul/solution/range-matmul.cpp
@@ -265,6 +267,7 @@ Note that:
    Note that the contiguous dimension (dimension 2 in this example) of ND-range
    and work-group coincide. Furthermore, sub-groups are laid out along the
    contiguous dimension of their work-groups.
+   Figure adapted from :cite:`Reinders2021-yx`.
 
 Work-groups and work-items in ND-ranges
 ---------------------------------------
@@ -313,7 +316,7 @@ from the returned ``group`` (``sub_group``) objects.
    accesses a bit more.  In this exercise, we will rewrite the matrix
    multiplication kernel to use ``nd_range`` s.
 
-   Each work-item will compute an element an element in the result matrix
+   Each work-item will compute an element in the result matrix
    :math:`\mathbf{C}` by accessing a full row of :math:`\mathbf{A}` and a full
    column of :math:`\mathbf{B}`.  However, at variance with the previous
    implementation, the work-item is in a work-group, and thus the data loaded
@@ -326,11 +329,12 @@ from the returned ``group`` (``sub_group``) objects.
       Schematics of a *less* naïve implementation of matrix multiplication:
       :math:`C_{ij} = \sum_{k}A_{ik}B_{kj}`. The computation is split into
       work-groups to optimize the locality of memory accesses. Each work-item
-      (green) will compute an element an element in the result matrix
+      (green) will compute an element in the result matrix
       :math:`\mathbf{C}` by accessing a full row of :math:`\mathbf{A}` and a
       full column of :math:`\mathbf{B}`.  However, since the work-item is in a
       work-group (orange), the data loaded for the operands can be reused by all
       work-items.
+      Figure adapted from :cite:`Reinders2021-yx`.
 
 
    **Don't do this at home, use optimized BLAS!**
@@ -346,7 +350,7 @@ from the returned ``group`` (``sub_group``) objects.
          file.  A working solution is in the ``solution`` subfolder.
 
          #. We first declare the operands as ``std::vector<double>`` the
-            right-hand size operands are filled with random numbers, while the
+            right-hand side operands are filled with random numbers, while the
             result matrix is zeroed out.
          #. We create a queue and map it to the GPU.
          #. We define buffers to the operands in our matrix multiplication.
