@@ -98,8 +98,7 @@ main()
 
           // loop over tile elements
           for (auto k = 0; k < tile_sz; ++k) {
-            // broadcast tile element to the subgroup and load matrix B from
-            // global memory
+            // load matrix B from global memory and perform multiplication
             sum += tileA[k] * accB[l + k][n];
           }
 
