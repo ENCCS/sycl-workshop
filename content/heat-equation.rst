@@ -103,14 +103,15 @@ the previous step at the same location *and* four adjacent locations:
 Spatial boundary conditions
 ---------------------------
 
-Something must happen at the edges of the grid so that the stencil does a valid operation.
-One alternative is to ignore the contribution of points that are outside the grid.
-However, this tends to complicate the implementation of the stencil and is also often non-physical.
-In a real problem, there is always somethign outside the grid!
-Sometimes it makes sense to have periodic boundaries to the grid, but that is complex to implement.
-In this mini-app, we will have a ring of data points around the grid.
-Those will have a fixed value that is not updated by the stencil,
-although they do contribute to the stencil operation for their neighbors.
+Something must happen at the edges of the grid so that the stencil does a valid
+operation.  One alternative is to ignore the contribution of points that are
+outside the grid.  However, this tends to complicate the implementation of the
+stencil and is also often non-physical.  In a real problem, there is always
+somethign outside the grid!  Sometimes it makes sense to have periodic
+boundaries to the grid, but that is complex to implement.  In this mini-app, we
+will have a ring of data points around the grid.  Those will have a fixed value
+that is not updated by the stencil, although they do contribute to the stencil
+operation for their neighbors.
 
 .. figure:: img/stencil-fixed-boundaries.svg
    :align: center
@@ -215,7 +216,8 @@ Initial and boundary conditions
 -------------------------------
 
 When solving PDEs, the initial conditions determine the possible solutions.
-The mini-app automatically sets up a disk of cold grid points in the center at temperature 5, with warm grid points around it at temperature 65.
+The mini-app automatically sets up a disk of cold grid points in the center at
+temperature 5, with warm grid points around it at temperature 65.
 
 .. figure:: img/heat_0000.png
    :align: center
@@ -224,8 +226,10 @@ The mini-app automatically sets up a disk of cold grid points in the center at t
    Initial conditions of the grid.
    The boundary layers are not shown.
 
-There is a fixed boundary layer of one grid point on all sides, two of which are warm (temperature 70 and 85) and two cold (temperature 20 and 5).
-Early on, the disk and its surroundings dominate the contents of the grid, but over time, the boundary layers have greater and greater influence.
+There is a fixed boundary layer of one grid point on all sides, two of which are
+warm (temperature 70 and 85) and two cold (temperature 20 and 5).
+Early on, the disk and its surroundings dominate the contents of the grid, but
+over time, the boundary layers have greater and greater influence.
 
 .. exercise::
 
@@ -234,15 +238,17 @@ Early on, the disk and its surroundings dominate the contents of the grid, but o
 .. solution::
 
    Eventually, the boundary conditions will dominate.
-   Each contributes equally if the sides are of equal length.
-   The average of the grid will be the average of the boundaries, ie. :math:`(70+20+85+5)/4` which is :math:`45`.
+   Each contributes equally if the sides are of equal length.  The average of
+   the grid will be the average of the boundaries, ie. :math:`(70+20+85+5)/4`
+   which is :math:`45`.
 
 
 Visualizing the output
 ----------------------
 
-The mini-app has support for writing an image file that shows the state of the grid every 1500 steps.
-Below we can see the progression over larger numbers of steps:
+The mini-app has support for writing an image file that shows the state of the
+grid every 1500 steps.  Below we can see the progression over larger numbers of
+steps:
 
 ..
    This image was made with the montage tool from ImageMagick.
@@ -256,12 +262,22 @@ Below we can see the progression over larger numbers of steps:
    an end state where one triangle is cold and one is warm.
    The average temperature tends to 45.
 
-We can use this visualization to check that our attempts at parallelization are working correctly.
-Perhaps some bugs can be resolved by seeing what distortions they introduce.
+We can use this visualization to check that our attempts at parallelization are
+working correctly.  Perhaps some bugs can be resolved by seeing what distortions
+they introduce.
+
+.. note::
+
+   The PNG library is available as a module on the Vega supercomputer:
+
+   .. code:: console
+
+      $ module load libpng
 
 
 .. keypoints::
 
    - The heat equation is discretized in space and time
    - The implementation has loops over time and spatial dimensions
-   - The implementation reports on the contents of the grid so we can understand correctness and performance easily.
+   - The implementation reports on the contents of the grid so we can understand
+     correctness and performance easily.
