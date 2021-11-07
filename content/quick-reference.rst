@@ -5,7 +5,17 @@ Quick Reference
 
    CTAD
    class template argument deduction
-      Since C++17, the compiler can deduce template arguments during instantiation.
+      Since C++17, the compiler can deduce template arguments during instantiation. For example:
+
+      .. code:: c++
+
+         std::vector A(10, 0.0);
+
+      instead of the more verbose:
+
+      .. code:: c++
+
+         auto A = std::vector<double>(10, 0.0);
 
    unified shared memory
    USM
@@ -19,7 +29,9 @@ Quick Reference
 
    RAII
    resource acquisition is initialization
-      A programming pattern for safe and automated management of resources, *i.e.* memory, files, etc.
+      A programming pattern for safe and automated management of resources,
+      *i.e.* memory, files, etc. See `examples on cppreference
+      <https://en.cppreference.com/w/cpp/language/raii>`_.
 
    STL
    standard template library
@@ -27,11 +39,11 @@ Quick Reference
 
    queue
    queues
-      TODO
+      SYCL abstraction for scheduling tasks on available devices.
 
    selector
    selectors
-      TODO
+      SYCL type used to map queues to devices.
 
    vector engines
-      TODO https://en.wikipedia.org/wiki/Vector_processor
+      A CPU with efficient instruction set for large one-dimensional arrays. See: https://en.wikipedia.org/wiki/Vector_processor
