@@ -79,6 +79,7 @@ In general, it is preferable to queue the job using a submission script, like th
    #SBATCH --job-name=test
    #SBATCH --mem=4G
    #SBATCH --reservation=sycl
+   #SBATCH --gres=gpu:1
    #SBATCH --time=00-01:00:00
    #SBATCH --output=test_out.log
    #SBATCH --error=test_err.log
