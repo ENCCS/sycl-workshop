@@ -158,7 +158,7 @@ function-call operator:
 The method takes a ``device`` object and return a **score** for it, an integer
 value, and the highest score gets selected.
 The runtime will call this method exactly once for each device that it has
-access too, in order to build the ranking of device scores.
+access to, in order to build the ranking of device scores.
 Devices might be completely excluded from the ranking if their score is a
 *negative* number.
 We can write our own selector by simply inheriting from this abstract base class
@@ -246,7 +246,7 @@ including ``device``, of course. The template parameter specifies which
 information we would like to obtain.
 In the previous examples, we have used ``info::device::vendor`` and
 ``info::device::name`` to build our selectors.
-Valid ``get_info`` queries for devices are in the ```info::device`` namespace
+Valid ``get_info`` queries for devices are in the ``info::device`` namespace
 and can be roughly classified in two groups of queries, which can:
 
 #. decide whether a kernel can run correctly on a given device. For example,
