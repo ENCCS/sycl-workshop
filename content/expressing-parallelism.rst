@@ -10,7 +10,7 @@ Expressing parallelism with SYCL
 .. objectives::
 
    - Learn the difference between *task* and *data* parallelism.
-   - Learn about *work-items*, *work-groups*, and *nd-ranges*.
+   - Learn about *work-items*, *work-groups*, and *ND-ranges*.
 
 
 We should have acquired a good enough understanding of the anatomy of a SYCL
