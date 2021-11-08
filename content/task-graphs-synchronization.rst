@@ -303,7 +303,7 @@ available before we use them and also that the work-group local memory is
       :math:`\mathbf{B}` is also accessed from global memory.
       Figure adapted from :cite:`Reinders2021-yx`.
 
-   ***Don't do this at home, use optimized BLAS!**
+   **Don't do this at home, use optimized BLAS!**
 
    You can find a scaffold for the code in the
    ``content/code/day-2/04_tiled-matmul/tiled-matmul.cpp`` file,
