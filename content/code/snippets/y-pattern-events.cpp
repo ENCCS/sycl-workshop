@@ -24,18 +24,22 @@ main()
   auto a = malloc_shared<double>(N, Q);
   auto b = malloc_shared<double>(N, Q);
 
+  // task A
   auto e1 = Q.parallel_for(range { N }, [=](id<1> id) {
     a[id[0]] = 1;
   });
 
+  // task B
   auto e2 = Q.parallel_for(range { N }, [=](id<1> id) {
     b[id[0]] = 2;
   });
 
+  // task C
   auto e3 = Q.parallel_for(range { N }, { e1, e2 }, [=](id<1> id) {
     a[id[0]] += b[id[0]];
   });
 
+  // task D
   Q.single_task(e3, [=]() {
     for (int i = 1; i < N; i++)
       data1[0] += data1[i];

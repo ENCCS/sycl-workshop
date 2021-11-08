@@ -24,6 +24,7 @@ main()
   buffer<double> A { range { N } };
   buffer<double> B { range { N } };
 
+  // task A
   Q.submit([&](handler &h) {
     accessor aA { A, h };
     h.parallel_for(range { N }, [=](id<1> id) {
@@ -31,6 +32,7 @@ main()
     });
   });
 
+  // task B
   Q.submit([&](handler &h) {
     accessor aB { B, h };
     h.parallel_for(range { N }, [=](id<1> id) {
@@ -38,6 +40,7 @@ main()
     });
   });
 
+  // task C
   Q.submit([&](handler &h) {
     accessor aA { A, h };
     accessor aB { B, h, read_only };
@@ -46,6 +49,7 @@ main()
     });
   });
 
+  // task D
   Q.submit([&](handler &h) {
     accessor aA { A, h };
     h.single_task([=]() {

@@ -98,7 +98,7 @@ There are three available methods to express the latter:
    invocations on the ``queue`` class.
 
 
-.. typealong:: Expressing the Y-pattern
+.. demo:: Expressing the Y-pattern
 
    .. tabs::
 
@@ -112,7 +112,7 @@ There are three available methods to express the latter:
 
          .. literalinclude:: code/snippets/y-pattern-events.cpp
             :language: c++
-            :lines: 23-43
+            :lines: 24-48
 
       .. tab:: Using accessors
 
@@ -121,7 +121,7 @@ There are three available methods to express the latter:
 
          .. literalinclude:: code/snippets/y-pattern-accessors.cpp
             :language: c++
-            :lines: 27-57
+            :lines: 27-61
 
       .. tab:: Using an in-order queue
 
@@ -131,7 +131,7 @@ There are three available methods to express the latter:
 
          .. literalinclude:: code/snippets/y-pattern-in-order.cpp
             :language: c++
-            :lines: 21-43
+            :lines: 21-47
 
 
 Synchronization with the host
@@ -223,6 +223,60 @@ Kernel-level communication
 
    - Group collectives: tiled matmul as exercise
 
+ND-range parallel kernels gives us access to kernel-level communication patterns
+between work-items. [*]_ Recall that when using ND-ranges, we partition the
+execution space of a data-parallel kernel into global and local ranges. Each
+local range is a work-group within the ND-range and it's in turn partitioned
+into work-items, the actual units of work in a kernel.  Work-items in a
+work-group have access to **work-group local memory** which we can use to
+coordinate efficient execution of the kernel.
+We work with local memory by using the ``local_accessor`` type:
+
+.. signature:: ``local_accessor``
+
+   .. code:: c++
+
+      template <typename T, int dimensions = 1>
+      class local_accessor;
+
+   This type of accessor only has *two* template parameters: the access
+   mode is always ``read_write`` and the access target is always local memory.
+   Dedicated local memory is not always available, but you can implement a
+   selector that checks that through the ``info::device::local_mem_type`` query to
+   ``get_info``.
+
+
+.. figure:: img/work-groups_work-items.svg
+   :align: center
+
+   Schematic view of a 3-dimensional ``nd_range`` object constructed from global
+   :math:`8\times 8 \times 8` and local :math:`4\times 4 \times 4` ranges,
+   respectively. The different colors represent the *work-groups* in the
+   ND-range, each made of 64 *work-items*.  Work-items with the same color can
+   cooperate to each other during kernel execution: they have access to
+   **work-group local memory** and can use it to communicate with each other.
+   Communication between work-items in differently colored work-groups will most
+   likely result in a deadlock.
+
+
+It is essential to keep in mind these facts about work-group local memory:
+
+#. It is only accessible once a work-group start execution. In practice, this
+   means that ``local_accessor`` constructors require a ``handler`` object.
+#. It is not initialized when a work-group starts execution.
+#. It does not persist once the work-group finishes.
+
+Furthermore, it is our responsibility as programmers to **synchronize** between
+accesses within the same work-group.  We use the ``barrier`` method on objects
+of ``item`` type to synchronize work-items.  The concept of a barrier might be
+familiar from MPI programming: when work-items encounter it, they can only move
+past it at the same time. Work-items that execute faster will wait for those
+that lag behind.  We should use barriers whenever work-items *read from*/*write
+to* local memory that was previously *written to*/*read from* by another
+work-item.  This ensures, for example, that results of an operation are actually
+available before we use them and also that the work-group local memory is
+*consistent* for all work-items once we move past the barrier.
+
 
 .. exercise:: Tiled MatMul
 
@@ -299,3 +353,4 @@ Kernel-level communication
 
 .. [*] And with great power, comes great responsibility.
 .. [*] One could also set the host pointer *after* buffer construction using the ``set_final_data`` method.
+.. [*] This is true also for hierarchical parallel kernels.
