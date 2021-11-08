@@ -31,7 +31,7 @@ main()
   constexpr size_t N = sz;
   constexpr size_t K = sz;
 
-  // FIXME create operands and result matrices 
+  // FIXME create operands
   std::vector<double> ...;
 
   // FIXME fill operands A and B with random numbers in the unit interval
@@ -40,80 +40,77 @@ main()
   std::mt19937 mt(rd());
   std::uniform_real_distribution<double> dist(0.0, 1.0);
 
-  // FIXME zero-out c
-  std::fill(...);
+  // FIXME Create 2-dimensional buffers associated with inputs and output
+  buffer<double, 2> ...;
 
-  {
-    // FIXME Create 2-dimensional buffers associated with inputs and output
-    buffer<double, 2> ...;
+  // Submit the kernel to the queue
+  Q.submit([&](handler& cgh) {
+    // FIXME define accessors for the buffers
+    // hint: operands A and B are read-only, result C is write-only
+    auto accA = accessor(...);
+    auto accB = accessor(...);
+    auto accC = accessor(...);
 
-    // Submit the kernel to the queue
-    Q.submit([&](handler& cgh) {
-      // FIXME define accessors for the buffers
-      // hint: operands A and B are read-only, result C is write-only
-      auto accA = accessor(...);
-      auto accB = accessor(...);
-      auto accC = accessor(...);
+    // size of tile for loads from first operands
+    // NOTE you can play around with the tile size
+    constexpr auto tile_sz = 16;
 
-      // size of tile for loads from first operands
-      // NOTE you can play around with the tile size
-      constexpr auto tile_sz = 16;
+    // FIXME define local accessor into work-group local memory
+    // the constructor accepts a range and a handler
+    auto tileA = ...;
 
-      // FIXME define local accessor into work-group local memory
-      // the constructor accepts a range and a handler
-      auto tileA = ...;
+    // FIXME declare global and local 2-dimensional ranges
+    range global { ... };
+    // hint: the local range will be used to index local memory, which is 1-dimensional
+    range local { ... };
 
-      // FIXME declare global and local 2-dimensional ranges
-      range global { ... };
-      // hint: the local range will be used to index local memory, which is 1-dimensional
-      range local { ... };
+    // FIXME use nd_range with appropriate global and local ranges
+    cgh.parallel_for(..., [=](nd_item<2> it) {
+      // FIXME get indices in the global index space from the 2d item object
+      // passed as input to the kernel
+      // hint: these indices are used to address
+      //  - the result (held in global memory)
+      //  - the row of the left operand
+      //  - the column of the right operand
+      auto m = it. ...;
+      auto n = it. ...;
 
-      // FIXME use nd_range with appropriate global and local ranges
-      cgh.parallel_for(..., [=](nd_item<2> it) {
-	// FIXME get indices in the global index space from the 2d item object
-	// passed as input to the kernel
-        // hint: these indices are used to address
-        //  - the result (held in global memory)
-        //  - the row of the left operand
-        //  - the column of the right operand
-        auto m = it. ...;
-        auto n = it. ...;
+      // FIXME get index in the local index space from the 2d item object
+      // passed as input to the kernel
+      // hint: this is used to address the local memory buffer
+      auto i = it. ...;
 
-        // FIXME get index in the local index space from the 2d item object
-	// passed as input to the kernel
-	// hint: this is used to address the local memory buffer
-        auto i = it. ...;
+      // accumulate result
+      auto sum = 0.0;
+      // loop over inner index (common to operands) with stride equal to the
+      // tile size
+      for (auto l = 0; l < K; l += tile_sz) {
+        // FIXME load a tile of matrix A using the global memory accessor
+        tileA[i] = ...;
+        // synchronize to ensure all work-items have a consistent view of
+        // the local memory holding the tile.
+        // FIXME call the barrier
+        ...;
 
-        // accumulate result
-        auto sum = 0.0;
-        // loop over inner index (common to operands) with stride equal to the
-        // tile size
-        for (auto l = 0; l < K; l += tile_sz) {
-          // FIXME load a tile of matrix A using the global memory accessor
-          tileA[i] = ...;
-          // synchronize to ensure all work-items have a consistent view of
-          // the local memory holding the tile.
-	  // FIXME call the barrier
-	  ...;
-
-          // loop over tile elements
-          for (auto k = 0; k < tile_sz; ++k) {
-            // FIXME load matrix B from its global memory accessor and perform multiplication
-            sum += ...; 
-          }
-
-          // after computation, synchronize again, to ensure all
-          // reads from the local memory tile are complete
-	  // FIXME call the barrier
-	  ...;
+        // loop over tile elements
+        for (auto k = 0; k < tile_sz; ++k) {
+          // FIXME load matrix B from its global memory accessor and perform multiplication
+          sum += ...; 
         }
 
-        // FIXME write to the result matrix using its global memory accessor
-	...;
-      });
+        // after computation, synchronize again, to ensure all
+        // reads from the local memory tile are complete
+        // FIXME call the barrier
+        ...;
+      }
+
+      // FIXME write to the result matrix using its global memory accessor
+      ...;
     });
-  }
-  // FIXME do we need to wait?
+  });
+
+  // FIXME create a host_accessor to the result matrix
+  host_accessor C{...};
 
   // Check that all outputs match serial execution
   bool passed = true;
@@ -123,7 +120,8 @@ main()
       for (int k = 0; k < N; ++k) {
         gold += A[j * N + k] * B[k * N + i];
       }
-      if (std::abs(gold - C[j * N + i]) / gold > 1.0e-12) {
+      // NOTE we use double subscript for C since it's an accessor with a 2-dimensional range
+      if (std::abs(gold - C[j][i]) / gold > 1.0e-12) {
         passed = false;
       }
     }

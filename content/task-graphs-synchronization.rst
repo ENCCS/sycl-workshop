@@ -275,10 +275,6 @@ available before we use them and also that the work-group local memory is
 *consistent* for all work-items once we move past the barrier.
 
 
-Sub-groups
-~~~~~~~~~~
-
-
 .. exercise:: Tiled MatMul
 
    We can further optimize the ND-range implementation of matrix multiplication
@@ -318,9 +314,8 @@ Sub-groups
    #. We create a queue and map it to the GPU.
    #. We declare the operands as ``std::vector<double>``. Generalize the
       example in the previous exercise to allow multiplication of non-square
-      matrices. The right-hand side operands are filled with random numbers,
-      while the result matrix is zeroed out.
-   #. We define buffers to the operands in our matrix multiplication.
+      matrices. The right-hand side operands are filled with random numbers.
+   #. We define buffers to the operands and result in our matrix multiplication.
    #. We submit work to the queue through a command group handler.
    #. We set up accessors for the matrix buffers. We can use access targets and
       properties to guide the runtime in the creation of the task graph.
@@ -329,6 +324,13 @@ Sub-groups
    #. Within the handler, we launch a ``parallel_for`` with an appropriately
       sized ``nd_range`` execution range.  The tile will be our local range and
       it is 1-dimensional.
+   #. Obtain indices in the global and local ranges:
+
+      - The "global" indices are used to address rows of the left operand,
+        columns of the right operand, and the element in the result matrix..
+      - The "local" indices are used to address the tile, *i.e.* the local
+        memory buffer.
+
    #. Define the matrix multiplication kernel function, where we have:
 
       - A tile-strided loop to load data for :math:`\mathbf{A}` from global to
@@ -338,6 +340,7 @@ Sub-groups
 
       Remember that we need to ensure that the local memory is *consistent*
       across work-items after every load and/or store operation!
+   #. Retrieve the result using a ``host_accessor``.
    #. Check that your results are correct.
 
 

@@ -118,6 +118,7 @@ main()
       for (int k = 0; k < N; ++k) {
         gold += A[j * N + k] * B[k * N + i];
       }
+      // NOTE we use double subscript for C since it's an accessor with a 2-dimensional range
       if (std::abs(gold - C[j][i]) / gold > 1.0e-12) {
         passed = false;
       }
