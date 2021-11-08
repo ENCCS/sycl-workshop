@@ -5,7 +5,7 @@ Queues, command groups, and kernels
 
 .. questions::
 
-   - How do we express parallelism in SYCL?
+   - How do we organize work in a SYCL application?
 
 .. objectives::
 
