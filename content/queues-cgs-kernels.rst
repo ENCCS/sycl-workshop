@@ -29,7 +29,7 @@ of SYCL_.  The SYCL standard models our program as a **task graph**, a set of
   a node to execute. Edges arise most often because of data dependencies between
   nodes.
 
-The task graph is a *directed acyclic graph (DAG)*: it has a definite
+The task graph is a *directed acyclic graph (DAG)*: it has a well-defined
 start-to-finish direction and no nodes are self-connected.
 The SYCL runtime can resolve dependencies and thus **generate** the task graph.
 Furthermore, it can schedule how to execute the nodes, *i.e.* **traversal** of

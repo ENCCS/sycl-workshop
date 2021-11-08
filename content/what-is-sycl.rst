@@ -211,12 +211,12 @@ This source code introduces a number of fundamental concepts in SYCL_:
 
 #. An **action** is submitted to a queue and it runs on a device. In this
    example, our action is a ``parallel_for`` on a 1-dimensional **range** of
-   work items
+   work-items
 
    .. code:: c++
 
       Q.parallel_for(
-         range<1>{sz},  /* range of work items */
+         range<1>{sz},  /* range of work-items */
          ...
       );
 
@@ -229,7 +229,7 @@ This source code introduces a number of fundamental concepts in SYCL_:
       }
 
    the ``result`` array is indexed using an ``id`` object: a mapping between a
-   ``range`` of work items and available workers.
+   ``range`` of work-items and available workers.
    Kernels are either `lambda functions <https://en.cppreference.com/w/cpp/language/lambda>`_ or
    `function objects <https://en.cppreference.com/w/cpp/utility/functional>`_.
 
@@ -240,7 +240,7 @@ This source code introduces a number of fundamental concepts in SYCL_:
    .. code:: c++
 
       Q.parallel_for(
-         range<1>{sz},        /* range of work items */
+         range<1>{sz},        /* range of work-items */
          [=](id<1> tid) {     /* kernel code */
            result[tid[0]] -= 1;
          }
