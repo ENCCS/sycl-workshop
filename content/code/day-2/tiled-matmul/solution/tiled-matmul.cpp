@@ -63,8 +63,7 @@ main()
       constexpr auto tile_sz = 16;
 
       // local accessor into work-group local memory
-      auto tileA = accessor<double, 1, access_mode::read_write, target::local>(
-        tile_sz, cgh);
+      auto tileA = local_accessor<double, 1>(tile_sz, cgh);
 
       // declare global and local ranges
       // the global range spans the whole result matrix
