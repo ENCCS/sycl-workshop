@@ -131,7 +131,7 @@ will ensure that buffers are updated after their data is accessed in a kernel!
 Creation of buffers is just one side of the coin. The buffer is only a view into
 memory and no migration of data occurs when we construct one and we cannot
 manipulate the underlying data of a buffer directly: both goals are achieved
-with ***accessors**.
+with **accessors**.
 
 Buffers, accessors, and data movement
 -------------------------------------
