@@ -13,6 +13,22 @@
 
 using namespace sycl;
 
+std::string
+local_memory_type(const device& dev)
+{
+
+  switch (dev.get_info<info::device::local_mem_type>()) {
+    case info::local_mem_type::local:
+      return "local";
+    case info::local_mem_type::global:
+      return "global";
+    case info::local_mem_type::none:
+      return "none";
+    default:
+      return "none";
+  }
+}
+
 int
 main()
 {
@@ -21,7 +37,11 @@ main()
 
   std::cout << " Device " << Q.get_device().get_info<info::device::vendor>()
             << " " << Q.get_device().get_info<info::device::name>()
-            << std::endl;
+            << "\n   Local memory type " << local_memory_type(Q.get_device())
+            << "\n   Local memory size "
+            << Q.get_device().get_info<info::device::local_mem_size>() /
+                 (1024.0)
+            << " KiB" << std::endl;
 
   // initialize input and output memory on the host
   constexpr size_t sz = 256;
@@ -118,7 +138,8 @@ main()
       for (int k = 0; k < N; ++k) {
         gold += A[j * N + k] * B[k * N + i];
       }
-      // NOTE we use double subscript for C since it's an accessor with a 2-dimensional range
+      // NOTE we use double subscript for C since it's an accessor with a
+      // 2-dimensional range
       if (std::abs(gold - C[j][i]) / gold > 1.0e-12) {
         passed = false;
       }
