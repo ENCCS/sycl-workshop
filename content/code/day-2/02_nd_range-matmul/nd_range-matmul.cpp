@@ -25,6 +25,7 @@ main()
   std::vector<double> ...;
 
   // FIXME fill operands with random numbers in the unit interval
+  // hint: you call dist(mt) to get one random number
   std::random_device rd;
   std::mt19937 mt(rd());
   std::uniform_real_distribution<double> dist(0.0, 1.0);
