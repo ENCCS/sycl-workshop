@@ -13,7 +13,9 @@ Heat equation mini-app
 .. note::
 
    This episode was adapted, with permission, from the `ENCCS/CSC workshop on
-   OpenMP for GPU offloading <https://enccs.github.io/openmp-gpu/>`_.
+   OpenMP for GPU offloading <https://enccs.github.io/openmp-gpu/>`_.  CSC
+   staff developed the serial version of the mini-app, under MIT license. We
+   reproduce it with permission.
 
 
 Heat equation
