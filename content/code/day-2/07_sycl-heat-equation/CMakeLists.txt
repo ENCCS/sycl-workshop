@@ -38,3 +38,23 @@ if(TARGET PNG::PNG)
       PNG::PNG
     )
 endif()
+
+# uncomment to use SYCL
+# find hipSYCL compiler
+find_package(hipSYCL CONFIG REQUIRED)
+
+# find threading library...
+find_package(Threads REQUIRED)
+# ...and link against it
+target_link_libraries(heat 
+  PRIVATE 
+    Threads::Threads
+  )
+
+# the SYCL secret sauce :)
+add_sycl_to_target(
+  TARGET 
+    heat 
+  SOURCES 
+    ${_sources}
+  )
