@@ -3,13 +3,10 @@
 name: sphinx
 on: [push, pull_request]
 
-# If these SPHINXOPTS are enabled, then be strict about the builds and
-# fail on any warnings
-#env:
-#  SPHINXOPTS: "-W --keep-going -T"
 env:
-   DEFAULT_BRANCH: main
-
+  DEFAULT_BRANCH: "main"
+  #SPHINXOPTS: "-W --keep-going -T"
+  # ^-- If these SPHINXOPTS are enabled, then be strict about the builds and fail on any warnings
 
 jobs:
   build-and-deploy:
@@ -57,7 +54,6 @@ jobs:
           python -V
           pip list --not-required
           pip list
-
 
       # Build
       - uses: ammaraskar/sphinx-problem-matcher@master
@@ -139,7 +135,7 @@ jobs:
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
         if: ${{ github.event_name == 'push' }}
-        #if: ${{ success() && github.event_name == 'push' && github.ref == 'refs/heads/${{ env.DEFAULT_BRANCH }}' }}
+        #if: ${{ success() && github.event_name == 'push' && github.ref == 'refs/heads/$defaultBranch' }}
         with:
           publish_branch: gh-pages
           github_token: ${{ secrets.GITHUB_TOKEN }}
