@@ -45,9 +45,12 @@ In this workshop, you will learn to:
    queues-cgs-kernels
    buffers-accessors
    unified-shared-memory
-   expressing-parallelism
+   expressing-parallelism-basic
+   expressing-parallelism-nd-range
    task-graphs-synchronization
    heat-equation
+   sub-groups
+   profiling
    buffer-accessor-vs-usm
 
 
@@ -72,9 +75,12 @@ In this workshop, you will learn to:
    30 min ; :doc:`queues-cgs-kernels`
    30 min ; :doc:`buffers-accessors`
    30 min ; :doc:`unified-shared-memory`
-   40 min ; :doc:`expressing-parallelism`
+   30 min ; :doc:`expressing-parallelism-basic`
+   30 min ; :doc:`expressing-parallelism-nd-range`
    40 min ; :doc:`task-graphs-synchronization`
-   20 min ; :doc:`heat-equation`
+   40 min ; :doc:`heat-equation`
+   30 min ; :doc:`sub-groups`
+   30 min ; :doc:`profiling`
    40 min ; :doc:`buffer-accessor-vs-usm`
 
 
