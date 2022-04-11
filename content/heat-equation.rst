@@ -131,7 +131,7 @@ Let's look at the data structure describing the field:
 
 .. typealong:: The field data structure
 
-   .. literalinclude:: code/day-2/00_serial-heat-equation/heat.h
+   .. literalinclude:: code/day-2/06_serial-heat-equation/heat.h
       :language: cpp
       :lines: 6-17
 
@@ -140,7 +140,7 @@ Next, the routine that applies the stencil to the previous field to compute the 
 
 .. typealong:: The core evolution operation
 
-   .. literalinclude:: code/day-2/00_serial-heat-equation/core.cpp
+   .. literalinclude:: code/day-2/06_serial-heat-equation/core.cpp
       :language: cpp
       :lines: 11-39
 
@@ -149,7 +149,7 @@ Then the routine that handles the main loop over time steps:
 
 .. typealong:: The main driver function
 
-   .. literalinclude:: code/day-2/00_serial-heat-equation/main.cpp
+   .. literalinclude:: code/day-2/06_serial-heat-equation/main.cpp
       :language: cpp
       :lines: 8-10,14-18,26-33,37-46,64-65
 
@@ -164,7 +164,7 @@ We should look at the routines that initialize the field data structures:
 
 .. typealong:: The setup routines
 
-   .. literalinclude:: code/day-2/00_serial-heat-equation/utilities.cpp
+   .. literalinclude:: code/day-2/06_serial-heat-equation/utilities.cpp
       :language: cpp
       :lines: 28-35
 

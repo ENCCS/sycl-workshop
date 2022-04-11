@@ -1,7 +1,7 @@
-.. _expressing-parallelism:
+.. _sub-groups:
 
-Expressing parallelism with SYCL
-================================
+Using sub-groups in SYCL
+========================
 
 .. questions::
 

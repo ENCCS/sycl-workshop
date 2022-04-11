@@ -46,7 +46,7 @@ bibtex_bibfiles = ["bibliography.bib"]
 # jupyter_execute_notebooks = "off"
 # jupyter_execute_notebooks = "auto"   # *only* execute if at least one output is missing.
 # jupyter_execute_notebooks = "force"
-jupyter_execute_notebooks = "cache"
+# jupyter_execute_notebooks = "cache"
 
 # Add any paths that contain templates here, relative to this directory.
 # templates_path = ['_templates']
