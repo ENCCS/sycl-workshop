@@ -81,7 +81,8 @@ We construct buffers by specifying their size and what memory they should
 provide a view for. The ``buffer`` class is templated over the type of the
 underlying memory and its dimensionality (1, 2, or 3). We give the size as an
 object of ``range`` type: ranges are also used to express parallelism, but we
-postpone giving those details until episode :ref:`expressing-parallelism`.
+postpone giving those details until episodes :ref:`expressing-parallelism-basic`
+and :ref:`expressing-parallelism-nd-range`.
 
 .. signature:: Some ``buffer`` constructors
 

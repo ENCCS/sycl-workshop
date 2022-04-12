@@ -141,7 +141,7 @@ Let's dig in with a "Hello, world" example.
       :lines: 7-
       :emphasize-lines: 25-27
 
-   #. Log in onto `Vega <https://doc.vega.izum.si/login/>`_ and clone the
+   #. Log in to `Karolina <https://docs.it4i.cz/general/shell-and-data-access/>`_ and clone the
       repository for this workshop. Navigate to the correct folder. This
       contains a source file, ``hello.cpp``, and the CMake script to build it.
 
@@ -149,7 +149,7 @@ Let's dig in with a "Hello, world" example.
 
       .. code:: console
 
-         $ module load CMake hipSYCL
+         $ module load hipSYCL CMake/3.20.1-GCCcore-10.2.0
 
    #. Configure and compile the code:
 

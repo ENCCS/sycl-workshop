@@ -14,6 +14,17 @@ Learning outcomes
 Second iteration
 ^^^^^^^^^^^^^^^^
 
+.. prereq::
+
+   Before attending this workshop, please make sure that you have access to a
+   machine with the hipSYCL compiler (v0.9.2) and CMake (>=3.14) installed.
+
+   This workshop is organized in collaboration with `NRIS`_ and `IT4I`_. We will
+   work on the exercises using the `Karolina supercomputer
+   <https://www.it4i.cz/en/infrastructure/karolina>`_, a `EuroHPC Joint Undertaking
+   <https://eurohpc-ju.europa.eu/>`_ petascale system.
+
+
 **Day 1 - Tuesday 19 April 2022**
 
 .. csv-table::
@@ -73,6 +84,17 @@ Second iteration
 
 First iteration
 ^^^^^^^^^^^^^^^
+
+.. prereq::
+
+   Before attending this workshop, please make sure that you have access to a
+   machine with the hipSYCL compiler (v0.9.1) and CMake (>=3.14) installed.
+
+   This workshop is organized in collaboration with `CSC`_ and `IZUM`_. We will
+   work on the exercises using the `Vega supercomputer
+   <https://doc.vega.izum.si/>`_, a `EuroHPC Joint Undertaking
+   <https://eurohpc-ju.europa.eu/>`_ petascale system.
+
 
 **Day 1 - Monday 8 November 2021**
 

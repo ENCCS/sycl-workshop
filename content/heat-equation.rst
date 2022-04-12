@@ -270,7 +270,7 @@ they introduce.
 
 .. note::
 
-   The PNG library is available as a module on the Vega supercomputer:
+   The PNG library is available as a module on the Karolina supercomputer:
 
    .. code:: console
 

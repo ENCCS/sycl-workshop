@@ -17,7 +17,7 @@
 
 # -- Project information -----------------------------------------------------
 
-project = "SYCL"
+project = "Heterogeneous programming with SYCL"
 copyright = "2021, Roberto Di Remigio and individual contributors."
 author = "Roberto Di Remigio and individual contributors."
 github_user = "ENCCS"
@@ -141,6 +141,8 @@ rst_epilog = f"""
 .. _OpenACC: https://www.openacc.org/
 .. _CSC: https://www.csc.fi/
 .. _IZUM: https://www.izum.si/en/home/
+.. _NRIS: https://www.sigma2.no/nris
+.. _IT4I: https://www.it4i.cz/en
 """
 
 
