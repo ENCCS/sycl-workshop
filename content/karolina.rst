@@ -100,3 +100,85 @@ In general, it is preferable to queue the job using a submission script, like th
    # ./build/sycl_vadd
 
    exit 0
+
+
+Graphical sessions using VNC
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+We will need to use GUI software during the workshop. It is usually enough to
+login with SSH and enable X11 forwarding. However, some GUI programs might be
+too demanding for certain connections and it is then better to use other
+solutions, like virtual network computing (VNC).
+VNC is a graphical desktop-sharing system the remote frame buffer (RFB)
+protocol. Karolina is set up to allow such connections and this is what we will
+use in the workshop.  The `VNC help page
+<https://docs.it4i.cz/general/accessing-the-clusters/graphical-user-interface/vnc/>`_
+on the Karolina documentation website has an extensive list of examples that you
+can follow. Here we will summarize the most salient points for Linux and macOS
+users:
+
+* Install a VNC client on your local machine. `TigerVNC <https://tigervnc.org/>`_ is recommended.
+* Start a VNC server instance on Karolina.
+* Connect to the VNC server through an SSH tunnel.
+
+Here, in detail, how to proceeed:
+
+
+#. Open **two** terminal windows: one to start the VNC server, the other for the SSH tunnel.
+#. In the **first terminal window**:
+
+   * Login to Karolina with your credentials:
+
+     .. code::
+
+        ssh <your-username>@karolina.it4i.cz
+   * Set a VNC password:
+
+     .. code::
+
+        vncpasswd
+   * Choose an available display number (<=99). The following command will list
+     those already in use:
+
+     .. code::
+
+        ps aux | grep Xvnc | sed -rn 's/(\s) .*Xvnc (\:[0-9]+) .*/\1 \2/p'
+   * Start the VNC server:
+
+     .. code::
+
+        vncserver :<your-display-number> -geometry 1600x900 -depth 16
+
+     In the output, pay attention to the following line:
+
+     .. code::
+
+        New 'login1.karolina.it4i.cz:61 (it4i-robedr)' desktop is login1.karolina.it4i.cz:61
+
+     The SSH tunnel needs to be to the `login1` node!
+#. In the **second terminal window**:
+
+   * Open an SSH tunnel using as port number ``5900 + display number``:
+
+     .. code::
+
+        ssh -TN -f <your-username>@login1.karolina.it4i.cz -L 5961:localhost:5961
+   * Open the VNC host viewer:
+
+     .. code::
+
+        vncviewer localhost:5961
+
+To kill the VNC session:
+
+#. In the **second terminal window**, find the PID of the SSH tunnel and kill the process:
+
+   .. code::
+
+      ps aux | grep ssh
+      kill <PID>
+#. In the **first terminal window**:
+
+   .. code::
+
+      vncserver -kill :61
