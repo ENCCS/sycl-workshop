@@ -30,7 +30,7 @@ Fortunately that effort is quite regular and so can suit parallelization with a
 variety of techniques, SYCL_ included.
 
 The partial differential equation
----------------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The rate of change of the temperature field :math:`u(x, y, t)` over two spatial
 dimensions :math:`x` and :math:`y` and time :math:`t`
@@ -103,7 +103,7 @@ the previous step at the same location *and* four adjacent locations:
    total.
 
 Spatial boundary conditions
----------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Something must happen at the edges of the grid so that the stencil does a valid
 operation.  One alternative is to ignore the contribution of points that are
@@ -124,7 +124,7 @@ operation for their neighbors.
    straightforward way.
 
 The source code
----------------
+~~~~~~~~~~~~~~~
 
 Now we'll take a look at the source code that will do this for us!
 Let's look at the data structure describing the field:
@@ -171,10 +171,10 @@ We should look at the routines that initialize the field data structures:
 
 
 Building the code
------------------
+~~~~~~~~~~~~~~~~~
 
-The code is set up so that you can change to its directory,
-type `make` and it will build and run for you.
+The code is set up so that you can change to its directory
+and build as follows.
 
 .. typealong:: Building the code
 
@@ -184,9 +184,11 @@ type `make` and it will build and run for you.
       $ cmake --build build
 
 which produces an executable program called ``heat`` in the ``build`` folder.
+The app can be built with visualization support. [*]_
+
 
 Running the code
-----------------
+~~~~~~~~~~~~~~~~
 
 The code lets you choose the spatial dimensions and the number of time steps on the command line.
 For example, to run an 800 by 800 grid for 1000 steps, run
@@ -216,7 +218,7 @@ You can see the output on the terminal, like::
 This report will help us check whether our attempts to optimize made the code faster while keepint it correct.
 
 Initial and boundary conditions
--------------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 When solving PDEs, the initial conditions determine the possible solutions.
 The mini-app automatically sets up a disk of cold grid points in the center at
@@ -246,36 +248,137 @@ over time, the boundary layers have greater and greater influence.
    which is :math:`45`.
 
 
-Visualizing the output
-----------------------
+Writing a SYCL port
+-------------------
 
-The mini-app has support for writing an image file that shows the state of the
-grid every 1500 steps.  Below we can see the progression over larger numbers of
-steps:
+We are now ready to write a SYCL port of the heat equation mini-app. We will start by using the buffer and accessor model and will look into using USM at a later stage, see :ref:`buffer-accessor-vs-usm`.
 
-..
-   This image was made with the montage tool from ImageMagick.
-   Run ./heat_serial 800 800 42000 then
-   montage heat_?000.png heat_??000.png heat_montage.png
+Before starting to work with the code, consider:
 
-.. figure:: img/heat_montage.png
-   :align: center
+#. Which kernel should be ported first?
+   The time evolution is essentially serial:
 
-   Over time, the grid progresses from the initial state toward
-   an end state where one triangle is cold and one is warm.
-   The average temperature tends to 45.
+   .. literalinclude:: code/day-2/06_serial-heat-equation/main.cpp
+      :language: cpp
+      :lines: 58-67
 
-We can use this visualization to check that our attempts at parallelization are
-working correctly.  Perhaps some bugs can be resolved by seeing what distortions
-they introduce.
+   The stencil application will be our target for parallelization with SYCL:
 
-.. note::
+   .. literalinclude:: code/day-2/06_serial-heat-equation/core.cpp
+      :language: cpp
+      :lines: 32-60
 
-   The PNG library is available as a module on the Karolina supercomputer:
+#. How do we fit the queue, buffer, and accessor concepts of SYCL in the
+   existing codebase?
+   We will have to modify a few aspects of the codebase, to make sure that
+   functions to be offloaded are aware of the queue. Data will have to be
+   wrapped into SYCL buffers.
 
-   .. code:: console
+.. exercise:: SYCL heat equation mini app with buffers and accessors
 
-      $ module load libpng
+   We will use the serial version of the mini-app as a scaffold for our port.
+   The code is in the ``content/code/day-2/06_serial-heat-equation`` folder.
+   You will have to *uncomment* some lines in the CMake script in order to build
+   the executable with SYCL support.
+   A working solution is in the ``content/code/day-2/07_sycl-heat-equation``
+   folder.
+
+   Let's start from the top, ``main.cpp``, and more down to the stencil
+   application function in ``core.cpp``. Compile after each step and fix
+   compiler errors before moving on to the next step.
+
+   #. As usual, we first create a queue and map it to the GPU, either explicitly:
+
+      .. code:: c++
+
+         queue Q{gpu_selector{}};
+
+      or implicitly, by compiling with the appropriate ``HIPSYCL_TARGETS`` value.
+
+   #. The queue needs to be passed into the ``evolve`` function.  Compiling now
+      should raise an error, because no overload of this function accepting a
+      ``queue`` is known. Fix the compiler errors by redefining the function or
+      providing an overload.  Don't change the implementation in ``core.cpp``
+      yet.
+
+   We can now work on the parallel implementation:
+
+   #. Obtain grid sizes in the :math:`x` and :math:`y` directions from the
+      ``curr`` input parameter.
+   #. Obtain denominator of the finite-difference formula in both Cartesian
+      directions:
+
+      .. code:: c++
+
+         auto dx2 = prev->dx * prev->dx;
+         auto dy2 = prev->dy * prev->dy;
+
+   #. We open a new scope for our SYCL work and declare buffers mapping to the
+      data underlying the ``curr`` and ``prev`` data structures for the heat
+      field:
+
+      .. code:: c++
+
+         buffer<double, 2> buf_curr{ ..., ... }, buf_prev{ ..., ... };
+
+      What are the dimensions of the iteration spaces given as second argument
+      to the buffer constructors?  Remember that the edges of the grid
+      accomodate the fixed boundary conditions!
+   #. With buffers at hand, we're ready to submit work to the queue:
+
+      .. code:: c++
+
+         Q.submit([&](handler& cgh){
+            /* body */
+         });
+
+   #. First, declare accessors with appropriate targets, since ``curr`` is
+      read-write, but ``prev`` is read-only:
+
+      .. code:: c++
+
+         auto acc_curr = accessor(buf_curr, cgh, ...);
+         auto acc_prev = accessor(buf_prev, cgh, ...);
+
+   #. To start with, we use a basic data-parallel kernel. Add a ``parallel_for``
+      to the command-group handler:
+
+      .. code:: c++
+
+         cgh.parallel_for(range<2>(..., ...), [=](id<2> id) {
+           /* kernel body */
+         }
+
+      What are the extents of the ``range`` object passed as first argument?
+      Remember that the zeroth and last elements in each dimension accommodate
+      the values **fixed** by the boundary conditions!
+   #. The buffers and accessors reinterpret the data in the 1-dimensional
+      ``data`` arrays of the ``field`` data structures as 2-dimensional objects.
+      We need to obtain the correct row and column indices:
+
+      .. code:: c++
+
+         auto j = ...;
+         auto i = ...;
+
+      Once again, remember that the zeroth and last elements in each dimension
+      accommodate the values **fixed** by the boundary conditions!
+   #. Finally, apply the stencil:
+
+      .. code:: c++
+
+         acc_curr[j][i] =
+           acc_prev[j][i] +
+           a * dt *
+             ((acc_prev[j][i + 1] - 2.0 * acc_prev[j][i] + acc_prev[j][i - 1]) / dx2 +
+              (acc_prev[j + 1][i] - 2.0 * acc_prev[j][i] + acc_prev[j - 1][i]) / dy2);
+
+   The star and stop timers surrounding the time evolution loop in ``main.cpp``
+   can be used to give a rough estimate of the performance. Compare the serial
+   and SYCL versions of the code? What do you notice?
+   At a glance, do you think this is the best SYCL version of the app we can
+   write?
+
 
 
 .. keypoints::
@@ -284,3 +387,33 @@ they introduce.
    - The implementation has loops over time and spatial dimensions
    - The implementation reports on the contents of the grid so we can understand
      correctness and performance easily.
+
+.. rubric:: Footnotes
+
+.. [*] The mini-app has support for writing an image file that shows the state of the
+       grid every 1500 steps.  Below we can see the progression over larger numbers of
+       steps:
+
+       ..
+          This image was made with the montage tool from ImageMagick.
+          Run ./heat_serial 800 800 42000 then
+          montage heat_?000.png heat_??000.png heat_montage.png
+
+       .. figure:: img/heat_montage.png
+          :align: center
+
+          Over time, the grid progresses from the initial state toward
+          an end state where one triangle is cold and one is warm.
+          The average temperature tends to 45.
+
+       We can use this visualization to check that our attempts at parallelization are
+       working correctly.  Perhaps some bugs can be resolved by seeing what distortions
+       they introduce.
+
+       .. note::
+
+          The PNG library is available as a module on the Karolina supercomputer:
+
+          .. code:: console
+
+             $ module load libpng

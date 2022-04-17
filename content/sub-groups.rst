@@ -190,7 +190,7 @@ What are sub-groups?
 
    #. Copy back the results to the host using a ``host_accessor``:
 
-      .. code:: c++=
+      .. code:: c++
 
          host_accessor C{bufC};
 

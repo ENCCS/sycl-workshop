@@ -58,7 +58,6 @@ main(int argc, char **argv)
   double dt = dx2 * dy2 / (2.0 * a * (dx2 + dy2));
 
   // create a queue
-  // TODO map it to a device
   queue Q;
 
   auto start = std::chrono::steady_clock::now();

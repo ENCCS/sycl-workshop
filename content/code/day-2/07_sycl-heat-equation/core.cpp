@@ -23,8 +23,6 @@
 
 #include "heat.h"
 
-#include <iostream>
-
 #include <sycl/sycl.hpp>
 
 using namespace sycl;
@@ -53,18 +51,18 @@ evolve(queue Q, field *curr, field *prev, double a, double dt)
       buf_prev { prev->data.data(), range<2>(nx + 2, ny + 2) };
 
     Q.submit([&](handler &cgh) {
-      auto curr = accessor(buf_curr, cgh, read_write);
-      auto prev = accessor(buf_prev, cgh, read_only);
+      auto acc_curr = accessor(buf_curr, cgh, read_write);
+      auto acc_prev = accessor(buf_prev, cgh, read_only);
 
       cgh.parallel_for(range<2>(nx, ny), [=](id<2> id) {
         auto j = id[0] + 1;
         auto i = id[1] + 1;
 
-        curr[j][i] =
-          prev[j][i] +
+        acc_curr[j][i] =
+          acc_prev[j][i] +
           a * dt *
-            ((prev[j][i + 1] - 2.0 * prev[j][i] + prev[j][i - 1]) / dx2 +
-             (prev[j + 1][i] - 2.0 * prev[j][i] + prev[j - 1][i]) / dy2);
+            ((acc_prev[j][i + 1] - 2.0 * acc_prev[j][i] + acc_prev[j][i - 1]) / dx2 +
+             (acc_prev[j + 1][i] - 2.0 * acc_prev[j][i] + acc_prev[j - 1][i]) / dy2);
       });
     });
   }

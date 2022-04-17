@@ -46,7 +46,9 @@ might provide an easier porting path to SYCL.
 
 .. exercise:: Porting the heat equation mini-app to SYCL
 
-   As a last assignment for this workshop, we'll port the heat equation mini-app
-   introduced in the previous episode.
-   You are free to choose either the buffer/accessor or the USM model for your
-   port.
+   As a last assignment for this workshop, we'll re-write our port of the heat
+   equation mini-app in ref:`heat-equation` using USM.
+
+   .. todo::
+
+      WRITE THE USM PORT!
