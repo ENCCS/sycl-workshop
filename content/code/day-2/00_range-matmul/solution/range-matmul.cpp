@@ -53,9 +53,9 @@ main()
       accessor c { c_buf, cgh };
 
       cgh.parallel_for(range { N, N }, [=](id<2> idx) {
-        int j = idx[0];
-        int i = idx[1];
-        for (int k = 0; k < N; ++k) {
+        auto j = idx[0];
+        auto i = idx[1];
+        for (decltype(N) k = 0; k < N; ++k) {
           c[j][i] += a[j][k] * b[k][i];
           // we can use the id object directly:
           // c[idx] += a[id(j,k)] * b[id(k,i)];
@@ -69,7 +69,7 @@ main()
   for (int j = 0; j < N; ++j) {
     for (int i = 0; i < N; ++i) {
       double gold = 0;
-      for (int k = 0; k < N; ++k) {
+      for (decltype(N) k = 0; k < N; ++k) {
         gold += a[j * N + k] * b[k * N + i];
       }
       if (std::abs(gold - c[j * N + i]) / gold > 1.0e-12) {

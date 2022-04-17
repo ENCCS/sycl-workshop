@@ -18,6 +18,9 @@ main()
 {
   // FIXME set up queue on GPU
 
+  std::cout << "Running on: " << Q.get_device().get_info<info::device::name>()
+            << std::endl;
+
   // initialize input and output memory on the host
   constexpr size_t N = 256;
   // FIXME create operands and result of N*N size

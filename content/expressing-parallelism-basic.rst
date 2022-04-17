@@ -179,7 +179,14 @@ When to use ``id`` and when to use ``item`` as arguments in the kernel function?
          the source code to compile and run correctly: follow the hints in the source
          file.  A working solution is in the ``solution`` subfolder.
 
-         #. We first create a queue and map it to the GPU.
+         #. We first create a queue and map it to the GPU, either explicitly:
+
+            .. code:: c++
+
+               queue Q{gpu_selector{}};
+
+            or implicitly, by compiling with the appropriate ``HIPSYCL_TARGETS`` value.
+
          #. We declare the operands as ``std::vector<double>`` the
             right-hand side operands are filled with random numbers, while the
             result matrix is zeroed out:
@@ -188,9 +195,45 @@ When to use ``id`` and when to use ``item`` as arguments in the kernel function?
                :language: c++
                :lines: 30-39,42
 
-         #. We define buffers to the operands in our matrix multiplication.
-         #. We submit work to the queue through a command group handler.
-         #. Within the handler, we launch a ``parallel_for``.
+         #. We define buffers to the operands in our matrix multiplication. For
+            example, for the matrix :math:`\mathbf{A}`:
+
+            .. code:: c++
+
+               buffer<double, 2> a_buf(a.data(), range<2>(N, N));
+
+         #. We submit work to the queue through a command group handler:
+
+            .. code:: c++
+
+               Q.submit[&](handler& cgh) {
+                 /* work for the queue */
+               }
+
+         #. We declare accessors to the buffers. For example, for the matrix :math:`\mathbf{A}`:
+
+            .. code:: c++
+
+               accessor a{ a_buf, cgh };
+
+         #. Within the handler, we launch a ``parallel_for``. The parallel
+            region iterates over the 2-dimensional range of indices spanned by
+            the output matrix :math:`\mathbf{C}` and for every output index
+            pair, performs an iteration over the inner index :math:`k`:
+
+            .. code:: c++
+
+               cgh.parallel_for(
+                 range{ /* number of rows in C */, /* number of columns in C */ },
+                 [=](id<2> idx){
+                   auto j = idx[0];
+                   auto i = idx[1];
+                   for (decltype(N) k = 0; k < N; ++k) {
+                     c[j][i] += ...;
+                   }
+                 }
+               );
+
          #. Check that your results are correct.
 
       .. tab:: Using USM
@@ -201,7 +244,14 @@ When to use ``id`` and when to use ``item`` as arguments in the kernel function?
          the source code to compile and run correctly: follow the hints in the source
          file.  A working solution is in the ``solution`` subfolder.
 
-         #. We first create a queue and map it to the GPU.
+         #. We first create a queue and map it to the GPU, either explicitly:
+
+            .. code:: c++
+
+               queue Q{gpu_selector{}};
+
+            or implicitly, by compiling with the appropriate ``HIPSYCL_TARGETS`` value.
+
          #. We allocate the operands as USM buffers and fill them with random
             numbers. We can do this with untyped or typed ``malloc``-style or
             ``usm_allocator`` APIs. Should operands be host, device, or shared
@@ -210,7 +260,14 @@ When to use ``id`` and when to use ``item`` as arguments in the kernel function?
             this with untyped or typed ``malloc``-style or ``usm_allocator``
             APIs. Should this be host, device, or shared allocation?
          #. We submit work to the queue. Note that we need to linearize indices
-            for row-major access to our buffers!
+            for row-major access to our buffers:
+
+            .. code:: c++
+
+               auto irow = ...;
+               auto jcol = ...;
+               auto row_major_id = irow * N + jcol;
+
          #. Check that your results are correct.
 
 
