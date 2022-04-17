@@ -16,8 +16,7 @@ using namespace sycl;
 int
 main()
 {
-  // set up queue on any available device
-  queue Q;
+  // FIXME set up queue on GPU
 
   std::cout << " Device " << Q.get_device().get_info<info::device::vendor>()
             << " " << Q.get_device().get_info<info::device::name>()
@@ -39,42 +38,43 @@ main()
   constexpr size_t N = sz;
   constexpr size_t K = sz;
 
-  std::vector<double> A(M * K), B(K * N);
+  // FIXME create A and B operands of sizes MxK and KxN
+  std::vector<double> ...;
 
-  // fill a and b with random numbers in the unit interval
+  // FIXME fill operands with random numbers in the unit interval
+  // hint: you call dist(mt) to get one random number
   std::random_device rd;
   std::mt19937 mt(rd());
   std::uniform_real_distribution<double> dist(0.0, 1.0);
 
-  std::generate(A.begin(), A.end(), [&dist, &mt]() {
-    return dist(mt);
-  });
-  std::generate(B.begin(), B.end(), [&dist, &mt]() {
-    return dist(mt);
-  });
-
-  // Create buffers associated with inputs and output
-  buffer<double, 2> bufA(A.data(), range<2>(M, K)),
-    bufB(B.data(), range<2>(K, N)), bufC(range<2>(M, N));
+  // FIXME Create buffers associated with input matrices
+  buffer<double, 2> bufA(...), bufB(...);
+  // FIXME create buffer for output matrix
+  // hint: we will use a host accessor to retrieve the data, so only the range
+  // argument is needed!
+  buffer<double, 2> bufC(...);
 
   // Submit the kernel to the queue
   Q.submit([&](handler& cgh) {
-    accessor accA { bufA, cgh, read_only };
-    accessor accB { bufB, cgh, read_only };
-    accessor accC { bufC, cgh, write_only, no_init };
+    // FIXME define accessort for the buffers
+    // hint: A and B are read-only, while C is write-only and we don't care
+    // about any value initially present in its memory.
+    accessor accA { ... };
+    accessor accB { ... };
+    accessor accC { ... };
 
     // NOTE we assume that the sub-group size is greater than or equal to the
     // tile size!
     constexpr auto tile_sz = 16;
 
-    // declare global and local ranges
-    // the global range spans the whole result matrix
-    range global { M, N };
-    // the local range spans one tile in the left operand
+    // FIXME declare global and local ranges
+    // hint: the global range spans the whole result matrix
+    range global { ... };
+    // hint: the local range spans one tile in the left operand
     // it really is a 1d range, because sub-groups are 1d!
-    range local { 1, tile_sz };
+    range local { ... };
 
-    cgh.parallel_for(nd_range { global, local }, [=](nd_item<2> it) {
+    cgh.parallel_for(..., [=](...) {
       // get subgroup
       auto sg = it.get_sub_group();
 
@@ -93,23 +93,24 @@ main()
       auto sum = 0.0;
       // loop over inner index (common to operands) with stride equal to the
       // tile size
-      for (auto l = 0; l < K; l += tile_sz) {
-        // load a tile of matrix A
-        auto tileA = accA[m][l + i];
+      for (decltype(K) l = 0; l < K; l += tile_sz) {
+        // FIXME load a tile of matrix A, i.e. tile_sz elements in the m-th row
+        auto tileA = accA[...][...];
 
         // loop over tile elements
-        for (auto k = 0; k < tile_sz; ++k) {
-          // broadcast tile element to the subgroup and load matrix B from
-          // global memory
-          sum += group_broadcast(sg, tileA, k) * accB[l + k][n];
+        for (decltype(tile_sz) k = 0; k < tile_sz; ++k) {
+          // FIXME: broadcast tile element to the subgroup and load matrix B from
+          // global memory, i.e. tile_sz rows in column k
+          sum += group_broadcast(sg, tileA, k) * accB[...][...];
         }
       }
-      // finally, write to the result matrix
-      accC[m][n] = sum;
+      // FIXME finally, write to the result matrix
+      accC[...][...] = sum;
     });
   });
 
-  host_accessor C { bufC };
+  // FIXME trigger copy back to host of the result matrix using a host accessor
+  host_accessor C{...};
 
   // Check that all outputs match serial execution
   bool passed = true;

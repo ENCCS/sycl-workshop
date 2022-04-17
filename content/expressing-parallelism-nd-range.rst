@@ -203,9 +203,9 @@ from the returned ``group`` (``sub_group``) objects.
 
             .. code:: c++
 
-               Q.submit[&](handler& cgh) {
+               Q.submit([&](handler& cgh) {
                  /* work for the queue */
-               }
+               });
 
          #. We declare accessors to the buffers. For example, for the matrix :math:`\mathbf{A}`:
 

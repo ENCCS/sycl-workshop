@@ -206,9 +206,9 @@ When to use ``id`` and when to use ``item`` as arguments in the kernel function?
 
             .. code:: c++
 
-               Q.submit[&](handler& cgh) {
+               Q.submit([&](handler& cgh) {
                  /* work for the queue */
-               }
+               });
 
          #. We declare accessors to the buffers. For example, for the matrix :math:`\mathbf{A}`:
 
