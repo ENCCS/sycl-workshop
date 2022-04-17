@@ -20,6 +20,7 @@ class custom_selector : public device_selector {
 	// FIXME get vendor name
 	auto vendor = ...;
 	// FIXME score AMD GPU
+        if (vendor.find("AMD") != std::string::npos) score += 75;
 
 	// FIXME score Nvidia GPU
 
