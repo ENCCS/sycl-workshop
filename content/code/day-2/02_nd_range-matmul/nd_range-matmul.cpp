@@ -34,6 +34,8 @@ main()
   std::fill(...);
 
   {
+    // size of local range
+    constexpr size_t B = 4;
     // FIXME Create 2-dimensional buffers associated with inputs and output
     buffer<double, 2> ...;
 

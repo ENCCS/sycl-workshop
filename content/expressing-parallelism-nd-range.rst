@@ -148,13 +148,96 @@ from the returned ``group`` (``sub_group``) objects.
          the source code to compile and run correctly: follow the hints in the source
          file.  A working solution is in the ``solution`` subfolder.
 
-         #. We first declare the operands as ``std::vector<double>`` the
-            right-hand side operands are filled with random numbers, while the
-            result matrix is zeroed out.
-         #. We create a queue and map it to the GPU.
-         #. We define buffers to the operands in our matrix multiplication.
-         #. We submit work to the queue through a command group handler.
-         #. Within the handler, we launch a ``parallel_for``.
+         #. We first create a queue and map it to the GPU, either explicitly:
+
+            .. code:: c++
+
+               queue Q{gpu_selector{}};
+
+            or implicitly, by compiling with the appropriate ``HIPSYCL_TARGETS`` value.
+
+         #. We declare the operands as ``std::vector<double>`` the
+            right-hand side operands are filled with random numbers:
+
+            .. code:: c++
+
+               constexpr size_t N = 256;
+               std::vector<double> a(N * N), b(N * N), c(N * N);
+
+               // fill a and b with random numbers in the unit interval
+               std::random_device rd;
+               std::mt19937 mt(rd());
+               std::uniform_real_distribution<double> dist(0.0, 1.0);
+
+               std::generate(a.begin(), a.end(), [&dist, &mt]() {
+                 return dist(mt);
+               });
+               std::generate(b.begin(), b.end(), [&dist, &mt]() {
+                 return dist(mt);
+               });
+
+            while the result matrix is zeroed out:
+
+            .. code:: c++
+
+               std::vector<double> c(N * N);
+
+               // zero-out c
+               std::fill(c.begin(), c.end(), 0.0);
+
+         #. We define buffers to the operands in our matrix multiplication. For
+            example, for the matrix :math:`\mathbf{A}`:
+
+            .. code:: c++
+
+               buffer<double, 2> a_buf(a.data(), range<2>(N, N));
+
+            Since we will be using the ND-range version, we will also need a
+            local, 2-dimensional iteration range, with size :math:`B\times B`:
+
+            .. code:: c++
+
+               constexpr size_t B = 4;
+
+         #. We submit work to the queue through a command group handler:
+
+            .. code:: c++
+
+               Q.submit[&](handler& cgh) {
+                 /* work for the queue */
+               }
+
+         #. We declare accessors to the buffers. For example, for the matrix :math:`\mathbf{A}`:
+
+            .. code:: c++
+
+               accessor a{ a_buf, cgh };
+
+            We also need the global and local 2-dimensional iteration ranges:
+
+            .. code:: c++
+
+               range global{N, N};
+               range local{B, B};
+
+         #. Within the handler, we launch a ``parallel_for``. The parallel
+            region iterates over the 2-dimensional ranges of global and local
+            indices, with an inner loop to span the common dimension of the
+            :math:`\mathbf{A}` and :math:`\mathbf{B}` operand matrices:
+
+            .. code:: c++
+
+               cgh.parallel_for(
+                 nd_range{ /* global range */, /* local range */ },
+                 [=](nd_item<2> it){
+                   auto j = it.get_global_id(0);
+                   auto i = it.get_global_id(1);
+                   for (decltype(N) k = 0; k < N; ++k) {
+                     c[j][i] += ...;
+                   }
+                 }
+               );
+
          #. Check that your results are correct.
 
       .. tab:: Using USM
@@ -165,7 +248,14 @@ from the returned ``group`` (``sub_group``) objects.
          the source code to compile and run correctly: follow the hints in the source
          file.  A working solution is in the ``solution`` subfolder.
 
-         #. We first create a queue and map it to the GPU.
+         #. We first create a queue and map it to the GPU, either explicitly:
+
+            .. code:: c++
+
+               queue Q{gpu_selector{}};
+
+            or implicitly, by compiling with the appropriate ``HIPSYCL_TARGETS`` value.
+
          #. We allocate the operands as USM buffers and fill them with random
             numbers. We can do this with untyped or typed ``malloc``-style or
             ``usm_allocator`` APIs. Should operands be host, device, or shared
@@ -174,7 +264,14 @@ from the returned ``group`` (``sub_group``) objects.
             this with untyped or typed ``malloc``-style or ``usm_allocator``
             APIs. Should this be host, device, or shared allocation?
          #. We submit work to the queue. Note that we need to linearize indices
-            for row-major access to our buffers!
+            for row-major access to our buffers:
+
+            .. code:: c++
+
+               auto irow = ...;
+               auto jcol = ...;
+               auto row_major_id = irow * N + jcol;
+
          #. Check that your results are correct.
 
 

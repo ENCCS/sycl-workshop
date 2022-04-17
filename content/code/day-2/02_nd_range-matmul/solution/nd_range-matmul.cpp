@@ -19,9 +19,11 @@ main()
   // set up queue on any available device
   queue Q;
 
+  std::cout << "Running on: " << Q.get_device().get_info<info::device::name>()
+            << std::endl;
+
   // initialize input and output memory on the host
   constexpr size_t N = 256;
-  constexpr size_t B = 4;
   std::vector<double> a(N * N), b(N * N), c(N * N);
 
   // fill a and b with random numbers in the unit interval
@@ -40,6 +42,8 @@ main()
   std::fill(c.begin(), c.end(), 0.0);
 
   {
+    // size of local range
+    constexpr size_t B = 4;
     // Create buffers associated with inputs and output
     buffer<double, 2> a_buf(a.data(), range<2>(N, N)),
       b_buf(b.data(), range<2>(N, N)), c_buf(c.data(), range<2>(N, N));
@@ -57,7 +61,7 @@ main()
       cgh.parallel_for(nd_range { global, local }, [=](nd_item<2> it) {
         auto j = it.get_global_id(0);
         auto i = it.get_global_id(1);
-        for (int k = 0; k < N; ++k) {
+        for (decltype(N) k = 0; k < N; ++k) {
           c[j][i] += a[j][k] * b[k][i];
         }
       });
