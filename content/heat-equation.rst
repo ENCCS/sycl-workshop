@@ -133,7 +133,7 @@ Let's look at the data structure describing the field:
 
    .. literalinclude:: code/day-2/06_serial-heat-equation/heat.h
       :language: cpp
-      :lines: 6-17
+      :lines: 27-38
 
 
 Next, the routine that applies the stencil to the previous field to compute the current one:
@@ -142,7 +142,7 @@ Next, the routine that applies the stencil to the previous field to compute the 
 
    .. literalinclude:: code/day-2/06_serial-heat-equation/core.cpp
       :language: cpp
-      :lines: 11-39
+      :lines: 32-60
 
 
 Then the routine that handles the main loop over time steps:
@@ -151,14 +151,15 @@ Then the routine that handles the main loop over time steps:
 
    .. literalinclude:: code/day-2/06_serial-heat-equation/main.cpp
       :language: cpp
-      :lines: 8-10,14-18,26-33,37-46,64-65
+      :lines: 35-39,47-54,58-67
 
 
-There's other supporting code to handle user input and produce nice images
-of the current field, but we won't need to touch those, so we won't spend time
+There's other supporting code to handle user input and produce nice images of
+the current field, but we won't need to touch those, so we won't spend time
 looking at them now.
-In the real version of the code we have seen, there's also calls to libraries to record the time taken.
-We'll need that later so we understand how fast our code is.
+In the real version of the code we have seen, there's also calls to libraries to
+record the time taken.  We'll need that later so we understand how fast our code
+is.
 
 We should look at the routines that initialize the field data structures:
 
@@ -166,7 +167,7 @@ We should look at the routines that initialize the field data structures:
 
    .. literalinclude:: code/day-2/06_serial-heat-equation/utilities.cpp
       :language: cpp
-      :lines: 28-35
+      :lines: 49-56
 
 
 Building the code
