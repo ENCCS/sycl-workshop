@@ -233,7 +233,14 @@ burdensome aspect of heterogeneous programming.
 .. exercise:: AXPY with SYCL buffers and accessors
 
    We will now write an AXPY implementation in SYCL_, using the buffer and
-   accessor API.  This will be a generic implementation: it will work with any
+   accessor API. Given a scalar, :math:`\alpha`, and two vectors, :math:`x` and
+   :math:`y` , AXPY performs the following operation:
+
+   .. math::
+  
+      y := \alpha x + y
+      
+   This will be a generic implementation: it will work with any
    arithmetic type, thanks to C++ templates.
 
    **Don't do this at home, use optimized BLAS!**
