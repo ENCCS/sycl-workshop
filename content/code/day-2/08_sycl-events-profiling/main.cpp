@@ -62,10 +62,7 @@ main(int argc, char **argv)
   queue Q { gpu_selector {}, { property::queue::enable_profiling() } };
 
   using wall_clock_t = std::chrono::high_resolution_clock;
-  using time_point_t = typename wall_clock_t::time_point;
 
-  std::vector<float> cg_submission(nsteps);
-  std::vector<float> kern_execution(nsteps);
   float cgSubmissionTime  = 0;
   float kernExecutionTime = 0;
 

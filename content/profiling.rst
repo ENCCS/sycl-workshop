@@ -30,10 +30,89 @@ kind of information when SYCL_ is our programming model of choice.
 Profiling with SYCL events [*]_
 -------------------------------
 
+The SYCL_ `event API`_ can also be used to obtain timing information on various
+stages of work execution on any given queue. To do so, we need to initialize our
+``queue`` object for profiling:
 
-https://www.khronos.org/registry/SYCL/specs/sycl-2020/html/sycl-2020.html#sec:interface.event
+.. code:: c++
 
-https://www.khronos.org/registry/SYCL/specs/sycl-2020/html/sycl-2020.html#table.event.profilinginfo
+   queue Q{ gpu_selector{}, { property::queue::enable_profiling() } };
+
+this is achieved by passing a *list* containing  the ``enable_profiling()`` property to the constructor.
+Events submitted to the queue will now collect timestamps of work submission,
+execution start, and execution stop.
+
+Recall from episode :ref:`task-graphs-synchronization` that the ``submit``
+method on a ``queue`` object returns an object of ``event`` type. We have seen
+how to use these objects to explicitly manage the task graph of our application.
+With the queue initialized for profiling, we can take an event and probe the
+collected timestamps.
+For example, to obtain the timestamp, in nanoseconds, when the some work was
+submitted to the queue one could write the following code:
+
+.. code:: c++
+
+   auto e = Q.submit([&](handler &cgh){
+      /* body */
+   });
+
+   // make sure the task completed
+   e.wait();
+
+   const auto submit =
+      e.get_profiling_info<info::event_profiling::command_submit>();
+
+The SYCL_ standard includes the following three queries for the
+``get_profiling_info`` method of the ``event`` class:
+
+- ``info::event_profiling::command_submit``, timestamp in nanoseconds when the
+  associated command group was submitted to the queue.
+- ``info::event_profiling::command_start``, timestamp in nanoseconds when the
+  action associated with the command group (*e.g.* kernel invocation) started
+  executing on the device.
+- ``info::event_profiling::command_end``, the timestamp in nanoseconds when the
+  action associated with the command group (*e.g.* kernel invocation) finished
+  executing on the device.
+
+
+.. exercise:: Profiling the SYCL heat equation mini app with events
+
+   You can find the scaffold for this exercise in the
+   ``content/code/day-2/07_sycl-heat-equation`` folder.
+
+   Our goal is to modify the mini-app to:
+
+   #. Use a profiling-enabled SYCL queue.
+   #. Collect events and analyze the information regarding command group
+      submission and kernel execution.
+
+   Recall that for every time step, we submit a new command group, each with one
+   action: the application of the stencil
+
+
+   #. Declare two ``float`` variables to hold the *cumulative* time, in
+      milliseconds, spent in command group submission and kernel execution:
+
+      .. code:: c++
+
+         float cgSubmissionTime = 0;
+         float kernExecutionTime = 0;
+
+      We will accumulate the data obtained from the events in these variables.
+   #. Modify the code for the ``evolve`` function in ``core.cpp``. We want to
+      return the event corresponding to the command group submission to the
+      queue. Be careful where you put the ``return`` statement: we are opening a
+      new scope to make sure that host-device synchronization is handled
+      automatically!
+   #. Within the time-stepping loop in the ``main`` function, wait on the event
+      return from the stencil application. Why do we need it?
+   #. Obtain the timestamps for command group submission, kernel execution
+      start, and kernel execution stop. Compute the time spent in command group
+      submission and kernel execution. Accumulate it in the appropriate
+      variables.
+   #. Print out a summary.
+   #. Does the total execution time of the mini-app change? By how much?
+
 
 Profiling with backend tools
 ----------------------------

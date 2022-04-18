@@ -57,10 +57,12 @@ main(int argc, char **argv)
   // Time step
   double dt = dx2 * dy2 / (2.0 * a * (dx2 + dy2));
 
+  using wall_clock_t = std::chrono::high_resolution_clock;
+
   // create a queue
   queue Q;
 
-  auto start = std::chrono::steady_clock::now();
+  auto start = wall_clock_t::now();
 
   // Time evolution
   for (int iter = 1; iter <= nsteps; iter++) {
@@ -73,13 +75,13 @@ main(int argc, char **argv)
     swap_fields(&current, &previous);
   }
 
-  auto stop = std::chrono::steady_clock::now();
+  auto stop = wall_clock_t::now();
 
   // Average temperature for reference
   average_temp = average(&previous);
 
   // Determine the CPU time used for all the iterations
-  std::chrono::duration<double> elapsed = stop - start;
+  std::chrono::duration<float> elapsed = stop - start;
   printf("Iterations took %.3f seconds.\n", elapsed.count());
   printf("Average temperature: %f\n", average_temp);
   if (argc == 1) {
