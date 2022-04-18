@@ -101,6 +101,7 @@ In general, it is preferable to queue the job using a submission script, like th
 
    exit 0
 
+.. _vnc-sessions:
 
 Graphical sessions using VNC
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
