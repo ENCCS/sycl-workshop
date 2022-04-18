@@ -78,7 +78,13 @@ The SYCL_ standard includes the following three queries for the
 .. exercise:: Profiling the SYCL heat equation mini app with events
 
    You can find the scaffold for this exercise in the
-   ``content/code/day-2/07_sycl-heat-equation`` folder.
+   ``content/code/day-2/07_sycl-heat-equation`` folder. Before starting, make a
+   copy of this folder:
+
+   .. code:: bash
+
+      cp -r 07_sycl-heat-equation event-profiling
+      cd event-profiling
 
    Our goal is to modify the mini-app to:
 
@@ -86,9 +92,11 @@ The SYCL_ standard includes the following three queries for the
    #. Collect events and analyze the information regarding command group
       submission and kernel execution.
 
+   A working solution can be found in the
+   ``content/code/day-2/08_sycl-events-profiling`` folder.
+
    Recall that for every time step, we submit a new command group, each with one
    action: the application of the stencil
-
 
    #. Declare two ``float`` variables to hold the *cumulative* time, in
       milliseconds, spent in command group submission and kernel execution:
@@ -110,7 +118,7 @@ The SYCL_ standard includes the following three queries for the
       start, and kernel execution stop. Compute the time spent in command group
       submission and kernel execution. Accumulate it in the appropriate
       variables.
-   #. Print out a summary.
+   #. Print out a summary. Where are we spending most of our time?
    #. Does the total execution time of the mini-app change? By how much?
 
 
@@ -163,10 +171,79 @@ analyze the performance of our SYCL_ code.
 
    Before starting, you should open a VNC session to Karolina, following the
    instructions in :ref:`vnc-sessions`.
+   We will use the code in the ``content/code/day-2/07_sycl-heat-equation``
+   folder **unmodified**.
 
-   .. todo::
+   #. In your VNC session, open a terminal and obtain an interactive job with:
 
-      WRITE ME!
+      .. code:: bash
+
+         qsub -A DD-22-28 -q qnvidia -l select=1:ngpus=1 -I
+
+   #. Load the hipSYCL and CMake modules. Configure and build the code as usual:
+
+      .. code:: bash
+
+         cmake -S. -Bbuild -DHIPSYCL_TARGETS="cuda:sm_80"
+         cmake --build build
+
+   #. Run a profiler collection with the command-line tool:
+
+      .. code:: bash
+
+         nsys profile ./build/heat 800 800 1000
+
+      This will produce a file with extension ``qdrep`` with the profiling data.
+   #. Open a new terminal tab and load the hipSYCL module. Open the `NVIDIA
+      Nsight Systems`_ GUI with:
+
+      .. code:: bash
+
+         nsys-ui
+
+      Load the ``qdrep`` file into the GUI: File > Open and select the file in
+      the navigator menu.
+      You will see a timeline similar to the following:
+
+      .. figure:: img/nvidia-profile.png
+         :align: center
+
+   #. Double-click on the "CUDA (NVIDIA A100-SXM4-40GB)" tab to expand the
+      timeline view of what's happening on the GPU card.
+      You will notice that we spend the *overwhelming majority* of the time in
+      host-to-device and device-to-host memory copies. Where is this happening and how
+      can we improve the situation?
+      Hint: what happens when we call the destructor of buffer objects
+      associated with host memory?
+
+The ``evolve`` function is the culprit here. At every timestep we pass the
+``curr`` and ``prev`` data structures in:
+
+.. literalinclude:: code/day-2/07_sycl-heat-equation/core.cpp
+   :language: cpp
+   :lines: 36-37
+
+and then we open a new scope to associate their data with SYCL buffers:
+
+.. literalinclude:: code/day-2/07_sycl-heat-equation/core.cpp
+   :language: cpp
+   :lines: 49-68
+
+This incurs a host-to-device copy, when declaring the buffers, and a
+device-to-host copy, when the buffers go out of scope. Both copies happen at every timestep and this is wasteful.
+we need two arrays to hold the heat field: one for the values at the previous
+timestep, one for the values at the current timestep. These arrays do not change
+size during execution and thus can be allocated on the device at the start and
+only copied back when needed for I/O purposes.
+A strategy to optimize this code would then be:
+
+#. Create buffers to the current and previous heat field data outside the
+   time-stepping loop.
+#. Modify the ``evolve`` function to accept ``buffer``, instead of ``field``
+   objects.
+#. The ``swap_fields`` function would have to be modified as well to accept
+   buffers.
+
 
 
 .. keypoints::
