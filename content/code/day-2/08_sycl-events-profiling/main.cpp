@@ -59,14 +59,14 @@ main(int argc, char **argv)
   double dt = dx2 * dy2 / (2.0 * a * (dx2 + dy2));
 
   // create a queue
-  queue Q{gpu_selector{}, {property::queue::enable_profiling()}};
+  queue Q { gpu_selector {}, { property::queue::enable_profiling() } };
 
   using wall_clock_t = std::chrono::high_resolution_clock;
   using time_point_t = typename wall_clock_t::time_point;
 
-std::vector<float> cg_submission(nsteps);
-std::vector<float> kern_execution(nsteps);
-  float cgSubmissionTime = 0;
+  std::vector<float> cg_submission(nsteps);
+  std::vector<float> kern_execution(nsteps);
+  float cgSubmissionTime  = 0;
   float kernExecutionTime = 0;
 
   auto start = wall_clock_t::now();
@@ -75,26 +75,22 @@ std::vector<float> kern_execution(nsteps);
   for (int iter = 1; iter <= nsteps; iter++) {
     // collect event
     auto e = evolve(Q, &current, &previous, a, dt);
-e.wait();
-// analyze timings 
-// time, in nanoseconds, when the kernel was submitted to the queue
-      const auto submit_tp = e.get_profiling_info<
-          info::event_profiling::command_submit>();
-// time, in nanoseconds, when the kernel started executing
-      const auto start_tp =
-          e.get_profiling_info<
-              info::event_profiling::command_start>();
-// time, in nanoseconds, when the kernel finished executing
-      const auto end_tp =
-          e.get_profiling_info<
-              sycl::info::event_profiling::command_end>();
+    e.wait();
+    // analyze timings
+    // time, in nanoseconds, when the kernel was submitted to the queue
+    const auto submit_tp =
+      e.get_profiling_info<info::event_profiling::command_submit>();
+    // time, in nanoseconds, when the kernel started executing
+    const auto start_tp =
+      e.get_profiling_info<info::event_profiling::command_start>();
+    // time, in nanoseconds, when the kernel finished executing
+    const auto end_tp =
+      e.get_profiling_info<sycl::info::event_profiling::command_end>();
 
-      cgSubmissionTime +=
-          (start_tp - submit_tp) *1e-6;
-      kernExecutionTime +=
-          (end_tp - start_tp) * 1e-6;
+    cgSubmissionTime += (start_tp - submit_tp) * 1e-6;
+    kernExecutionTime += (end_tp - start_tp) * 1e-6;
 
-    //evolve(Q, &current, &previous, a, dt);
+    // evolve(Q, &current, &previous, a, dt);
     if (iter % image_interval == 0) {
       write_field(&current, iter);
     }
@@ -103,16 +99,19 @@ e.wait();
     swap_fields(&current, &previous);
   }
 
-  auto stop = wall_clock_t::now();
+  auto stop                            = wall_clock_t::now();
   std::chrono::duration<float> elapsed = stop - start;
 
   // Average temperature for reference
   average_temp = average(&previous);
 
   printf("Total execution time: %.3f seconds.\n", elapsed.count());
-    printf("Total time spent in command-group submission: %.3f milliseconds.\n", cgSubmissionTime);
-    printf("Total time spent in kernel execution:  %.3f milliseconds.\n", kernExecutionTime);
-
+  printf(
+    "Total time spent in command-group submission: %.3f milliseconds.\n",
+    cgSubmissionTime);
+  printf(
+    "Total time spent in kernel execution:  %.3f milliseconds.\n",
+    kernExecutionTime);
 
   printf("Average temperature: %f\n", average_temp);
   if (argc == 1) {

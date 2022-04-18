@@ -61,7 +61,7 @@ generate_field(field *temperature);
 double
 average(field *temperature);
 
-sycl::event 
+sycl::event
 evolve(sycl::queue Q, field *curr, field *prev, double a, double dt);
 
 void
