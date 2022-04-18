@@ -5,28 +5,131 @@ Using sub-groups in SYCL
 
 .. questions::
 
-   .. todo::
-
-      WRITE ME!
+   - Is it always necessary to use work-group local memory and synchronization?
 
 .. objectives::
 
-   .. todo::
+   - Learn about sub-groups as an alternative to work-group local memory.
 
-      WRITE ME!
+In episode :ref:`task-graphs-synchronization`, we saw that work-group local
+memory is an effective means to achieve kernel-level communication between
+work-items in an ND-range.
+SYCL_ also offers *sub-groups* as a useful abstraction to achieve such
+communication patterns.
+Let's have a further look at the organization of a 3-dimensional :math:`8\times
+8 \times 8` ND-range.
+
+.. figure:: img/nd_range.svg
+   :align: center
+   :scale: 50%
+
+   Depiction of a 3-dimensional ND-range and its further subvisions. The global
+   execution range is :math:`8\times 8 \times 8`, thus containing 512
+   **work-items**. The global range is further subdivided into 8 **work-groups**
+   each comprised of :math:`4 \times 4 \times 4` work-items. At an even finer
+   level, each work-group has **sub-groups** of 4 work-items.
+   The availability of sub-groups is implementation-dependent.
+   Note that the contiguous dimension (dimension 2 in this example) of ND-range
+   and work-group coincide. Furthermore, sub-groups are laid out along the
+   contiguous dimension of their work-groups.
+   Figure adapted from :cite:`Reinders2021-yx`.
+
+The number of work-items is dictated by the total size of the ND-range, here we
+have 512 work-items, while we determine the subdivision in work-groups with our
+definition of the local range, here :math:`4\times 4\times 4`.
+Based on the SYCL_ implementation at hand, the further division into *sub-groups* might also be available.
+The following three facts should be kept in mind when considering workign with sub-groups:
+
+- They are always 1-dimensional and laid out along the contiguous dimension of
+  their parent work-groups.
+- Their size is implementation-dependent: it cannot be set in the ``nd_range``
+  constructor.
+- You can obtain the sizes of sub-groups with the ``info::device::sub_group_sizes`` query to ``get_info``:
+
+  .. code:: c++
+
+     std::cout << " Subgroup sizes: ";
+     for (const auto& x :
+          Q.get_device().get_info<info::device::sub_group_sizes>()) {
+       std::cout << x << " ";
+     }
+     std::cout << std::endl;
+
+Why would it be advantageous to use sub-groups? Sub-groups are groupings of
+work-items within a given work-group with additional scheduling guarantees. The
+most obvious guarantee is that all work-items in the sub-group **execute
+together on the same hardware**. There is thus limited or no need to explicitly
+synchronize work-items within a sub-group using barriers, as we did in the tiled
+MatMul exercise.
+Furthermore, since the details of sub-groups are left up to the implementors of
+the SYCL_ standard, they might enjoy further execution guarantees and
+performance optimizations over the use of work-group local memory. Communication
+and synchronization might be more efficient for sub-groups than for work-group
+local memory.
+
+Within a ND-range ``parallel_for``, we access the sub-group to which the current ``nd_item``
+belongs by calling the ``get_sub_group`` function.
+
+.. signature:: ``get_sub_group``
+
+   .. code:: c++
+
+      sub_group get_sub_group() const;
+
+For example:
+
+.. code:: c++
+
+   cgh.parallel_for(nd_range { global, local }, [=](nd_item<2> it) {
+     // get subgroup
+     auto sg = it.get_sub_group();
+   });
+
+When using work-group local memory, we explicitly set its values and synchronize
+the memory view across the work-group using a barrier:
+
+.. code:: c++
+
+   tileA[i] = accA[m][l + i];
+   it.barrier();
+
+   for (auto k = 0; k < tile_sz; ++k) {
+     sum += tileA[k] * accB[l + k][n];
+   }
 
 
-What are sub-groups?
---------------------
+When using sub-groups, we use **collective functions** instead. A work-item in
+the sub-group loads data and the **broadcasts** it to communicate it to all
+elements in the sub-group:
 
-.. todo::
+.. code:: c++
 
-   WRITE ME!
+   auto tileA = accA[m][l + i];
 
-.. exercise:: Sub-group MatMul
+   for (auto k = 0; k < tile_sz; ++k) {
+     sum += group_broadcast(sg, tileA, k) * accB[l + k][n];
+   }
+
+The ``group_broadcast`` function takes the value of the work-item with local id
+``k`` in ``tileA`` and communicates it to all work-items in the ``sg``
+sub-group:
+
+.. signature:: ``group_broadcast``
+
+   .. code:: c++
+
+      template <typename Group, typename T>
+      T group_broadcast(Group g, T x, Group::id_type local_id);
+
+Since **all work-items** in the sub-group will perform the broadcast, the
+``local_id`` argument **must be** the same for all work-items.
+
+.. exercise:: Sub-group tiled MatMul
 
    We will modify the tiled MatMul exercise in
    :ref:`task-graphs-synchronization` to use sub-groups instead of local memory.
+   Using ``group_broadcast`` removes all explicit work-item barriers in the
+   code.
 
    **Don't do this at home, use optimized BLAS!**
 
@@ -199,9 +302,13 @@ What are sub-groups?
 
 .. keypoints::
 
-   .. todo::
-
-      WRITE ME!
+   - Sub-groups are an implementation-defined grouping of work-items within a
+     work-group with additional scheduling guarantees.
+   - The use of sub-groups might improve your code by removing, partially or
+     completely, the use of explicit synchronization barriers.
+   - Group-collective functions, such as ``group_broadcast``, might offer a
+     better alternative than using explicit work-group local memory and
+     synchronization, especially in a high-quality SYCL_ implementation.
 
 
 .. rubric:: Footnotes

@@ -33,7 +33,7 @@ ND-ranges are represented with objects of type ``nd_range``, templated over the 
 
       nd_range(range<dimensions> globalSize, range<dimensions> localSize);
 
-these are constructed using with *two* ``range`` objects, representing the
+these are constructed using *two* ``range`` objects, representing the
 *global* and *local* execution ranges:
 
 - The *global range* gives the total size of the ``nd_range``: a 1-, 2-, or
@@ -42,8 +42,8 @@ these are constructed using with *two* ``range`` objects, representing the
 - The *local range* gives the size of each **work-group** comprising the
   ``nd_range``.
 - The implementation can further subdivide each work-group into 1-dimensional
-  **sub-groups**. Since this is an implementation-dependent feature, its size can
-  neither be set in the ``nd_range`` constructor, nor queried afterwards.
+  **sub-groups**. Since this is an implementation-dependent feature, its size
+  cannot be set in the ``nd_range`` constructor.
 
 Note that:
 
