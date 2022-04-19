@@ -193,13 +193,21 @@ A command group handler contains:
    The task we would like to perform is a print-out on the device. If you are
    familiar with CUDA/HIP, you probably know that ``printf`` can be used in
    device code. In keeping with C++, the SYCL standard defines a ``stream``
-   class, which works similar to the standard streams. A SYCL stream needs a ``handler`` object on construction:
+   class, which works similar to the standard streams. A SYCL stream needs a
+   ``handler`` object on construction:
 
    .. code:: c++
 
       auto out = stream(1024, /* maximum size of output per kernel invocation */
                          256, /* maximum size before flushing the stream */
                          cgh);
+
+   SYCL streams behave just like standard C++ streams. We can write something to
+   a stream using ``operator<<``:
+
+   .. code:: c++
+
+      out << "my message" << std::endl;
 
    You can find a scaffold for the code in the
    ``content/code/day-1/04_single-task/single-task.cpp`` file,
@@ -211,7 +219,15 @@ A command group handler contains:
       strategies we have encountered in the previous episode.
    #. Submit work to the queue using a command handler group.
    #. Create a ``stream`` object.
-   #. Create a single task on the ``handler`` printing a string to the stream.
+   #. Create a single task on the ``handler`` printing a string to the stream. A
+      ``single_task`` only accepts a function with no input arguments as
+      parameter:
+
+      .. code:: c++
+
+         cgh.single_task([=](){
+           /* task code */
+         });
 
 
 .. keypoints::
