@@ -131,7 +131,7 @@ Let's look at the data structure describing the field:
 
 .. typealong:: The field data structure
 
-   .. literalinclude:: code/day-2/06_serial-heat-equation/heat.h
+   .. literalinclude:: code/day-2/05_serial-heat-equation/heat.h
       :language: cpp
       :lines: 27-38
 
@@ -140,7 +140,7 @@ Next, the routine that applies the stencil to the previous field to compute the 
 
 .. typealong:: The core evolution operation
 
-   .. literalinclude:: code/day-2/06_serial-heat-equation/core.cpp
+   .. literalinclude:: code/day-2/05_serial-heat-equation/core.cpp
       :language: cpp
       :lines: 32-60
 
@@ -149,7 +149,7 @@ Then the routine that handles the main loop over time steps:
 
 .. typealong:: The main driver function
 
-   .. literalinclude:: code/day-2/06_serial-heat-equation/main.cpp
+   .. literalinclude:: code/day-2/05_serial-heat-equation/main.cpp
       :language: cpp
       :lines: 35-39,47-54,58-67
 
@@ -165,7 +165,7 @@ We should look at the routines that initialize the field data structures:
 
 .. typealong:: The setup routines
 
-   .. literalinclude:: code/day-2/06_serial-heat-equation/utilities.cpp
+   .. literalinclude:: code/day-2/05_serial-heat-equation/utilities.cpp
       :language: cpp
       :lines: 49-56
 
@@ -258,13 +258,13 @@ Before starting to work with the code, consider:
 #. Which kernel should be ported first?
    The time evolution is essentially serial:
 
-   .. literalinclude:: code/day-2/06_serial-heat-equation/main.cpp
+   .. literalinclude:: code/day-2/05_serial-heat-equation/main.cpp
       :language: cpp
       :lines: 58-67
 
    The stencil application will be our target for parallelization with SYCL:
 
-   .. literalinclude:: code/day-2/06_serial-heat-equation/core.cpp
+   .. literalinclude:: code/day-2/05_serial-heat-equation/core.cpp
       :language: cpp
       :lines: 32-60
 
@@ -277,10 +277,10 @@ Before starting to work with the code, consider:
 .. exercise:: SYCL heat equation mini app with buffers and accessors
 
    We will use the serial version of the mini-app as a scaffold for our port.
-   The code is in the ``content/code/day-2/06_serial-heat-equation`` folder.
+   The code is in the ``content/code/day-2/05_serial-heat-equation`` folder.
    You will have to *uncomment* some lines in the CMake script in order to build
    the executable with SYCL support.
-   A working solution is in the ``content/code/day-2/07_sycl-heat-equation``
+   A working solution is in the ``content/code/day-2/06_sycl-heat-equation``
    folder.
 
    Let's start from the top, ``main.cpp``, and more down to the stencil

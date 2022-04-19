@@ -78,7 +78,7 @@ The SYCL_ standard includes the following three queries for the
 .. exercise:: Profiling the SYCL heat equation mini app with events
 
    You can find the scaffold for this exercise in the
-   ``content/code/day-2/07_sycl-heat-equation`` folder. Before starting, make a
+   ``content/code/day-2/06_sycl-heat-equation`` folder. Before starting, make a
    copy of this folder:
 
    .. code:: bash
@@ -93,7 +93,7 @@ The SYCL_ standard includes the following three queries for the
       submission and kernel execution.
 
    A working solution can be found in the
-   ``content/code/day-2/08_sycl-events-profiling`` folder.
+   ``content/code/day-2/01_sycl-events-profiling`` folder.
 
    Recall that for every time step, we submit a new command group, each with one
    action: the application of the stencil
@@ -171,7 +171,7 @@ analyze the performance of our SYCL_ code.
 
    Before starting, you should open a VNC session to Karolina, following the
    instructions in :ref:`vnc-sessions`.
-   We will use the code in the ``content/code/day-2/07_sycl-heat-equation``
+   We will use the code in the ``content/code/day-2/06_sycl-heat-equation``
    folder **unmodified**.
 
    #. In your VNC session, open a terminal and obtain an interactive job with:
@@ -219,13 +219,13 @@ analyze the performance of our SYCL_ code.
 The ``evolve`` function is the culprit here. At every timestep we pass the
 ``curr`` and ``prev`` data structures in:
 
-.. literalinclude:: code/day-2/07_sycl-heat-equation/core.cpp
+.. literalinclude:: code/day-2/06_sycl-heat-equation/core.cpp
    :language: cpp
    :lines: 36-37
 
 and then we open a new scope to associate their data with SYCL buffers:
 
-.. literalinclude:: code/day-2/07_sycl-heat-equation/core.cpp
+.. literalinclude:: code/day-2/06_sycl-heat-equation/core.cpp
    :language: cpp
    :lines: 49-68
 
@@ -243,6 +243,10 @@ A strategy to optimize this code would then be:
    objects.
 #. The ``swap_fields`` function would have to be modified as well to accept
    buffers.
+
+.. todo::
+
+   WRITE OPTIMIZED VERSION
 
 
 

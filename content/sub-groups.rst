@@ -134,7 +134,7 @@ Since **all work-items** in the sub-group will perform the broadcast, the
    **Don't do this at home, use optimized BLAS!**
 
    You can find a scaffold for the code in the
-   ``content/code/day-2/05_sub_group-matmul/sub_group-matmul.cpp`` file,
+   ``content/code/day-3/00_sub_group-matmul/sub_group-matmul.cpp`` file,
    alongside the CMake script to build the executable. You will have to complete
    the source code to compile and run correctly: follow the hints in the source
    file.  A working solution is in the ``solution`` subfolder.
