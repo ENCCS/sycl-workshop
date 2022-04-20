@@ -64,30 +64,35 @@ auto ny = static_cast<size_t>(current.ny);
 
   using wall_clock_t = std::chrono::high_resolution_clock;
 
+  auto start = wall_clock_t::now();
+
   // create a queue
   queue Q;
 
+{ 
   // create buffers for current and previous fields
   buffer<double, 2> buf_curr{current.data.data(), range<2>{nx+2, ny+2}}, 
   buf_prev{previous.data.data(), range<2>{nx+2, ny+2}}; 
 
-  auto start = wall_clock_t::now();
+  start = wall_clock_t::now();
 
   // Time evolution
   for (int iter = 1; iter <= nsteps; iter++) {
-    evolve(Q, buf_curr, buf_prev, a, dt, dx, dy);
+    evolve(Q, buf_curr, buf_prev, a, dt, dx2, dy2);
     //evolve(Q, &current, &previous, a, dt);
     
     //if (iter % image_interval == 0) {
     //  write_field(&current, iter);
     //}
    
+    //std::swap();
     // Swap current field so that it will be used
     // as previous for next iteration step
     swap_fields(buf_curr, buf_prev);
     //swap_fields(&current, &previous);
   }
 Q.wait();
+}
 
   auto stop = wall_clock_t::now();
 
