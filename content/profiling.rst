@@ -244,11 +244,6 @@ A strategy to optimize this code would then be:
 #. The ``swap_fields`` function would have to be modified as well to accept
    buffers.
 
-.. todo::
-
-   WRITE OPTIMIZED VERSION
-
-
 
 .. keypoints::
 
