@@ -232,7 +232,7 @@ from the returned ``group`` (``sub_group``) objects.
                  [=](nd_item<2> it){
                    auto j = it.get_global_id(0);
                    auto i = it.get_global_id(1);
-                   for (decltype(N) k = 0; k < N; ++k) {
+                   for (auto k = 0; k < N; ++k) {
                      c[j][i] += ...;
                    }
                  }

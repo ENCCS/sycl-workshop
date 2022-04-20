@@ -61,7 +61,7 @@ main()
       cgh.parallel_for(nd_range { global, local }, [=](nd_item<2> it) {
         auto j = it.get_global_id(0);
         auto i = it.get_global_id(1);
-        for (decltype(N) k = 0; k < N; ++k) {
+        for (auto k = 0; k < N; ++k) {
           c[j][i] += a[j][k] * b[k][i];
         }
       });

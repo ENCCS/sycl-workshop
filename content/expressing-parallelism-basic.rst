@@ -228,7 +228,7 @@ When to use ``id`` and when to use ``item`` as arguments in the kernel function?
                  [=](id<2> idx){
                    auto j = idx[0];
                    auto i = idx[1];
-                   for (decltype(N) k = 0; k < N; ++k) {
+                   for (auto k = 0; k < N; ++k) {
                      c[j][i] += ...;
                    }
                  }

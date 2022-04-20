@@ -93,12 +93,12 @@ main()
       auto sum = 0.0;
       // loop over inner index (common to operands) with stride equal to the
       // tile size
-      for (decltype(K) l = 0; l < K; l += tile_sz) {
+      for (auto l = 0; l < K; l += tile_sz) {
         // FIXME load a tile of matrix A, i.e. tile_sz elements in the m-th row
         auto tileA = accA[...][...];
 
         // loop over tile elements
-        for (decltype(tile_sz) k = 0; k < tile_sz; ++k) {
+        for (auto k = 0; k < tile_sz; ++k) {
           // FIXME: broadcast tile element to the subgroup and load matrix B from
           // global memory, i.e. tile_sz rows in column k
           sum += group_broadcast(sg, tileA, k) * accB[...][...];
