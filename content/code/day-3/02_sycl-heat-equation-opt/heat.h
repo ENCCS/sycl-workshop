@@ -71,8 +71,8 @@ evolve(
   sycl::buffer<double, 2> &prev,
   double a,
   double dt,
-  double dx,
-  double dy);
+  double dx2,
+  double dy2);
 
 void
 write_field(field *temperature, int iter);
