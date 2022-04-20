@@ -64,18 +64,16 @@ auto ny = static_cast<size_t>(current.ny);
 
   using wall_clock_t = std::chrono::high_resolution_clock;
 
-  auto start = wall_clock_t::now();
+  decltype(wall_clock_t::now()) start, stop;
 
   // create a queue
   queue Q;
 
-{ 
+{
   // create buffers for current and previous fields
   buffer<double, 2> buf_curr{current.data.data(), range<2>{nx+2, ny+2}}, 
   buf_prev{previous.data.data(), range<2>{nx+2, ny+2}}; 
-
-  start = wall_clock_t::now();
-
+start  = wall_clock_t::now();
   // Time evolution
   for (int iter = 1; iter <= nsteps; iter++) {
     evolve(Q, buf_curr, buf_prev, a, dt, dx2, dy2);
@@ -94,7 +92,7 @@ auto ny = static_cast<size_t>(current.ny);
 Q.wait();
 }
 
-  auto stop = wall_clock_t::now();
+  stop = wall_clock_t::now();
 
   // Average temperature for reference
   average_temp = average(&previous);
