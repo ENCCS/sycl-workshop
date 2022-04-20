@@ -61,8 +61,10 @@ evolve(queue &Q, field *curr, field *prev, double a, double dt)
         acc_curr[j][i] =
           acc_prev[j][i] +
           a * dt *
-            ((acc_prev[j][i + 1] - 2.0 * acc_prev[j][i] + acc_prev[j][i - 1]) / dx2 +
-             (acc_prev[j + 1][i] - 2.0 * acc_prev[j][i] + acc_prev[j - 1][i]) / dy2);
+            ((acc_prev[j][i + 1] - 2.0 * acc_prev[j][i] + acc_prev[j][i - 1]) /
+               dx2 +
+             (acc_prev[j + 1][i] - 2.0 * acc_prev[j][i] + acc_prev[j - 1][i]) /
+               dy2);
       });
     });
   }
