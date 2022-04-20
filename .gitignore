@@ -4,3 +4,5 @@
 .jupyter_cache
 jupyter_execute
 /.ccls-cache/
+*.png
+*.qdrep

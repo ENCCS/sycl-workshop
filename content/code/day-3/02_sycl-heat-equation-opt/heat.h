@@ -65,6 +65,9 @@ void
 evolve(sycl::queue &Q, field *curr, field *prev, double a, double dt);
 
 void
+evolve(sycl::queue &Q, sycl::buffer<double, 2> &current, sycl::buffer<double, 2> &prev, double a, double dt, double dx, double dy);
+
+void
 write_field(field *temperature, int iter);
 
 void
@@ -75,6 +78,9 @@ copy_field(field *temperature1, field *temperature2);
 
 void
 swap_fields(field *temperature1, field *temperature2);
+
+void
+swap_fields(sycl::buffer<double, 2> &temperature1, sycl::buffer<double, 2> &temperature2);
 
 void
 allocate_field(field *temperature);
