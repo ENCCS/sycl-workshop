@@ -52,15 +52,15 @@ main(int argc, char **argv)
   double a = 0.5;
 
   // Compute the largest stable time step
-  auto dx = current.dx;
-auto dy = current.dy;
+  auto dx    = current.dx;
+  auto dy    = current.dy;
   double dx2 = dx * dx;
   double dy2 = dy * dy;
   // Time step
   double dt = dx2 * dy2 / (2.0 * a * (dx2 + dy2));
 
-auto nx = static_cast<size_t>(current.nx);
-auto ny = static_cast<size_t>(current.ny);
+  auto nx = static_cast<size_t>(current.nx);
+  auto ny = static_cast<size_t>(current.ny);
 
   using wall_clock_t = std::chrono::high_resolution_clock;
 
@@ -69,28 +69,29 @@ auto ny = static_cast<size_t>(current.ny);
   // create a queue
   queue Q;
 
-{
-  // create buffers for current and previous fields
-  buffer<double, 2> buf_curr{current.data.data(), range<2>{nx+2, ny+2}}, 
-  buf_prev{previous.data.data(), range<2>{nx+2, ny+2}}; 
-start  = wall_clock_t::now();
-  // Time evolution
-  for (int iter = 1; iter <= nsteps; iter++) {
-    evolve(Q, buf_curr, buf_prev, a, dt, dx2, dy2);
-    //evolve(Q, &current, &previous, a, dt);
-    
-    //if (iter % image_interval == 0) {
-    //  write_field(&current, iter);
-    //}
-   
-    //std::swap();
-    // Swap current field so that it will be used
-    // as previous for next iteration step
-    swap_fields(buf_curr, buf_prev);
-    //swap_fields(&current, &previous);
+  {
+    // create buffers for current and previous fields
+    buffer<double, 2> buf_curr { current.data.data(),
+                                 range<2> { nx + 2, ny + 2 } },
+      buf_prev { previous.data.data(), range<2> { nx + 2, ny + 2 } };
+    start = wall_clock_t::now();
+    // Time evolution
+    for (int iter = 1; iter <= nsteps; iter++) {
+      evolve(Q, buf_curr, buf_prev, a, dt, dx2, dy2);
+      // evolve(Q, &current, &previous, a, dt);
+
+      // if (iter % image_interval == 0) {
+      //  write_field(&current, iter);
+      //}
+
+      // std::swap();
+      // Swap current field so that it will be used
+      // as previous for next iteration step
+      swap_fields(buf_curr, buf_prev);
+      // swap_fields(&current, &previous);
+    }
+    Q.wait();
   }
-Q.wait();
-}
 
   stop = wall_clock_t::now();
 

@@ -61,8 +61,10 @@ evolve(queue Q, field *curr, field *prev, double a, double dt)
         acc_curr[j][i] =
           acc_prev[j][i] +
           a * dt *
-            ((acc_prev[j][i + 1] - 2.0 * acc_prev[j][i] + acc_prev[j][i - 1]) / dx2 +
-             (acc_prev[j + 1][i] - 2.0 * acc_prev[j][i] + acc_prev[j - 1][i]) / dy2);
+            ((acc_prev[j][i + 1] - 2.0 * acc_prev[j][i] + acc_prev[j][i - 1]) /
+               dx2 +
+             (acc_prev[j + 1][i] - 2.0 * acc_prev[j][i] + acc_prev[j - 1][i]) /
+               dy2);
       });
     });
   }
@@ -75,29 +77,38 @@ evolve(queue Q, field *curr, field *prev, double a, double dt)
 //   a: diffusivity
 //   dt: time step
 void
-evolve(queue &Q, buffer<double, 2> &curr, buffer<double, 2> &prev, double a, double dt, double dx2, double dy2)
+evolve(
+  queue &Q,
+  buffer<double, 2> &curr,
+  buffer<double, 2> &prev,
+  double a,
+  double dt,
+  double dx2,
+  double dy2)
 {
   // Help the compiler avoid being confused by the structs
-  auto nx = curr.get_range()[0] -2;
-  auto ny = curr.get_range()[1] -2;
+  auto nx = curr.get_range()[0] - 2;
+  auto ny = curr.get_range()[1] - 2;
 
   // Determine the temperature field at next time step
   // As we have fixed boundary conditions, the outermost gridpoints
   // are not updated.
 
-    Q.submit([&](handler &cgh) {
-      auto acc_curr = accessor(curr, cgh, read_write);
-      auto acc_prev = accessor(prev, cgh, read_only);
+  Q.submit([&](handler &cgh) {
+    auto acc_curr = accessor(curr, cgh, read_write);
+    auto acc_prev = accessor(prev, cgh, read_only);
 
-      cgh.parallel_for(range<2>(nx, ny), [=](id<2> id) {
-        auto j = id[0] + 1;
-        auto i = id[1] + 1;
+    cgh.parallel_for(range<2>(nx, ny), [=](id<2> id) {
+      auto j = id[0] + 1;
+      auto i = id[1] + 1;
 
-        acc_curr[j][i] =
-          acc_prev[j][i] +
-          a * dt *
-            ((acc_prev[j][i + 1] - 2.0 * acc_prev[j][i] + acc_prev[j][i - 1]) / dx2 +
-             (acc_prev[j + 1][i] - 2.0 * acc_prev[j][i] + acc_prev[j - 1][i]) / dy2);
-      });
+      acc_curr[j][i] =
+        acc_prev[j][i] +
+        a * dt *
+          ((acc_prev[j][i + 1] - 2.0 * acc_prev[j][i] + acc_prev[j][i - 1]) /
+             dx2 +
+           (acc_prev[j + 1][i] - 2.0 * acc_prev[j][i] + acc_prev[j - 1][i]) /
+             dy2);
     });
+  });
 }

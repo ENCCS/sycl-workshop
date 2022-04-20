@@ -56,7 +56,6 @@ swap_fields(buffer<double, 2> &temperature1, buffer<double, 2> &temperature2)
   std::swap(temperature1, temperature2);
 }
 
-
 // Allocate memory for a temperature field and initialise it to zero
 void
 allocate_field(field *temperature)
