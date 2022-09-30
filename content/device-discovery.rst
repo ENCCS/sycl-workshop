@@ -216,6 +216,21 @@ on the webpage of the standard
       items, and work groups.
 
 
+   .. note::
+
+      Not all queries make sense on all devices: 
+
+      * A property might be unlimited on a particular device/backend, *e.g.*,
+        no real maximum allocation size on most host operating systems due to
+        modern virtual memory implementations with first-touch allocation
+        policy.
+      * hipSYCL does not know the result, *e.g.* because the query does not
+        apply or make sense to the backend, or the backend cannot provide this
+        information.
+
+      Compiling with hipSYCL might return alarming values in some cases, but
+      this is not necessarily an issue. 
+
 The ``info::`` namespace is **vast!** You can query many aspects of a SYCL code
 at runtime using ``get_info``, not just devices. The classes ``platform``,
 ``context``, ``queue``, ``event``, and ``kernel`` also offer a ``get_info``
