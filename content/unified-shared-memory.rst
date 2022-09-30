@@ -334,6 +334,17 @@ Implicit
 
          A working solution is in the ``solution`` subfolder.
 
+         .. note:: 
+             
+            The fact that we use a device-aware allocator for ``std::vector``
+            does not mean that STL objects will *magically* work within the
+            SYCL runtime. Indeed, doing so is absolutely not legal code: it
+            might compile and even work in some cases, but is to be considered
+            a bug.
+            You can read up a complete explanation `here
+            <https://github.com/illuhad/hipSYCL/issues/817#issuecomment-1231922115>`_.
+
+
 
 .. keypoints::
 

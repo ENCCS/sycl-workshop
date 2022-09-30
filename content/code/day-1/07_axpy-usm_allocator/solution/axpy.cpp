@@ -22,6 +22,9 @@ axpy(
   assert(x.size() == y.size());
   auto sz = x.size();
 
+  auto ptrX = x.data();
+  auto ptrY = y.data();
+
   std::vector z(sz, T { 0.0 }, shared_allocator<T>(Q));
   // get address of z, because we rely on by-copy capture in the kernel lambda.
   // Why?
@@ -33,7 +36,7 @@ axpy(
   Q.submit([&](handler& cgh) {
      cgh.parallel_for(range { sz }, [=](id<1> tid) {
        auto i  = tid[0];
-       ptrZ[i] = alpha * x[i] + y[i];
+       ptrZ[i] = alpha * ptrX[i] + ptrY[i];
      });
    })
     .wait();
