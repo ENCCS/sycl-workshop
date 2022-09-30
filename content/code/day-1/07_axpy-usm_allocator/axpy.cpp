@@ -24,6 +24,9 @@ axpy(
   assert(x.size() == y.size());
   auto sz = x.size();
 
+  auto ptrX = x.data();
+  auto ptrY = y.data();
+
   // FIXME allocate output vector
   std::vector z(...);
   // NOTE why do we take the address of the output vector?
