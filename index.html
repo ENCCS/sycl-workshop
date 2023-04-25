@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Heterogeneous programming with SYCL &mdash; Heterogeneous programming with SYCL  documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" type="text/css" />
+      <link rel="stylesheet" href="_static/copybutton.css" type="text/css" />
+      <link rel="stylesheet" href="_static/togglebutton.css" type="text/css" />
+      <link rel="stylesheet" href="_static/sphinx_lesson.css" type="text/css" />
+      <link rel="stylesheet" href="_static/sphinx_rtd_theme_ext_color_contrast.css" type="text/css" />
+      <link rel="stylesheet" href="_static/tabs.css" type="text/css" />
+      <link rel="stylesheet" href="_static/overrides.css" type="text/css" />
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
+        <script src="_static/clipboard.min.js"></script>
+        <script src="_static/copybutton.js"></script>
+        <script src="_static/minipres.js"></script>
+        <script>let toggleHintShow = 'Click to show';</script>
+        <script>let toggleHintHide = 'Click to hide';</script>
+        <script>let toggleOpenOnPrint = 'true';</script>
+        <script src="_static/togglebutton.js"></script>
+        <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+        <script data-domain="enccs.github.io/sycl-workshop" defer="defer" src="https://plausible.io/js/script.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex/" />
+    <link rel="search" title="Search" href="search/" />
+    <link rel="next" title="Setting up your system" href="karolina/" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="#" class="icon icon-home">
+            Heterogeneous programming with SYCL
+              <img src="_static/ENCCS.jpg" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search/" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="karolina/">Setting up your system</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">The lesson</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="what-is-sycl/">What is SYCL?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="device-discovery/">Device discovery</a></li>
+<li class="toctree-l1"><a class="reference internal" href="queues-cgs-kernels/">Queues, command groups, and kernels</a></li>
+<li class="toctree-l1"><a class="reference internal" href="buffers-accessors/">Data management with buffers and accessors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="unified-shared-memory/">Data management with unified shared memory</a></li>
+<li class="toctree-l1"><a class="reference internal" href="expressing-parallelism-basic/">Expressing parallelism with SYCL: basic data-parallel kernels</a></li>
+<li class="toctree-l1"><a class="reference internal" href="expressing-parallelism-nd-range/">Expressing parallelism with SYCL: nd-range data-parallel kernels</a></li>
+<li class="toctree-l1"><a class="reference internal" href="task-graphs-synchronization/">The task graph: data, dependencies, synchronization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="heat-equation/">Heat equation mini-app</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sub-groups/">Using sub-groups in SYCL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="profiling/">Profiling SYCL applications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="buffer-accessor-vs-usm/">Buffer-accessor model <em>vs</em> unified shared memory</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="quick-reference/">Quick Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="zbibliography/">Bibliography</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide/">Instructor’s guide</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="#">Heterogeneous programming with SYCL</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="#" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Heterogeneous programming with SYCL</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/ENCCS/sycl-workshop/blob/main/content/index.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="heterogeneous-programming-with-sycl">
+<h1>Heterogeneous programming with SYCL<a class="headerlink" href="#heterogeneous-programming-with-sycl" title="Permalink to this heading"></a></h1>
+<p><a class="reference external" href="https://www.khronos.org/sycl/">SYCL</a> is a C++ abstraction layer for programming heterogeneous hardware with a
+<strong>single-source approach</strong>. <a class="reference external" href="https://www.khronos.org/sycl/">SYCL</a> is built on top of <strong>standard</strong> ISO C++17 and
+provides a <strong>high-level</strong> and <strong>cross-platform</strong> route for heterogeneous
+programming.</p>
+<p>In this workshop, you will learn to:</p>
+<ul class="simple">
+<li><p>Use the <a class="reference external" href="https://hipsycl.github.io">hipSYCL</a> compiler to generate executable for <em>multiple</em> hardware
+targets.</p></li>
+<li><p>Write hardware-agnostic code to express parallelism using the queue, command
+group, and kernel abstractions.</p></li>
+<li><p>Use buffer and accessors to handle memory across devices.</p></li>
+<li><p>Evaluate drawbacks and advantages of unified shared memory.</p></li>
+</ul>
+<div class="admonition-prerequisites prerequisites admonition" id="prerequisites-0">
+<p class="admonition-title">Prerequisites</p>
+<p>Before attending this workshop, please make sure that you have access to a
+machine with the hipSYCL compiler (v0.9.2) and CMake (&gt;=3.14) installed.</p>
+<p>This workshop is organized in collaboration with <a class="reference external" href="https://www.sigma2.no/nris">NRIS</a> and <a class="reference external" href="https://www.it4i.cz/en">IT4I</a>. We will
+work on the exercises using the <a class="reference external" href="https://www.it4i.cz/en/infrastructure/karolina">Karolina supercomputer</a>, a <a class="reference external" href="https://eurohpc-ju.europa.eu/">EuroHPC Joint Undertaking</a> petascale system.</p>
+</div>
+<div class="toctree-wrapper compound">
+</div>
+<div class="toctree-wrapper compound">
+</div>
+<div class="toctree-wrapper compound">
+</div>
+<table class="docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p>30 min</p></td>
+<td><p><a class="reference internal" href="what-is-sycl/"><span class="doc">What is SYCL?</span></a></p></td>
+</tr>
+<tr class="row-even"><td><p>30 min</p></td>
+<td><p><a class="reference internal" href="device-discovery/"><span class="doc">Device discovery</span></a></p></td>
+</tr>
+<tr class="row-odd"><td><p>30 min</p></td>
+<td><p><a class="reference internal" href="queues-cgs-kernels/"><span class="doc">Queues, command groups, and kernels</span></a></p></td>
+</tr>
+<tr class="row-even"><td><p>30 min</p></td>
+<td><p><a class="reference internal" href="buffers-accessors/"><span class="doc">Data management with buffers and accessors</span></a></p></td>
+</tr>
+<tr class="row-odd"><td><p>30 min</p></td>
+<td><p><a class="reference internal" href="unified-shared-memory/"><span class="doc">Data management with unified shared memory</span></a></p></td>
+</tr>
+<tr class="row-even"><td><p>30 min</p></td>
+<td><p><a class="reference internal" href="expressing-parallelism-basic/"><span class="doc">Expressing parallelism with SYCL: basic data-parallel kernels</span></a></p></td>
+</tr>
+<tr class="row-odd"><td><p>30 min</p></td>
+<td><p><a class="reference internal" href="expressing-parallelism-nd-range/"><span class="doc">Expressing parallelism with SYCL: nd-range data-parallel kernels</span></a></p></td>
+</tr>
+<tr class="row-even"><td><p>40 min</p></td>
+<td><p><a class="reference internal" href="task-graphs-synchronization/"><span class="doc">The task graph: data, dependencies, synchronization</span></a></p></td>
+</tr>
+<tr class="row-odd"><td><p>40 min</p></td>
+<td><p><a class="reference internal" href="heat-equation/"><span class="doc">Heat equation mini-app</span></a></p></td>
+</tr>
+<tr class="row-even"><td><p>30 min</p></td>
+<td><p><a class="reference internal" href="sub-groups/"><span class="doc">Using sub-groups in SYCL</span></a></p></td>
+</tr>
+<tr class="row-odd"><td><p>30 min</p></td>
+<td><p><a class="reference internal" href="profiling/"><span class="doc">Profiling SYCL applications</span></a></p></td>
+</tr>
+<tr class="row-even"><td><p>40 min</p></td>
+<td><p><a class="reference internal" href="buffer-accessor-vs-usm/"><span class="doc">Buffer-accessor model vs unified shared memory</span></a></p></td>
+</tr>
+</tbody>
+</table>
+<section id="who-is-the-course-for">
+<span id="learner-personas"></span><h2>Who is the course for?<a class="headerlink" href="#who-is-the-course-for" title="Permalink to this heading"></a></h2>
+<p>This course is for students, researchers, engineers, and programmers that have
+heard of <a class="reference external" href="https://www.khronos.org/sycl/">SYCL</a> and want to learn how to use it effectively with projects they
+are working on.
+This course assumes no previous experience with <a class="reference external" href="https://www.khronos.org/sycl/">SYCL</a>, however, participants
+should have some prior experience with or knowledge of the following:</p>
+<ul class="simple">
+<li><p>A working knowledge of recent C++ standards, <em>e.g.</em> familiarity with <a class="reference external" href="https://en.cppreference.com/w/cpp/language/lambda">lambda
+functions</a>, <a class="reference external" href="https://en.cppreference.com/w/cpp/utility/functional">function
+objects</a>, and
+<a class="reference external" href="https://en.cppreference.com/w/cpp/language/templates">templates</a>.</p></li>
+<li><p>Some familiarity with C++17, <em>e.g.</em> <a class="reference external" href="https://en.cppreference.com/w/cpp/language/class_template_argument_deduction">class template argument deduction (CTAD)</a>
+and <a class="reference external" href="https://en.cppreference.com/w/cpp/language/structured_binding">structured binding declaration</a>.</p></li>
+</ul>
+</section>
+<section id="about-the-course">
+<h2>About the course<a class="headerlink" href="#about-the-course" title="Permalink to this heading"></a></h2>
+<p>This lesson material is developed by the <a class="reference external" href="https://enccs.se/">EuroCC National Competence Center
+Sweden (ENCCS)</a>, <a class="reference external" href="https://www.csc.fi/">CSC</a>, and <a class="reference external" href="https://www.izum.si/en/home/">IZUM</a>.
+It is taught in ENCCS workshops.
+It is aimed at researchers and developers who are curious about <a class="reference external" href="https://www.khronos.org/sycl/">SYCL</a> and how
+it can help them leverage heterogeneous hardware effectively.
+This lesson targets <strong>SYCL 2020</strong>.
+Each lesson episode has clearly defined learning objectives and includes
+multiple exercises along with solutions, and is therefore also useful for
+self-learning.
+The lesson material is licensed under <a class="reference external" href="https://creativecommons.org/licenses/by/4.0/">CC-BY-4.0</a> and can be reused in any form
+(with appropriate credit) in other courses and workshops.
+Instructors who wish to teach this lesson can refer to the <a class="reference internal" href="guide/"><span class="doc">Instructor’s guide</span></a> for
+practical advice.</p>
+<section id="graphical-and-text-conventions">
+<h3>Graphical and text conventions<a class="headerlink" href="#graphical-and-text-conventions" title="Permalink to this heading"></a></h3>
+<p>We adopt a few conventions which help organize the material.</p>
+<dl>
+<dt>Function signatures</dt><dd><p>These are shown in a text block marked with a wrench emoji:</p>
+<div class="admonition-struct-plus signature toggle-shown dropdown admonition" id="signature-0">
+<p class="admonition-title"><code class="docutils literal notranslate"><span class="pre">struct</span> <span class="pre">plus</span></code></p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">T</span><span class="o">=</span><span class="kt">void</span><span class="o">&gt;</span>
+<span class="k">struct</span><span class="w"> </span><span class="nc">plus</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="n">T</span><span class="w"> </span><span class="nf">operator</span><span class="p">()(</span><span class="k">const</span><span class="w"> </span><span class="n">T</span><span class="o">&amp;</span><span class="w"> </span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">T</span><span class="o">&amp;</span><span class="w"> </span><span class="n">y</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+</div>
+<p>The signature can be hidden by clicking the toggle.</p>
+</dd>
+<dt>Function arguments</dt><dd><p>The description of the function arguments will appear in a separate text
+box. It will be marked with a laptop emoji:</p>
+<div class="admonition-parameters parameters dropdown admonition" id="parameters-0">
+<p class="admonition-title">Parameters</p>
+<dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">T</span></code></dt><dd><p>Scalar type.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">x</span></code></dt><dd><p>First operand.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">y</span></code></dt><dd><p>Second operand.</p>
+</dd>
+</dl>
+</div>
+<p>The description is hidden and will be shown by clicking the toggle.</p>
+</dd>
+<dt>Type-along</dt><dd><p>The text and code for these activities are in a separate text box, marked with
+a keyboard emoji:</p>
+<div class="admonition-let-s-look-at-an-example typealong toggle-shown dropdown admonition" id="typealong-0">
+<p class="admonition-title">Let’s look at an example</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">cgh</span><span class="p">.</span><span class="n">parallel_for</span><span class="p">(</span><span class="mi">1024</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="o">=</span><span class="p">](</span><span class="k">auto</span><span class="w"> </span><span class="n">idx</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">   </span><span class="n">x</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">idx</span><span class="p">;</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</div>
+<p>The content can be hidden by clicking the toggle.</p>
+</dd>
+</dl>
+</section>
+</section>
+<section id="see-also">
+<h2>See also<a class="headerlink" href="#see-also" title="Permalink to this heading"></a></h2>
+<ul class="simple">
+<li><p>Reinders, J.; Ashbaugh, B.; Brodman, J.; Kinsner, M.; Pennycook, J.; Tian, X.
+<em>Data Parallel C++: Mastering DPC++ for Programming of Heterogeneous Systems
+Using C++ and SYCL</em> <span id="id1">[<a class="reference internal" href="zbibliography/#id2" title="James Reinders, Ben Ashbaugh, James Brodman, Michael Kinsner, John Pennycook, and Xinmin Tian. Data Parallel C++: Mastering DPC++ for Programming of Heterogeneous Systems using C++ and SYCL. Apress, Berkeley, CA, 2021. ISBN 9781484255735. URL: https://link.springer.com/book/10.1007%2F978-1-4842-5574-2, doi:10.1007/978-1-4842-5574-2.">RAB+21</a>]</span></p></li>
+<li><p>The <a class="reference external" href="https://github.com/codeplaysoftware/syclacademy">SYCL Academy</a> resources.</p></li>
+<li><p>The <a class="reference external" href="https://hipsycl.github.io/">hipSYCL blog</a> and <a class="reference external" href="https://github.com/illuhad/hipSYCL">GitHub repository</a>.</p></li>
+<li><p>The latest revision of the <a class="reference external" href="https://www.khronos.org/registry/SYCL/specs/sycl-2020/html/sycl-2020.html">SYCL 2020 standard</a>.</p></li>
+<li><p>The <a class="reference external" href="https://www.khronos.org/files/sycl/sycl-2020-reference-guide.pdf">SYCL 2020 API reference guide</a>.</p></li>
+</ul>
+</section>
+<section id="credits">
+<h2>Credits<a class="headerlink" href="#credits" title="Permalink to this heading"></a></h2>
+<p>The lesson file structure and browsing layout is inspired by and derived from
+<a class="reference external" href="https://github.com/coderefinery/sphinx-lesson">work</a> by <a class="reference external" href="https://coderefinery.org/">CodeRefinery</a> licensed under the <a class="reference external" href="http://opensource.org/licenses/mit-license.html">MIT</a> license. We have copied and adapted
+most of their license text.</p>
+<section id="instructional-material">
+<h3>Instructional Material<a class="headerlink" href="#instructional-material" title="Permalink to this heading"></a></h3>
+<p>This instructional material is made available under the
+<a class="reference external" href="https://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution license (CC-BY-4.0)</a>.
+The following is a human-readable summary of (and not a substitute for) the
+<a class="reference external" href="https://creativecommons.org/licenses/by/4.0/legalcode">full legal text of the CC-BY-4.0 license</a>.
+You are free to:</p>
+<ul class="simple">
+<li><p><strong>share</strong> - copy and redistribute the material in any medium or format</p></li>
+<li><p><strong>adapt</strong> - remix, transform, and build upon the material for any purpose,
+even commercially.</p></li>
+</ul>
+<p>The licensor cannot revoke these freedoms as long as you follow these license terms:</p>
+<ul class="simple">
+<li><p><strong>Attribution</strong> - You must give appropriate credit (mentioning that your work
+is derived from work that is Copyright (c) Roberto Di Remigio and individual contributors and, where practical, linking
+to <a class="reference external" href="https://enccs.se">https://enccs.se</a>), provide a <a class="reference external" href="https://creativecommons.org/licenses/by/4.0/">link to the license</a>, and indicate if changes were
+made. You may do so in any reasonable manner, but not in any way that suggests
+the licensor endorses you or your use.</p></li>
+<li><p><strong>No additional restrictions</strong> - You may not apply legal terms or
+technological measures that legally restrict others from doing anything the
+license permits.</p></li>
+</ul>
+<p>With the understanding that:</p>
+<ul class="simple">
+<li><p>You do not have to comply with the license for elements of the material in
+the public domain or where your use is permitted by an applicable exception
+or limitation.</p></li>
+<li><p>No warranties are given. The license may not give you all of the permissions
+necessary for your intended use. For example, other rights such as
+publicity, privacy, or moral rights may limit how you use the material.</p></li>
+</ul>
+</section>
+<section id="software">
+<h3>Software<a class="headerlink" href="#software" title="Permalink to this heading"></a></h3>
+<p>Except where otherwise noted, the example programs and other software provided
+with this repository are made available under the <a class="reference external" href="http://opensource.org/">OSI</a>-approved
+<a class="reference external" href="http://opensource.org/licenses/mit-license.html">MIT</a> license.</p>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="karolina/" class="btn btn-neutral float-right" title="Setting up your system" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021, Roberto Di Remigio and individual contributors..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

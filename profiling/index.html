@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Profiling SYCL applications &mdash; Heterogeneous programming with SYCL  documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/copybutton.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/togglebutton.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/sphinx_lesson.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/sphinx_rtd_theme_ext_color_contrast.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/tabs.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/overrides.css" type="text/css" />
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
+        <script src="../_static/clipboard.min.js"></script>
+        <script src="../_static/copybutton.js"></script>
+        <script src="../_static/minipres.js"></script>
+        <script>let toggleHintShow = 'Click to show';</script>
+        <script>let toggleHintHide = 'Click to hide';</script>
+        <script>let toggleOpenOnPrint = 'true';</script>
+        <script src="../_static/togglebutton.js"></script>
+        <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+        <script data-domain="enccs.github.io/sycl-workshop" defer="defer" src="https://plausible.io/js/script.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex/" />
+    <link rel="search" title="Search" href="../search/" />
+    <link rel="next" title="Buffer-accessor model vs unified shared memory" href="../buffer-accessor-vs-usm/" />
+    <link rel="prev" title="Using sub-groups in SYCL" href="../sub-groups/" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../" class="icon icon-home">
+            Heterogeneous programming with SYCL
+              <img src="../_static/ENCCS.jpg" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search/" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../karolina/">Setting up your system</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">The lesson</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../what-is-sycl/">What is SYCL?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../device-discovery/">Device discovery</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../queues-cgs-kernels/">Queues, command groups, and kernels</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../buffers-accessors/">Data management with buffers and accessors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../unified-shared-memory/">Data management with unified shared memory</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../expressing-parallelism-basic/">Expressing parallelism with SYCL: basic data-parallel kernels</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../expressing-parallelism-nd-range/">Expressing parallelism with SYCL: nd-range data-parallel kernels</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../task-graphs-synchronization/">The task graph: data, dependencies, synchronization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../heat-equation/">Heat equation mini-app</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../sub-groups/">Using sub-groups in SYCL</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Profiling SYCL applications</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#profiling-with-sycl-events">Profiling with SYCL events </a></li>
+<li class="toctree-l2"><a class="reference internal" href="#profiling-with-backend-tools">Profiling with backend tools</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../buffer-accessor-vs-usm/">Buffer-accessor model <em>vs</em> unified shared memory</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../quick-reference/">Quick Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../zbibliography/">Bibliography</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guide/">Instructor’s guide</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../">Heterogeneous programming with SYCL</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Profiling SYCL applications</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/ENCCS/sycl-workshop/blob/main/content/profiling.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="profiling-sycl-applications">
+<span id="profiling"></span><h1>Profiling SYCL applications<a class="headerlink" href="#profiling-sycl-applications" title="Permalink to this heading"></a></h1>
+<div class="admonition-questions questions admonition" id="questions-0">
+<p class="admonition-title">Questions</p>
+<ul class="simple">
+<li><p>How can we identify performance issues in our <a class="reference external" href="https://www.khronos.org/sycl/">SYCL</a> code?</p></li>
+</ul>
+</div>
+<div class="admonition-objectives objectives admonition" id="objectives-0">
+<p class="admonition-title">Objectives</p>
+<ul class="simple">
+<li><p>Learn to use the profiling interface in the <a class="reference external" href="https://www.khronos.org/sycl/">SYCL</a> standard.</p></li>
+<li><p>Explore graphical profilers.</p></li>
+</ul>
+</div>
+<p>It is rarely the case that the first version of a performance-critical code
+delivers satisfactory performance.
+Creating performant software requires awareness of the problem domain and the
+algorithms employed, but a good dose of empirical performance measurements are
+also needed to remove bottlenecks and optimize the code.
+Time-to-solution is an important performance metrics, but it’s not the sole
+metric one should care about: how well are we using the hardware at hand? Are
+the available cores always busy? What about memory usage?
+Performance profiling helps us answer these questions and guides us in
+identifying and fixing performance issues.</p>
+<p>This episode will show, using the heat equation mini-app, how to obtain this
+kind of information when <a class="reference external" href="https://www.khronos.org/sycl/">SYCL</a> is our programming model of choice.</p>
+<section id="profiling-with-sycl-events">
+<h2>Profiling with SYCL events <a class="footnote-reference brackets" href="#id2" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>*<span class="fn-bracket">]</span></a><a class="headerlink" href="#profiling-with-sycl-events" title="Permalink to this heading"></a></h2>
+<p>The <a class="reference external" href="https://www.khronos.org/sycl/">SYCL</a> <a class="reference external" href="https://www.khronos.org/registry/SYCL/specs/sycl-2020/html/sycl-2020.html#sec:interface.event">event API</a> can also be used to obtain timing information on various
+stages of work execution on any given queue. To do so, we need to initialize our
+<code class="docutils literal notranslate"><span class="pre">queue</span></code> object for profiling:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">queue</span><span class="w"> </span><span class="n">Q</span><span class="p">{</span><span class="w"> </span><span class="n">gpu_selector</span><span class="p">{},</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">property</span><span class="o">::</span><span class="n">queue</span><span class="o">::</span><span class="n">enable_profiling</span><span class="p">()</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="p">};</span>
+</pre></div>
+</div>
+<p>this is achieved by passing a <em>list</em> containing  the <code class="docutils literal notranslate"><span class="pre">enable_profiling()</span></code> property to the constructor.
+Events submitted to the queue will now collect timestamps of work submission,
+execution start, and execution stop.</p>
+<p>Recall from episode <a class="reference internal" href="../task-graphs-synchronization/#task-graphs-synchronization"><span class="std std-ref">The task graph: data, dependencies, synchronization</span></a> that the <code class="docutils literal notranslate"><span class="pre">submit</span></code>
+method on a <code class="docutils literal notranslate"><span class="pre">queue</span></code> object returns an object of <code class="docutils literal notranslate"><span class="pre">event</span></code> type. We have seen
+how to use these objects to explicitly manage the task graph of our application.
+With the queue initialized for profiling, we can take an event and probe the
+collected timestamps.
+For example, to obtain the timestamp, in nanoseconds, when the some work was
+submitted to the queue one could write the following code:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">auto</span><span class="w"> </span><span class="n">e</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Q</span><span class="p">.</span><span class="n">submit</span><span class="p">([</span><span class="o">&amp;</span><span class="p">](</span><span class="n">handler</span><span class="w"> </span><span class="o">&amp;</span><span class="n">cgh</span><span class="p">){</span>
+<span class="w">   </span><span class="cm">/* body */</span>
+<span class="p">});</span>
+
+<span class="c1">// make sure the task completed</span>
+<span class="n">e</span><span class="p">.</span><span class="n">wait</span><span class="p">();</span>
+
+<span class="k">const</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">submit</span><span class="w"> </span><span class="o">=</span>
+<span class="w">   </span><span class="n">e</span><span class="p">.</span><span class="n">get_profiling_info</span><span class="o">&lt;</span><span class="n">info</span><span class="o">::</span><span class="n">event_profiling</span><span class="o">::</span><span class="n">command_submit</span><span class="o">&gt;</span><span class="p">();</span>
+</pre></div>
+</div>
+<p>The <a class="reference external" href="https://www.khronos.org/sycl/">SYCL</a> standard includes the following three queries for the
+<code class="docutils literal notranslate"><span class="pre">get_profiling_info</span></code> method of the <code class="docutils literal notranslate"><span class="pre">event</span></code> class:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">info::event_profiling::command_submit</span></code>, timestamp in nanoseconds when the
+associated command group was submitted to the queue.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">info::event_profiling::command_start</span></code>, timestamp in nanoseconds when the
+action associated with the command group (<em>e.g.</em> kernel invocation) started
+executing on the device.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">info::event_profiling::command_end</span></code>, the timestamp in nanoseconds when the
+action associated with the command group (<em>e.g.</em> kernel invocation) finished
+executing on the device.</p></li>
+</ul>
+<div class="admonition-profiling-the-sycl-heat-equation-mini-app-with-events exercise important admonition" id="exercise-0">
+<p class="admonition-title">Profiling the SYCL heat equation mini app with events</p>
+<p>You can find the scaffold for this exercise in the
+<code class="docutils literal notranslate"><span class="pre">content/code/day-2/06_sycl-heat-equation</span></code> folder. Before starting, make a
+copy of this folder:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>cp<span class="w"> </span>-r<span class="w"> </span>07_sycl-heat-equation<span class="w"> </span>event-profiling
+<span class="nb">cd</span><span class="w"> </span>event-profiling
+</pre></div>
+</div>
+<p>Our goal is to modify the mini-app to:</p>
+<ol class="arabic simple">
+<li><p>Use a profiling-enabled SYCL queue.</p></li>
+<li><p>Collect events and analyze the information regarding command group
+submission and kernel execution.</p></li>
+</ol>
+<p>A working solution can be found in the
+<code class="docutils literal notranslate"><span class="pre">content/code/day-2/01_sycl-events-profiling</span></code> folder.</p>
+<p>Recall that for every time step, we submit a new command group, each with one
+action: the application of the stencil</p>
+<ol class="arabic">
+<li><p>Declare two <code class="docutils literal notranslate"><span class="pre">float</span></code> variables to hold the <em>cumulative</em> time, in
+milliseconds, spent in command group submission and kernel execution:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="kt">float</span><span class="w"> </span><span class="n">cgSubmissionTime</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="kt">float</span><span class="w"> </span><span class="n">kernExecutionTime</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>We will accumulate the data obtained from the events in these variables.</p>
+</li>
+<li><p>Modify the code for the <code class="docutils literal notranslate"><span class="pre">evolve</span></code> function in <code class="docutils literal notranslate"><span class="pre">core.cpp</span></code>. We want to
+return the event corresponding to the command group submission to the
+queue. Be careful where you put the <code class="docutils literal notranslate"><span class="pre">return</span></code> statement: we are opening a
+new scope to make sure that host-device synchronization is handled
+automatically!</p></li>
+<li><p>Within the time-stepping loop in the <code class="docutils literal notranslate"><span class="pre">main</span></code> function, wait on the event
+return from the stencil application. Why do we need it?</p></li>
+<li><p>Obtain the timestamps for command group submission, kernel execution
+start, and kernel execution stop. Compute the time spent in command group
+submission and kernel execution. Accumulate it in the appropriate
+variables.</p></li>
+<li><p>Print out a summary. Where are we spending most of our time?</p></li>
+<li><p>Does the total execution time of the mini-app change? By how much?</p></li>
+</ol>
+</div>
+</section>
+<section id="profiling-with-backend-tools">
+<h2>Profiling with backend tools<a class="headerlink" href="#profiling-with-backend-tools" title="Permalink to this heading"></a></h2>
+<p>The use of <a class="reference external" href="https://www.khronos.org/sycl/">SYCL</a> events is not the best way to go about profiling:</p>
+<ol class="arabic simple">
+<li><p>The information provided might not be as fine-grained as needed to correctly
+identify performance bottlenecks.</p></li>
+<li><p>The changes needed to adapt an existing code to “profiling” mode might be too
+substantial.</p></li>
+</ol>
+<p>It is usual to rely on <em>sampling profilers</em> to obtain a more well-rounded
+snapshot of the performance aspects of a software. Sampling profilers accumulate
+statistical measures of given <em>counters</em>, such as memory loads/stores and
+register occupancy, and provide a final report to the user. They introduce
+execution overhead, but the wealth of information they can provide is extremely
+valuable.</p>
+<p>There are <em>many</em> performance profiling tools available, here is an incomplete list:</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://www.intel.com/content/www/us/en/develop/documentation/vtune-help/top.html">Intel VTune</a> which offers both command-line tools and a GUI to obtain and
+analyze performance on x86 architectures, especially suited for Intel CPUs.</p></li>
+<li><p><a class="reference external" href="https://developer.amd.com/amd-uprof/">AMD uprof</a> similar to VTune, but for AMD CPUs.</p></li>
+<li><p><a class="reference external" href="https://docs.nvidia.com/nsight-systems/index.html">NVIDIA Nsight Systems</a> command-line tools and GUI for performance profiling
+of CUDA GPU code.</p></li>
+<li><p><a class="reference external" href="https://docs.amd.com/bundle/AMD-ROCProfiler-User-Guide/page/Introduction.html">AMD rocprof</a> a command-line tool for performance profiling of ROCm and HIP
+GPU code.</p></li>
+<li><p><a class="reference external" href="https://hpc.fau.de/research/tools/likwid/">LIKWID</a> a free, open-source set of command-line tools that works on many CPU
+architectures and NVIDIA GPUs.</p></li>
+</ul>
+<p>When we tried to answer the question <a class="reference internal" href="../what-is-sycl/#what-is-sycl"><span class="std std-ref">What is SYCL?</span></a> we saw that the
+implementors of the standard rely on existing low-level backends for parallel
+code generation.</p>
+<figure class="align-center" id="id3">
+<img alt="../_images/sycl_impls%2Bbackends.svg" src="../_images/sycl_impls%2Bbackends.svg" /><figcaption>
+<p><span class="caption-text">Each of the <a class="reference external" href="https://www.khronos.org/sycl/">SYCL</a> implementations can map to a number of <em>native backends</em>.
+Many of these provide a full-fledged ecosystem of programming tools,
+including profilers and debuggers. Any of these can be used with compiled
+<a class="reference external" href="https://www.khronos.org/sycl/">SYCL</a> code.</span><a class="headerlink" href="#id3" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<p>For example, the <a class="reference external" href="https://hipsycl.github.io">hipSYCL</a> compiler can generate GPU code targeting the CUDA and
+ROCm backends and it is thus possible to use the respective profiling tools to
+analyze the performance of our <a class="reference external" href="https://www.khronos.org/sycl/">SYCL</a> code.</p>
+<div class="admonition-profiling-the-sycl-heat-equation-mini-app-with-nvidia-nsight-systems exercise important admonition" id="exercise-1">
+<p class="admonition-title">Profiling the SYCL heat equation mini app with <a class="reference external" href="https://docs.nvidia.com/nsight-systems/index.html">NVIDIA Nsight Systems</a></p>
+<p>Before starting, you should open a VNC session to Karolina, following the
+instructions in <a class="reference internal" href="../karolina/#vnc-sessions"><span class="std std-ref">Graphical sessions using VNC</span></a>.
+We will use the code in the <code class="docutils literal notranslate"><span class="pre">content/code/day-2/06_sycl-heat-equation</span></code>
+folder <strong>unmodified</strong>.</p>
+<ol class="arabic">
+<li><p>In your VNC session, open a terminal and obtain an interactive job with:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>qsub<span class="w"> </span>-A<span class="w"> </span>DD-22-28<span class="w"> </span>-q<span class="w"> </span>qnvidia<span class="w"> </span>-l<span class="w"> </span><span class="k">select</span><span class="o">=</span><span class="m">1</span>:ngpus<span class="o">=</span><span class="m">1</span><span class="w"> </span>-I
+</pre></div>
+</div>
+</li>
+<li><p>Load the hipSYCL and CMake modules. Configure and build the code as usual:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>cmake<span class="w"> </span>-S.<span class="w"> </span>-Bbuild<span class="w"> </span>-DHIPSYCL_TARGETS<span class="o">=</span><span class="s2">&quot;cuda:sm_80&quot;</span>
+cmake<span class="w"> </span>--build<span class="w"> </span>build
+</pre></div>
+</div>
+</li>
+<li><p>Run a profiler collection with the command-line tool:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>nsys<span class="w"> </span>profile<span class="w"> </span>./build/heat<span class="w"> </span><span class="m">800</span><span class="w"> </span><span class="m">800</span><span class="w"> </span><span class="m">1000</span>
+</pre></div>
+</div>
+<p>This will produce a file with extension <code class="docutils literal notranslate"><span class="pre">qdrep</span></code> with the profiling data.</p>
+</li>
+<li><p>Open a new terminal tab and load the hipSYCL module. Open the <a class="reference external" href="https://docs.nvidia.com/nsight-systems/index.html">NVIDIA
+Nsight Systems</a> GUI with:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>nsys-ui
+</pre></div>
+</div>
+<p>Load the <code class="docutils literal notranslate"><span class="pre">qdrep</span></code> file into the GUI: File &gt; Open and select the file in
+the navigator menu.
+You will see a timeline similar to the following:</p>
+<figure class="align-center">
+<img alt="../_images/nvidia-profile.png" src="../_images/nvidia-profile.png" />
+</figure>
+</li>
+<li><p>Double-click on the “CUDA (NVIDIA A100-SXM4-40GB)” tab to expand the
+timeline view of what’s happening on the GPU card.
+You will notice that we spend the <em>overwhelming majority</em> of the time in
+host-to-device and device-to-host memory copies. Where is this happening and how
+can we improve the situation?
+Hint: what happens when we call the destructor of buffer objects
+associated with host memory?</p></li>
+</ol>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">evolve</span></code> function is the culprit here. At every timestep we pass the
+<code class="docutils literal notranslate"><span class="pre">curr</span></code> and <code class="docutils literal notranslate"><span class="pre">prev</span></code> data structures in:</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span>
+<span class="n">evolve</span><span class="p">(</span><span class="n">queue</span><span class="w"> </span><span class="o">&amp;</span><span class="n">Q</span><span class="p">,</span><span class="w"> </span><span class="n">field</span><span class="w"> </span><span class="o">*</span><span class="n">curr</span><span class="p">,</span><span class="w"> </span><span class="n">field</span><span class="w"> </span><span class="o">*</span><span class="n">prev</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">dt</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>and then we open a new scope to associate their data with SYCL buffers:</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="w">  </span><span class="p">{</span>
+<span class="w">    </span><span class="n">buffer</span><span class="o">&lt;</span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="o">&gt;</span><span class="w"> </span><span class="n">buf_curr</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">curr</span><span class="o">-&gt;</span><span class="n">data</span><span class="p">.</span><span class="n">data</span><span class="p">(),</span><span class="w"> </span><span class="n">range</span><span class="o">&lt;</span><span class="mi">2</span><span class="o">&gt;</span><span class="p">(</span><span class="n">nx</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="n">ny</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="p">},</span>
+<span class="w">      </span><span class="n">buf_prev</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">prev</span><span class="o">-&gt;</span><span class="n">data</span><span class="p">.</span><span class="n">data</span><span class="p">(),</span><span class="w"> </span><span class="n">range</span><span class="o">&lt;</span><span class="mi">2</span><span class="o">&gt;</span><span class="p">(</span><span class="n">nx</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="n">ny</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="p">};</span>
+
+<span class="w">    </span><span class="n">Q</span><span class="p">.</span><span class="n">submit</span><span class="p">([</span><span class="o">&amp;</span><span class="p">](</span><span class="n">handler</span><span class="w"> </span><span class="o">&amp;</span><span class="n">cgh</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="k">auto</span><span class="w"> </span><span class="n">acc_curr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">accessor</span><span class="p">(</span><span class="n">buf_curr</span><span class="p">,</span><span class="w"> </span><span class="n">cgh</span><span class="p">,</span><span class="w"> </span><span class="n">read_write</span><span class="p">);</span>
+<span class="w">      </span><span class="k">auto</span><span class="w"> </span><span class="n">acc_prev</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">accessor</span><span class="p">(</span><span class="n">buf_prev</span><span class="p">,</span><span class="w"> </span><span class="n">cgh</span><span class="p">,</span><span class="w"> </span><span class="n">read_only</span><span class="p">);</span>
+
+<span class="w">      </span><span class="n">cgh</span><span class="p">.</span><span class="n">parallel_for</span><span class="p">(</span><span class="n">range</span><span class="o">&lt;</span><span class="mi">2</span><span class="o">&gt;</span><span class="p">(</span><span class="n">nx</span><span class="p">,</span><span class="w"> </span><span class="n">ny</span><span class="p">),</span><span class="w"> </span><span class="p">[</span><span class="o">=</span><span class="p">](</span><span class="n">id</span><span class="o">&lt;</span><span class="mi">2</span><span class="o">&gt;</span><span class="w"> </span><span class="n">id</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">auto</span><span class="w"> </span><span class="n">j</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">id</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+<span class="w">        </span><span class="k">auto</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">id</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+
+<span class="w">        </span><span class="n">acc_curr</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">=</span>
+<span class="w">          </span><span class="n">acc_prev</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">+</span>
+<span class="w">          </span><span class="n">a</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">dt</span><span class="w"> </span><span class="o">*</span>
+<span class="w">            </span><span class="p">((</span><span class="n">acc_prev</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="n">i</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">]</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mf">2.0</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">acc_prev</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">acc_prev</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="n">i</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">])</span><span class="w"> </span><span class="o">/</span>
+<span class="w">               </span><span class="n">dx2</span><span class="w"> </span><span class="o">+</span>
+<span class="w">             </span><span class="p">(</span><span class="n">acc_prev</span><span class="p">[</span><span class="n">j</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">][</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mf">2.0</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">acc_prev</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">acc_prev</span><span class="p">[</span><span class="n">j</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">][</span><span class="n">i</span><span class="p">])</span><span class="w"> </span><span class="o">/</span>
+<span class="w">               </span><span class="n">dy2</span><span class="p">);</span>
+<span class="w">      </span><span class="p">});</span>
+</pre></div>
+</div>
+<p>This incurs a host-to-device copy, when declaring the buffers, and a
+device-to-host copy, when the buffers go out of scope. Both copies happen at every timestep and this is wasteful.
+we need two arrays to hold the heat field: one for the values at the previous
+timestep, one for the values at the current timestep. These arrays do not change
+size during execution and thus can be allocated on the device at the start and
+only copied back when needed for I/O purposes.
+A strategy to optimize this code would then be:</p>
+<ol class="arabic simple">
+<li><p>Create buffers to the current and previous heat field data outside the
+time-stepping loop.</p></li>
+<li><p>Modify the <code class="docutils literal notranslate"><span class="pre">evolve</span></code> function to accept <code class="docutils literal notranslate"><span class="pre">buffer</span></code>, instead of <code class="docutils literal notranslate"><span class="pre">field</span></code>
+objects.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">swap_fields</span></code> function would have to be modified as well to accept
+buffers.</p></li>
+</ol>
+<div class="admonition-keypoints keypoints admonition" id="keypoints-0">
+<p class="admonition-title">Keypoints</p>
+<ul class="simple">
+<li><p>The <a class="reference external" href="https://www.khronos.org/sycl/">SYCL</a> <a class="reference external" href="https://www.khronos.org/registry/SYCL/specs/sycl-2020/html/sycl-2020.html#sec:interface.event">event API</a> offers a standardized interface for
+back-of-the-envelope performance estimation.</p></li>
+<li><p>You can still use the performance tools offered by your backend of choice.</p></li>
+</ul>
+</div>
+<p class="rubric">Footnotes</p>
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="id2" role="note">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">*</a><span class="fn-bracket">]</span></span>
+<p>This section of the episode was inspired by the <a class="reference external" href="https://www.codeplay.com/portal/blogs/2019/08/27/optimizing-your-sycl-code-using-profiling.html">CodePlay tutorial</a>
+on profiling using the <a class="reference external" href="https://www.khronos.org/sycl/">SYCL</a> <a class="reference external" href="https://www.khronos.org/registry/SYCL/specs/sycl-2020/html/sycl-2020.html#sec:interface.event">event API</a>.</p>
+</aside>
+</aside>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../sub-groups/" class="btn btn-neutral float-left" title="Using sub-groups in SYCL" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../buffer-accessor-vs-usm/" class="btn btn-neutral float-right" title="Buffer-accessor model vs unified shared memory" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021, Roberto Di Remigio and individual contributors..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

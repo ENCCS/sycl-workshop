@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Data management with unified shared memory &mdash; Heterogeneous programming with SYCL  documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/copybutton.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/togglebutton.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/sphinx_lesson.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/sphinx_rtd_theme_ext_color_contrast.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/tabs.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/overrides.css" type="text/css" />
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
+        <script src="../_static/clipboard.min.js"></script>
+        <script src="../_static/copybutton.js"></script>
+        <script src="../_static/minipres.js"></script>
+        <script src="../_static/tabs.js"></script>
+        <script>let toggleHintShow = 'Click to show';</script>
+        <script>let toggleHintHide = 'Click to hide';</script>
+        <script>let toggleOpenOnPrint = 'true';</script>
+        <script src="../_static/togglebutton.js"></script>
+        <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+        <script data-domain="enccs.github.io/sycl-workshop" defer="defer" src="https://plausible.io/js/script.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex/" />
+    <link rel="search" title="Search" href="../search/" />
+    <link rel="next" title="Expressing parallelism with SYCL: basic data-parallel kernels" href="../expressing-parallelism-basic/" />
+    <link rel="prev" title="Data management with buffers and accessors" href="../buffers-accessors/" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../" class="icon icon-home">
+            Heterogeneous programming with SYCL
+              <img src="../_static/ENCCS.jpg" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search/" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../karolina/">Setting up your system</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">The lesson</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../what-is-sycl/">What is SYCL?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../device-discovery/">Device discovery</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../queues-cgs-kernels/">Queues, command groups, and kernels</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../buffers-accessors/">Data management with buffers and accessors</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Data management with unified shared memory</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#usm-memory-allocation">USM memory allocation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#usm-data-management">USM data management</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#movement">Movement</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../expressing-parallelism-basic/">Expressing parallelism with SYCL: basic data-parallel kernels</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../expressing-parallelism-nd-range/">Expressing parallelism with SYCL: nd-range data-parallel kernels</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../task-graphs-synchronization/">The task graph: data, dependencies, synchronization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../heat-equation/">Heat equation mini-app</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../sub-groups/">Using sub-groups in SYCL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../profiling/">Profiling SYCL applications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../buffer-accessor-vs-usm/">Buffer-accessor model <em>vs</em> unified shared memory</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../quick-reference/">Quick Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../zbibliography/">Bibliography</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guide/">Instructor’s guide</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../">Heterogeneous programming with SYCL</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Data management with unified shared memory</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/ENCCS/sycl-workshop/blob/main/content/unified-shared-memory.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="data-management-with-unified-shared-memory">
+<span id="unified-shared-memory"></span><h1>Data management with unified shared memory<a class="headerlink" href="#data-management-with-unified-shared-memory" title="Permalink to this heading"></a></h1>
+<div class="admonition-questions questions admonition" id="questions-0">
+<p class="admonition-title">Questions</p>
+<ul class="simple">
+<li><p>What facilities does SYCL offer to manage memory spaces in an heterogeneous environment?</p></li>
+</ul>
+</div>
+<div class="admonition-objectives objectives admonition" id="objectives-0">
+<p class="admonition-title">Objectives</p>
+<ul class="simple">
+<li><p>Learn about the unified shared memory (USM) API.</p></li>
+</ul>
+</div>
+<p>In the previous episode we learnt that <a class="reference external" href="https://www.khronos.org/sycl/">SYCL</a> offers three abstractions for
+memory management: the buffer and accessor API and unified shared memory (USM)
+are the most relevant for our purposes. We will discuss the latter in this episode.</p>
+<p>USM is probably the biggest new feature adopted in the SYCL 2020 standard. Why?
+The value of any pointer returned by a USM allocation on the host is
+<em>guaranteed</em> to be a valid pointer value also on the device.
+We have seen that the buffer-accessor API is powerful and also quite intuitive
+in a modern C++ setting. However, most programmers are quite familiar with
+pointer-based memory management, especially if they have been working with
+low-level CUDA/HIP languages. Furthermore, it is difficult to adopt SYCL in an
+existing codebase when it requires radical changes in fundamental
+infrastructure. USM offers a path forward.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>USM will only be available in SYCL for devices that support a <em>unified
+virtual address space</em>. If you want/need to use USM, be sure to write an
+appropriate selector for queue!</p>
+</div>
+<p>Let’s now analyze the allocation and data movement aspects of USM.</p>
+<section id="usm-memory-allocation">
+<h2>USM memory allocation<a class="headerlink" href="#usm-memory-allocation" title="Permalink to this heading"></a></h2>
+<p>There are three types of USM allocations available in the SYCL standard. If you
+have worked previously with CUDA/HIP, this “menu” of allocations should look
+fairly familiar to you:</p>
+<ul class="simple">
+<li><p>Device allocations will return a pointer to memory physically located on the
+device.</p></li>
+<li><p>Host allocations will return a pointer to memory physically located on the
+host. These are accessible both on the host <em>and</em> the device. In the latter
+case, however, memory will not migrate to the device automatically, but rather
+be accessed remotely. This is a crucial aspect to keep in mind for
+performance!</p></li>
+<li><p>Shared allocations will return a pointer to the unified virtual address space.
+Such allocations can be accessed from both host and device, and the memory can
+migrate freely, without programmer intervention, between host and device. This
+comes at the cost of increasing latency.</p></li>
+</ul>
+<p>The following table summarizes the available USM allocations and their properties.</p>
+<table class="docutils align-default" id="id1">
+<caption><span class="caption-text"><strong>Kinds of USM memory allocations and their properties</strong>. SYCL offers an
+        allocator- and <code class="docutils literal notranslate"><span class="pre">malloc</span></code>-style APIs. In the latter, typed (returning
+        <code class="docutils literal notranslate"><span class="pre">T*</span></code>) and untyped (returning <code class="docutils literal notranslate"><span class="pre">void*</span></code>) functions are available,
+        either with the kind explicitly in the name, <em>e.g.</em> <code class="docutils literal notranslate"><span class="pre">malloc_host</span></code>,
+        or accepting it as an extra type parameter.</span><a class="headerlink" href="#id1" title="Permalink to this table"></a></caption>
+<thead>
+<tr class="row-odd"><th class="head"><p>Kind</p></th>
+<th class="head"><p>Host-accessible</p></th>
+<th class="head"><p>Device-accessible</p></th>
+<th class="head"><p>Memory space</p></th>
+<th class="head"><p>Automatic migration</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">device</span></code></p></td>
+<td><p>No</p></td>
+<td><p>Yes</p></td>
+<td><p>Device</p></td>
+<td><p>No</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">host</span></code></p></td>
+<td><p>Yes</p></td>
+<td><p>Yes</p></td>
+<td><p>Host</p></td>
+<td><p>No</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">shared</span></code></p></td>
+<td><p>Yes</p></td>
+<td><p>Yes</p></td>
+<td><p>Shared</p></td>
+<td><p>Yes</p></td>
+</tr>
+</tbody>
+</table>
+<p>To perform USM allocations, we need to inform the runtime about which device
+we’d like to request memory from. The simplest way is to pass a <code class="docutils literal notranslate"><span class="pre">queue</span></code> object
+to the allocation functions. The standard provides three APIs for allocating
+USM:</p>
+<ul>
+<li><p>C-like (untyped)</p>
+<div class="admonition-c-like-malloc signature toggle-shown dropdown admonition" id="signature-0">
+<p class="admonition-title">C-like <code class="docutils literal notranslate"><span class="pre">malloc</span></code></p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span><span class="o">*</span><span class="w"> </span><span class="nf">malloc_device</span><span class="p">(</span><span class="kt">size_t</span><span class="w"> </span><span class="n">numBytes</span><span class="p">,</span>
+<span class="w">                    </span><span class="k">const</span><span class="w"> </span><span class="n">queue</span><span class="o">&amp;</span><span class="w"> </span><span class="n">syclQueue</span><span class="p">,</span>
+<span class="w">                    </span><span class="k">const</span><span class="w"> </span><span class="n">property_list</span><span class="o">&amp;</span><span class="w"> </span><span class="n">prop_list</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{});</span>
+
+<span class="kt">void</span><span class="o">*</span><span class="w"> </span><span class="nf">malloc_host</span><span class="p">(</span><span class="kt">size_t</span><span class="w"> </span><span class="n">numBytes</span><span class="p">,</span>
+<span class="w">                  </span><span class="k">const</span><span class="w"> </span><span class="n">queue</span><span class="o">&amp;</span><span class="w"> </span><span class="n">syclQueue</span><span class="p">,</span>
+<span class="w">                  </span><span class="k">const</span><span class="w"> </span><span class="n">property_list</span><span class="o">&amp;</span><span class="w"> </span><span class="n">prop_list</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{});</span>
+
+<span class="kt">void</span><span class="o">*</span><span class="w"> </span><span class="nf">malloc_shared</span><span class="p">(</span><span class="kt">size_t</span><span class="w"> </span><span class="n">numBytes</span><span class="p">,</span>
+<span class="w">                    </span><span class="k">const</span><span class="w"> </span><span class="n">queue</span><span class="o">&amp;</span><span class="w"> </span><span class="n">syclQueue</span><span class="p">,</span>
+<span class="w">                    </span><span class="k">const</span><span class="w"> </span><span class="n">property_list</span><span class="o">&amp;</span><span class="w"> </span><span class="n">prop_list</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{});</span>
+</pre></div>
+</div>
+</div>
+</li>
+<li><p>C++-like (typed)</p>
+<div class="admonition-c-like-malloc signature toggle-shown dropdown admonition" id="signature-1">
+<p class="admonition-title">C++-like <code class="docutils literal notranslate"><span class="pre">malloc</span></code></p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">T</span><span class="o">&gt;</span>
+<span class="n">T</span><span class="o">*</span><span class="w"> </span><span class="n">malloc_device</span><span class="p">(</span><span class="kt">size_t</span><span class="w"> </span><span class="n">count</span><span class="p">,</span>
+<span class="w">                 </span><span class="k">const</span><span class="w"> </span><span class="n">queue</span><span class="o">&amp;</span><span class="w"> </span><span class="n">syclQueue</span><span class="p">,</span>
+<span class="w">                 </span><span class="k">const</span><span class="w"> </span><span class="n">property_list</span><span class="o">&amp;</span><span class="w"> </span><span class="n">prop_list</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{});</span>
+
+<span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">T</span><span class="o">&gt;</span>
+<span class="n">T</span><span class="o">*</span><span class="w"> </span><span class="n">malloc_host</span><span class="p">(</span><span class="kt">size_t</span><span class="w"> </span><span class="n">count</span><span class="p">,</span>
+<span class="w">               </span><span class="k">const</span><span class="w"> </span><span class="n">queue</span><span class="o">&amp;</span><span class="w"> </span><span class="n">syclQueue</span><span class="p">,</span>
+<span class="w">               </span><span class="k">const</span><span class="w"> </span><span class="n">property_list</span><span class="o">&amp;</span><span class="w"> </span><span class="n">prop_list</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{});</span>
+
+<span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">T</span><span class="o">&gt;</span>
+<span class="n">T</span><span class="o">*</span><span class="w"> </span><span class="n">malloc_shared</span><span class="p">(</span><span class="kt">size_t</span><span class="w"> </span><span class="n">count</span><span class="p">,</span>
+<span class="w">                 </span><span class="k">const</span><span class="w"> </span><span class="n">queue</span><span class="o">&amp;</span><span class="w"> </span><span class="n">syclQueue</span><span class="p">,</span>
+<span class="w">                 </span><span class="k">const</span><span class="w"> </span><span class="n">property_list</span><span class="o">&amp;</span><span class="w"> </span><span class="n">prop_list</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{});</span>
+</pre></div>
+</div>
+</div>
+</li>
+<li><p>C++ allocator object <code class="docutils literal notranslate"><span class="pre">usm_allocator</span></code>.</p></li>
+</ul>
+<p>As usual, you need to free any memory you claim dynamically from the runtime.
+The <code class="docutils literal notranslate"><span class="pre">free</span></code> function also needs information about the location of the memory,
+which can be conveniently conveyed by a <code class="docutils literal notranslate"><span class="pre">queue</span></code> object:</p>
+<div class="admonition-free signature toggle-shown dropdown admonition" id="signature-2">
+<p class="admonition-title"><code class="docutils literal notranslate"><span class="pre">free</span></code></p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span><span class="w"> </span><span class="nf">free</span><span class="p">(</span><span class="kt">void</span><span class="o">*</span><span class="w"> </span><span class="n">ptr</span><span class="p">,</span>
+<span class="w">          </span><span class="n">queue</span><span class="o">&amp;</span><span class="w"> </span><span class="n">syclQueue</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="usm-data-management">
+<h2>USM data management<a class="headerlink" href="#usm-data-management" title="Permalink to this heading"></a></h2>
+<p>We have claimed memory from the system, now what to do with it? Usually, we
+first initialize with some more-or-less useful values and then use it in our
+data-parallel kernels.</p>
+<p>Initialization of the allocated memory to a byte or to an arbitrary
+pattern can be achieved using the  <code class="docutils literal notranslate"><span class="pre">memset</span></code> and <code class="docutils literal notranslate"><span class="pre">fill</span></code> functions,
+respectively, provided by the SYCL standard.</p>
+<div class="admonition-using-fill demo admonition" id="demo-0">
+<p class="admonition-title">Using <code class="docutils literal notranslate"><span class="pre">fill</span></code></p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">Q</span><span class="w"> </span><span class="n">queue</span><span class="p">;</span>
+<span class="k">auto</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">malloc_device</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">256</span><span class="p">,</span><span class="w"> </span><span class="n">Q</span><span class="p">);</span>
+<span class="n">fill</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="mf">42.0</span><span class="p">,</span><span class="w"> </span><span class="mi">256</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<p>For more complex initialization, a data-parallel loop is the way to go and it
+requires us to learn about USM and data movement.</p>
+<section id="movement">
+<h3>Movement<a class="headerlink" href="#movement" title="Permalink to this heading"></a></h3>
+<p>Data movement is a big part of achieving performanance in a heterogeneous
+programming environment: data needs to be available at the right time <em>and</em> at
+the right place for parallel kernels to perform optimally.
+This is probably old news already, if you come from a CUDA/HIP approach.</p>
+<p>USM supports both <em>explicit</em> and <em>implicit</em> data movement strategies.</p>
+<dl>
+<dt>Explicit</dt><dd><p>We have to call <code class="docutils literal notranslate"><span class="pre">memcpy</span></code> (untyped C-like API) and <code class="docutils literal notranslate"><span class="pre">copy</span></code> (typed C++-like
+API) explicitly whenever data needs to migrate between different backends.
+These methods are available both on the <code class="docutils literal notranslate"><span class="pre">queue</span></code> and <code class="docutils literal notranslate"><span class="pre">handler</span></code> classes.
+<strong>Remember</strong> methods of the <code class="docutils literal notranslate"><span class="pre">queue</span></code> and <code class="docutils literal notranslate"><span class="pre">handler</span></code> class are
+<strong>asynchronous</strong>! Copies are not an exception!
+Explicit data movement is only strictly necessary for host-to-device and
+device-to-host data migrations. Indeed, device allocations cannot be directly
+accessed from the host.</p>
+<div class="admonition-explicit-data-migration demo admonition" id="demo-1">
+<p class="admonition-title">Explicit data migration</p>
+<p>This looks quite like CUDA/HIP!
+But why would want to use this? Isn’t the whole point of SYCL to <strong>not
+think</strong> about data movements?  While ease of programming is definitely
+important, we also want a framework that empowers us to take full control
+whenever we deem it necessary.</p>
+<div class="sphinx-tabs docutils container">
+<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-0-0-0" aria-selected="true" class="sphinx-tabs-tab" id="tab-0-0-0" name="0-0" role="tab" tabindex="0">SYCL</button><button aria-controls="panel-0-0-1" aria-selected="false" class="sphinx-tabs-tab" id="tab-0-0-1" name="0-1" role="tab" tabindex="-1">CUDA</button></div><div aria-labelledby="tab-0-0-0" class="sphinx-tabs-panel" id="panel-0-0-0" name="0-0" role="tabpanel" tabindex="0"><div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">N</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">256</span><span class="p">;</span>
+<span class="n">queue</span><span class="w"> </span><span class="n">Q</span><span class="p">;</span>
+
+<span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="w"> </span><span class="n">x_h</span><span class="p">(</span><span class="n">N</span><span class="p">);</span>
+<span class="n">std</span><span class="o">::</span><span class="n">iota</span><span class="p">(</span><span class="n">x_h</span><span class="p">.</span><span class="n">begin</span><span class="p">(),</span><span class="w"> </span><span class="n">x_h</span><span class="p">.</span><span class="n">end</span><span class="p">(),</span><span class="w"> </span><span class="mf">0.0</span><span class="p">);</span>
+
+<span class="k">auto</span><span class="w"> </span><span class="n">x_d</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">malloc_device</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="n">N</span><span class="p">,</span><span class="w"> </span><span class="n">Q</span><span class="p">);</span>
+
+<span class="c1">// in a handler</span>
+<span class="n">Q</span><span class="p">.</span><span class="n">submit</span><span class="p">([</span><span class="o">&amp;</span><span class="p">](</span><span class="n">handler</span><span class="o">&amp;</span><span class="w"> </span><span class="n">cgh</span><span class="p">){</span>
+<span class="w">  </span><span class="c1">// untyped API</span>
+<span class="w">  </span><span class="n">cgh</span><span class="p">.</span><span class="n">memcpy</span><span class="p">(</span><span class="n">x_d</span><span class="p">,</span><span class="w"> </span><span class="n">x_h</span><span class="p">.</span><span class="n">data</span><span class="p">(),</span><span class="w"> </span><span class="n">N</span><span class="o">*</span><span class="k">sizeof</span><span class="p">(</span><span class="kt">double</span><span class="p">));</span>
+<span class="w">  </span><span class="c1">// or typed API</span>
+<span class="w">  </span><span class="c1">//cgh.copy(x_d, x_h.data(), N);</span>
+<span class="p">});</span>
+
+<span class="c1">// or on the queue directly</span>
+<span class="c1">// with typed API</span>
+<span class="c1">//Q.copy(x_d, x_h.data(), N);</span>
+<span class="c1">//or untype API</span>
+<span class="c1">//Q.memcpy(x_d, x_h.data(), N*sizeof(double));</span>
+
+<span class="c1">// copies are ASYNCHRONOUS!!</span>
+<span class="n">Q</span><span class="p">.</span><span class="n">wait</span><span class="p">();</span>
+</pre></div>
+</div>
+</div><div aria-labelledby="tab-0-0-1" class="sphinx-tabs-panel" hidden="true" id="panel-0-0-1" name="0-1" role="tabpanel" tabindex="0"><div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">N</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">256</span><span class="p">;</span>
+
+<span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="w"> </span><span class="n">x_h</span><span class="p">(</span><span class="n">N</span><span class="p">);</span>
+<span class="n">std</span><span class="o">::</span><span class="n">iota</span><span class="p">(</span><span class="n">x_h</span><span class="p">.</span><span class="n">begin</span><span class="p">(),</span><span class="w"> </span><span class="n">x_h</span><span class="p">.</span><span class="n">end</span><span class="p">(),</span><span class="w"> </span><span class="mf">0.0</span><span class="p">);</span>
+
+<span class="kt">double</span><span class="o">*</span><span class="w"> </span><span class="n">x_d</span><span class="p">;</span>
+<span class="n">cudaMalloc</span><span class="p">((</span><span class="kt">void</span><span class="o">**</span><span class="p">)</span><span class="o">&amp;</span><span class="n">x_d</span><span class="p">,</span><span class="w"> </span><span class="n">N</span><span class="o">*</span><span class="k">sizeof</span><span class="p">(</span><span class="kt">double</span><span class="p">));</span>
+
+<span class="n">cudaMemcpy</span><span class="p">(</span><span class="n">x_d</span><span class="p">,</span><span class="w"> </span><span class="n">x_h</span><span class="p">.</span><span class="n">data</span><span class="p">(),</span><span class="w"> </span><span class="n">N</span><span class="o">*</span><span class="k">sizeof</span><span class="p">(</span><span class="kt">double</span><span class="p">),</span><span class="w"> </span><span class="n">cudaMemcpyHostToDevice</span><span class="p">);</span>
+</pre></div>
+</div>
+</div></div>
+</div>
+</dd>
+<dt>Implicit</dt><dd><p>This movement strategy requires no programmer intervention and is relevant for
+host and shared allocations. When the former are accessed on a device, the
+runtime will transfer the memory through the appropriate hardware interface.
+Host memory allocations do not migrate to the device, so they incur latency
+and repeated accesses are discouraged.
+Shared memory is essentially defined by its ability to migrate between host
+and device. This happens simply by accessing the same memory location from
+different locations.</p>
+<div class="admonition-host-and-shared-allocations-benefit-from-implicit-data-movement demo admonition" id="demo-2">
+<p class="admonition-title">Host and shared allocations benefit from implicit data movement</p>
+<p>In this sample code, we access both the <code class="docutils literal notranslate"><span class="pre">x_h</span></code> and <code class="docutils literal notranslate"><span class="pre">x_s</span></code> arrays within kernel code.
+The former will be transferred from host memory over the appropriate
+interface, <em>e.g.</em> PCIe. The latter will be migrated to the device memory.</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">N</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">256</span><span class="p">;</span>
+<span class="n">queue</span><span class="w"> </span><span class="n">Q</span><span class="p">;</span>
+
+<span class="k">auto</span><span class="w"> </span><span class="n">x_h</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">malloc_host</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="n">N</span><span class="p">,</span><span class="w"> </span><span class="n">Q</span><span class="p">);</span>
+<span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="k">auto</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">N</span><span class="p">;</span><span class="w"> </span><span class="o">++</span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="n">x_h</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="n">i</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="k">auto</span><span class="w"> </span><span class="n">x_s</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">malloc_shared</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="n">N</span><span class="p">,</span><span class="w"> </span><span class="n">Q</span><span class="p">);</span>
+
+<span class="c1">// in a handler</span>
+<span class="n">Q</span><span class="p">.</span><span class="n">submit</span><span class="p">([</span><span class="o">&amp;</span><span class="p">](</span><span class="n">handler</span><span class="o">&amp;</span><span class="w"> </span><span class="n">cgh</span><span class="p">){</span>
+<span class="w">  </span><span class="n">cgh</span><span class="p">.</span><span class="n">parallel_for</span><span class="p">(</span><span class="n">range</span><span class="p">{</span><span class="n">N</span><span class="p">},</span><span class="w"> </span><span class="p">[</span><span class="o">=</span><span class="p">](</span><span class="n">id</span><span class="o">&lt;</span><span class="mi">1</span><span class="o">&gt;</span><span class="w"> </span><span class="n">tid</span><span class="p">){</span>
+<span class="w">    </span><span class="c1">// get index out of id object</span>
+<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">tid</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
+<span class="w">    </span><span class="n">x_s</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">x_h</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mf">1.0</span><span class="p">;</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">});</span>
+
+<span class="c1">// or on the queue directly</span>
+<span class="c1">//Q.parallel_for(range{N}, [=](id&lt;1&gt; tid){</span>
+<span class="c1">//  // get index out of id object</span>
+<span class="c1">//  auto i = tid[0];</span>
+<span class="c1">//  x_s[i] = x_h[i] + 1.0;</span>
+<span class="c1">//}</span>
+
+<span class="n">Q</span><span class="p">.</span><span class="n">wait</span><span class="p">();</span>
+</pre></div>
+</div>
+</div>
+</dd>
+</dl>
+<div class="admonition-axpy-with-sycl-and-usm exercise important admonition" id="exercise-0">
+<p class="admonition-title">AXPY with SYCL and USM</p>
+<p>We will now write an AXPY implementation in SYCL, using unified shared
+memory. This will be a generic implementation: it will work with any
+arithmetic type, thanks to C++ templates.</p>
+<p><strong>Don’t do this at home, use optimized BLAS!</strong></p>
+<div class="sphinx-tabs docutils container">
+<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-1-1-0" aria-selected="true" class="sphinx-tabs-tab" id="tab-1-1-0" name="1-0" role="tab" tabindex="0">Using the <code class="docutils literal notranslate"><span class="pre">malloc</span></code> and “raw” arrays</button><button aria-controls="panel-1-1-1" aria-selected="false" class="sphinx-tabs-tab" id="tab-1-1-1" name="1-1" role="tab" tabindex="-1">Bonus: using <code class="docutils literal notranslate"><span class="pre">usm_allocator</span></code> with <code class="docutils literal notranslate"><span class="pre">std::vector</span></code></button></div><div aria-labelledby="tab-1-1-0" class="sphinx-tabs-panel" id="panel-1-1-0" name="1-0" role="tabpanel" tabindex="0"><p>You can find a scaffold for the code in the
+<code class="docutils literal notranslate"><span class="pre">content/code/day-1/06_axpy-usm/axpy.cpp</span></code> file, alongside the CMake script
+to build the executable. You will have to complete the source code to compile
+and run correctly: follow the hints in the source file.</p>
+<p>The code fills two raw arrays and passes them to the <code class="docutils literal notranslate"><span class="pre">axpy</span></code>
+function, which accepts a <code class="docutils literal notranslate"><span class="pre">queue</span></code> object as first parameter.
+You have to allocate the <code class="docutils literal notranslate"><span class="pre">x</span></code> and <code class="docutils literal notranslate"><span class="pre">y</span></code> operands and complete the
+<code class="docutils literal notranslate"><span class="pre">axpy</span></code> function:</p>
+<ol class="arabic simple">
+<li><p>Define and allocate raw arrays for the operands.
+Should these allocations be of host, device or shared type?</p></li>
+<li><p>Fill the operands such that their sum is equal to <code class="docutils literal notranslate"><span class="pre">sz</span> <span class="pre">-</span> <span class="pre">1</span></code>.</p></li>
+<li><p>Complete the <code class="docutils literal notranslate"><span class="pre">axpy</span></code> function.</p></li>
+</ol>
+<p>A working solution is in the <code class="docutils literal notranslate"><span class="pre">solution</span></code> subfolder.</p>
+</div><div aria-labelledby="tab-1-1-1" class="sphinx-tabs-panel" hidden="true" id="panel-1-1-1" name="1-1" role="tabpanel" tabindex="0"><p>In this bonus exercise, we’ll implement AXPY to use USM and
+<code class="docutils literal notranslate"><span class="pre">std::vector</span></code>.
+Containers in the C++ <a class="reference internal" href="../quick-reference/#term-STL"><span class="xref std std-term">STL</span></a> can be constructed to use custom
+allocators. For example:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="w"> </span><span class="nf">x</span><span class="p">(</span><span class="n">count</span><span class="p">,</span><span class="w"> </span><span class="n">value</span><span class="p">,</span><span class="w"> </span><span class="n">alloc</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>will create a vector with <code class="docutils literal notranslate"><span class="pre">count</span></code> elements initialized to <code class="docutils literal notranslate"><span class="pre">value</span></code>,
+with memory managed by the <code class="docutils literal notranslate"><span class="pre">alloc</span></code> object.
+The SYCL standard already defines the <code class="docutils literal notranslate"><span class="pre">usm_allocator</span></code> class, which
+conforms to the C++ allocator interface.  Refer to the <a class="reference external" href="https://www.khronos.org/registry/SYCL/specs/sycl-2020/html/sycl-2020.html#_c_allocator_interface">page in the
+standard</a>
+for details.</p>
+<p>You can find a scaffold for the code in the
+<code class="docutils literal notranslate"><span class="pre">content/code/day-1/07_axpy-usm_allocator/axpy.cpp</span></code> file, alongside
+the CMake script to build the executable. You will have to complete the
+source code to compile and run correctly: follow the hints in the
+source file.</p>
+<ol class="arabic simple">
+<li><p>Create <code class="docutils literal notranslate"><span class="pre">std::vector</span></code> objects for the operands and fill them such
+that their sum is equal to <code class="docutils literal notranslate"><span class="pre">sz</span> <span class="pre">-</span> <span class="pre">1</span></code>.
+Should these allocations be of host or shared type?</p></li>
+<li><p>Complete the <code class="docutils literal notranslate"><span class="pre">axpy</span></code> function. Why do we take the address of the
+output vector before submitting the kernel?</p></li>
+</ol>
+<p>A working solution is in the <code class="docutils literal notranslate"><span class="pre">solution</span></code> subfolder.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The fact that we use a device-aware allocator for <code class="docutils literal notranslate"><span class="pre">std::vector</span></code>
+does not mean that STL objects will <em>magically</em> work within the
+SYCL runtime. Indeed, doing so is absolutely not legal code: it
+might compile and even work in some cases, but is to be considered
+a bug.
+You can read up a complete explanation <a class="reference external" href="https://github.com/illuhad/hipSYCL/issues/817#issuecomment-1231922115">here</a>.</p>
+</div>
+</div></div>
+</div>
+<div class="admonition-keypoints keypoints admonition" id="keypoints-0">
+<p class="admonition-title">Keypoints</p>
+<ul class="simple">
+<li><p>Unified shared memory (USM) provides a pointer-based API for SYCL. It looks
+and feels familiar if coming from CUDA/HIP.</p></li>
+<li><p>It is useful when porting existing code to SYCL, as it might require less
+pervasive changes to the codebase.</p></li>
+<li><p>The SYCL standard offers APIs for host, device, and shared allocations.</p></li>
+<li><p>USM supports both explicit and implicit data movement. The former is only
+relevant for device allocations.</p></li>
+<li><p>Implicit data movement simplifies programmers’ life considerably, but we
+might incur hard-to-control performance penalties.</p></li>
+</ul>
+</div>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../buffers-accessors/" class="btn btn-neutral float-left" title="Data management with buffers and accessors" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../expressing-parallelism-basic/" class="btn btn-neutral float-right" title="Expressing parallelism with SYCL: basic data-parallel kernels" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021, Roberto Di Remigio and individual contributors..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

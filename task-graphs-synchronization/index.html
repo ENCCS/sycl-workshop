@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The task graph: data, dependencies, synchronization &mdash; Heterogeneous programming with SYCL  documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/copybutton.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/togglebutton.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/sphinx_lesson.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/sphinx_rtd_theme_ext_color_contrast.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/tabs.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/overrides.css" type="text/css" />
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
+        <script src="../_static/clipboard.min.js"></script>
+        <script src="../_static/copybutton.js"></script>
+        <script src="../_static/minipres.js"></script>
+        <script src="../_static/tabs.js"></script>
+        <script>let toggleHintShow = 'Click to show';</script>
+        <script>let toggleHintHide = 'Click to hide';</script>
+        <script>let toggleOpenOnPrint = 'true';</script>
+        <script src="../_static/togglebutton.js"></script>
+        <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+        <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+        <script data-domain="enccs.github.io/sycl-workshop" defer="defer" src="https://plausible.io/js/script.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex/" />
+    <link rel="search" title="Search" href="../search/" />
+    <link rel="next" title="Heat equation mini-app" href="../heat-equation/" />
+    <link rel="prev" title="Expressing parallelism with SYCL: nd-range data-parallel kernels" href="../expressing-parallelism-nd-range/" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../" class="icon icon-home">
+            Heterogeneous programming with SYCL
+              <img src="../_static/ENCCS.jpg" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search/" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../karolina/">Setting up your system</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">The lesson</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../what-is-sycl/">What is SYCL?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../device-discovery/">Device discovery</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../queues-cgs-kernels/">Queues, command groups, and kernels</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../buffers-accessors/">Data management with buffers and accessors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../unified-shared-memory/">Data management with unified shared memory</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../expressing-parallelism-basic/">Expressing parallelism with SYCL: basic data-parallel kernels</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../expressing-parallelism-nd-range/">Expressing parallelism with SYCL: nd-range data-parallel kernels</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">The task graph: data, dependencies, synchronization</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#in-order-and-out-of-order-queues">In-order and out-of-order queues</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#how-to-specify-dependencies">How to specify dependencies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#synchronization-with-the-host">Synchronization with the host</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#kernel-level-communication">Kernel-level communication</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#work-group-local-memory">Work-group local memory</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../heat-equation/">Heat equation mini-app</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../sub-groups/">Using sub-groups in SYCL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../profiling/">Profiling SYCL applications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../buffer-accessor-vs-usm/">Buffer-accessor model <em>vs</em> unified shared memory</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../quick-reference/">Quick Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../zbibliography/">Bibliography</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guide/">Instructor’s guide</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../">Heterogeneous programming with SYCL</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">The task graph: data, dependencies, synchronization</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/ENCCS/sycl-workshop/blob/main/content/task-graphs-synchronization.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="the-task-graph-data-dependencies-synchronization">
+<span id="task-graphs-synchronization"></span><h1>The task graph: data, dependencies, synchronization<a class="headerlink" href="#the-task-graph-data-dependencies-synchronization" title="Permalink to this heading"></a></h1>
+<div class="admonition-questions questions admonition" id="questions-0">
+<p class="admonition-title">Questions</p>
+<ul class="simple">
+<li><p>How can you express dependencies between <a class="reference external" href="https://www.khronos.org/sycl/">SYCL</a> parallel kernels?</p></li>
+</ul>
+</div>
+<div class="admonition-objectives objectives admonition" id="objectives-0">
+<p class="admonition-title">Objectives</p>
+<ul class="simple">
+<li><p>Learn how the runtime can handle data movements for us.</p></li>
+<li><p>Learn how to work with events to fine-tune dependencies in the task graph.</p></li>
+<li><p>Learn about work-group- and work-item-level synchronization.</p></li>
+</ul>
+</div>
+<p>It should be clear by now that the essential role of the runtime in SYCL
+applications is to schedule work submitted to the queues in our program as
+actions and execute all enqueued work in an asynchronous fashion.
+How is this achieved? In episode <a class="reference internal" href="../queues-cgs-kernels/#queues-cgs-kernels"><span class="std std-ref">Queues, command groups, and kernels</span></a>, we briefly mentioned
+the <strong>task graph</strong> is the underlying abstraction for this purpose in the SYCL
+execution model.
+A task graph is composed of <em>nodes</em> and <em>edges</em>, it has a start-to-finish
+direction, and no self-loops: it is a <em>directed acyclic graph (DAG)</em>. Each node
+is an action to be performed on a device, such as a <code class="docutils literal notranslate"><span class="pre">parallel_for</span></code>. Each edge
+connecting two nodes is a dependency between the two, such as the data for task
+B produced by task A.</p>
+<p>It is not usually necessary to <em>directly</em> define the task graph for your
+application.</p>
+<ul class="simple">
+<li><p>If you use buffers and accessors, the runtime can correctly generate the task
+graph based on their use in kernel code.</p></li>
+<li><p>Similarly when you use USM with implicit data movement.</p></li>
+<li><p>For USM with explicit data movements, you are taking up scheduling power. <a class="footnote-reference brackets" href="#id6" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>*<span class="fn-bracket">]</span></a></p></li>
+</ul>
+<p>However, interacting with the task graph might be necessary to get performance.
+In this episode, we will explain how to do so.</p>
+<section id="in-order-and-out-of-order-queues">
+<h2>In-order and out-of-order queues<a class="headerlink" href="#in-order-and-out-of-order-queues" title="Permalink to this heading"></a></h2>
+<p>The following figure shows some plausible task graphs in an application, <em>i.e.</em>
+chains of dependencies between tasks.</p>
+<figure class="align-center" id="id9">
+<img alt="../_images/graphs.svg" src="../_images/graphs.svg" /><figcaption>
+<p><span class="caption-text">Examples of a linear chain (left) and Y-pattern (right) of dependencies.
+The Y-pattern might occur, for example, in the AXPY routine: tasks A and B
+fill the operand vectors, thus are able to run independently, and task C
+performs the summation. Task D might be a subsequent reduction.
+We can always “linearize” a Y-pattern, for example, by using a in-order
+queue. Figure adapted from <span id="id2">[<a class="reference internal" href="../zbibliography/#id2" title="James Reinders, Ben Ashbaugh, James Brodman, Michael Kinsner, John Pennycook, and Xinmin Tian. Data Parallel C++: Mastering DPC++ for Programming of Heterogeneous Systems using C++ and SYCL. Apress, Berkeley, CA, 2021. ISBN 9781484255735. URL: https://link.springer.com/book/10.1007%2F978-1-4842-5574-2, doi:10.1007/978-1-4842-5574-2.">RAB+21</a>]</span>.</span><a class="headerlink" href="#id9" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<p>The first interaction with the task graph happens already at queue construction.
+The SYCL standard defines two queue flavors: <strong>in-order</strong> and <strong>out-of-order</strong>.</p>
+<dl>
+<dt>Out-of-order queues</dt><dd><p>This is the default for <code class="docutils literal notranslate"><span class="pre">queue</span></code> objects and leaves all decisions on task
+ordering to the runtime, unless we intervene. The runtime will decide ordering
+based on the data dependencies declared in our code. This can be influenced
+with various mechanisms which we will discuss shortly.</p>
+</dd>
+<dt>In-order queues</dt><dd><p>Each action is assumed to be dependent on the action immediately preceding it
+in the queue.  In-order queues are quite simple to reason about, but they will
+constrain the runtime too much.  Tasks will be serialized in a linear chain,
+even though they do not read/write to the same data. For this reason, in-order
+semantics is not the default, but must be set explicitly at construction:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">queue</span><span class="w"> </span><span class="n">ioQ</span><span class="p">{</span><span class="n">property</span><span class="o">::</span><span class="n">queue</span><span class="o">::</span><span class="n">in_order</span><span class="p">()};</span>
+</pre></div>
+</div>
+</dd>
+</dl>
+</section>
+<section id="how-to-specify-dependencies">
+<h2>How to specify dependencies<a class="headerlink" href="#how-to-specify-dependencies" title="Permalink to this heading"></a></h2>
+<p>A <em>command group handler</em> can contain three things only: host code, <strong>exactly
+one</strong> action, and specifications of action dependencies.
+There are three available methods to express the latter:</p>
+<ol class="arabic simple">
+<li><p>When using <strong>in-order</strong> queues, each action is implicitly dependent on the
+action immediately preceding it. Successive tasks must complete strictly in
+the order in which they were submitted to the queue. This is the simplest way
+to express a <em>linear</em> chain on dependencies.
+In-order queues can be excessively constraining. For example, independent
+computations cannot be overlapped.</p></li>
+<li><p>Through accessors on buffers. In episode <a class="reference internal" href="../buffers-accessors/#buffers-accessors"><span class="std std-ref">Data management with buffers and accessors</span></a>, we saw
+that accessors are constructed with a mode and a target. This metadata is
+enough for the runtime to infer dependencies between different kernels
+accessing the same buffers.</p></li>
+<li><p>The event-based approach is the most flexible. Methods on the <code class="docutils literal notranslate"><span class="pre">handler</span></code>
+class or on the <code class="docutils literal notranslate"><span class="pre">queue</span></code> class are asynchronous and return immediately
+objects of the <code class="docutils literal notranslate"><span class="pre">event</span></code> class. We can pass an event (or a vector of events)
+to the <code class="docutils literal notranslate"><span class="pre">depends_on</span></code> method on the <code class="docutils literal notranslate"><span class="pre">handler</span></code> class or to <code class="docutils literal notranslate"><span class="pre">parallel_for</span></code>
+invocations on the <code class="docutils literal notranslate"><span class="pre">queue</span></code> class.</p></li>
+</ol>
+<div class="admonition-expressing-the-y-pattern demo admonition" id="demo-0">
+<p class="admonition-title">Expressing the Y-pattern</p>
+<div class="sphinx-tabs docutils container">
+<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-0-0-0" aria-selected="true" class="sphinx-tabs-tab" id="tab-0-0-0" name="0-0" role="tab" tabindex="0">Using events</button><button aria-controls="panel-0-0-1" aria-selected="false" class="sphinx-tabs-tab" id="tab-0-0-1" name="0-1" role="tab" tabindex="-1">Using accessors</button><button aria-controls="panel-0-0-2" aria-selected="false" class="sphinx-tabs-tab" id="tab-0-0-2" name="0-2" role="tab" tabindex="-1">Using an in-order queue</button></div><div aria-labelledby="tab-0-0-0" class="sphinx-tabs-panel" id="panel-0-0-0" name="0-0" role="tabpanel" tabindex="0"><p>Methods on <code class="docutils literal notranslate"><span class="pre">queue</span></code> or <code class="docutils literal notranslate"><span class="pre">handler</span></code> objects are asynchronous but return
+<code class="docutils literal notranslate"><span class="pre">event</span></code> objects immediately.  With events, we have granular control
+over dependencies, since they can be passed as arguments to
+<code class="docutils literal notranslate"><span class="pre">parallel_for</span></code> and <code class="docutils literal notranslate"><span class="pre">single_task</span></code> invocations and also to the
+<code class="docutils literal notranslate"><span class="pre">depends_on</span></code> method of the <code class="docutils literal notranslate"><span class="pre">handler</span></code> class.</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="w">  </span><span class="k">auto</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">malloc_shared</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="n">N</span><span class="p">,</span><span class="w"> </span><span class="n">Q</span><span class="p">);</span>
+<span class="w">  </span><span class="k">auto</span><span class="w"> </span><span class="n">b</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">malloc_shared</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="n">N</span><span class="p">,</span><span class="w"> </span><span class="n">Q</span><span class="p">);</span>
+
+<span class="w">  </span><span class="c1">// task A</span>
+<span class="w">  </span><span class="k">auto</span><span class="w"> </span><span class="n">e1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Q</span><span class="p">.</span><span class="n">parallel_for</span><span class="p">(</span><span class="n">range</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">N</span><span class="w"> </span><span class="p">},</span><span class="w"> </span><span class="p">[</span><span class="o">=</span><span class="p">](</span><span class="n">id</span><span class="o">&lt;</span><span class="mi">1</span><span class="o">&gt;</span><span class="w"> </span><span class="n">id</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">a</span><span class="p">[</span><span class="n">id</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+<span class="w">  </span><span class="p">});</span>
+
+<span class="w">  </span><span class="c1">// task B</span>
+<span class="w">  </span><span class="k">auto</span><span class="w"> </span><span class="n">e2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Q</span><span class="p">.</span><span class="n">parallel_for</span><span class="p">(</span><span class="n">range</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">N</span><span class="w"> </span><span class="p">},</span><span class="w"> </span><span class="p">[</span><span class="o">=</span><span class="p">](</span><span class="n">id</span><span class="o">&lt;</span><span class="mi">1</span><span class="o">&gt;</span><span class="w"> </span><span class="n">id</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">b</span><span class="p">[</span><span class="n">id</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">2</span><span class="p">;</span>
+<span class="w">  </span><span class="p">});</span>
+
+<span class="w">  </span><span class="c1">// task C</span>
+<span class="w">  </span><span class="k">auto</span><span class="w"> </span><span class="n">e3</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Q</span><span class="p">.</span><span class="n">parallel_for</span><span class="p">(</span><span class="n">range</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">N</span><span class="w"> </span><span class="p">},</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">e1</span><span class="p">,</span><span class="w"> </span><span class="n">e2</span><span class="w"> </span><span class="p">},</span><span class="w"> </span><span class="p">[</span><span class="o">=</span><span class="p">](</span><span class="n">id</span><span class="o">&lt;</span><span class="mi">1</span><span class="o">&gt;</span><span class="w"> </span><span class="n">id</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">a</span><span class="p">[</span><span class="n">id</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="n">b</span><span class="p">[</span><span class="n">id</span><span class="p">[</span><span class="mi">0</span><span class="p">]];</span>
+<span class="w">  </span><span class="p">});</span>
+
+<span class="w">  </span><span class="c1">// task D</span>
+<span class="w">  </span><span class="n">Q</span><span class="p">.</span><span class="n">single_task</span><span class="p">(</span><span class="n">e3</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="o">=</span><span class="p">]()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">N</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span>
+<span class="w">      </span><span class="n">data1</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="n">data1</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+
+<span class="w">    </span><span class="n">data1</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="w"> </span><span class="o">/=</span><span class="w"> </span><span class="mi">3</span><span class="p">;</span>
+<span class="w">  </span><span class="p">});</span>
+</pre></div>
+</div>
+</div><div aria-labelledby="tab-0-0-1" class="sphinx-tabs-panel" hidden="true" id="panel-0-0-1" name="0-1" role="tabpanel" tabindex="0"><p>Accessors on buffers implicitly define dependencies between tasks, but
+can be slightly more verbose.</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="w">  </span><span class="c1">// task A</span>
+<span class="w">  </span><span class="n">Q</span><span class="p">.</span><span class="n">submit</span><span class="p">([</span><span class="o">&amp;</span><span class="p">](</span><span class="n">handler</span><span class="w"> </span><span class="o">&amp;</span><span class="n">h</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">accessor</span><span class="w"> </span><span class="n">aA</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">A</span><span class="p">,</span><span class="w"> </span><span class="n">h</span><span class="w"> </span><span class="p">};</span>
+<span class="w">    </span><span class="n">h</span><span class="p">.</span><span class="n">parallel_for</span><span class="p">(</span><span class="n">range</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">N</span><span class="w"> </span><span class="p">},</span><span class="w"> </span><span class="p">[</span><span class="o">=</span><span class="p">](</span><span class="n">id</span><span class="o">&lt;</span><span class="mi">1</span><span class="o">&gt;</span><span class="w"> </span><span class="n">id</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="n">aA</span><span class="p">[</span><span class="n">id</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+<span class="w">    </span><span class="p">});</span>
+<span class="w">  </span><span class="p">});</span>
+
+<span class="w">  </span><span class="c1">// task B</span>
+<span class="w">  </span><span class="n">Q</span><span class="p">.</span><span class="n">submit</span><span class="p">([</span><span class="o">&amp;</span><span class="p">](</span><span class="n">handler</span><span class="w"> </span><span class="o">&amp;</span><span class="n">h</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">accessor</span><span class="w"> </span><span class="n">aB</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">B</span><span class="p">,</span><span class="w"> </span><span class="n">h</span><span class="w"> </span><span class="p">};</span>
+<span class="w">    </span><span class="n">h</span><span class="p">.</span><span class="n">parallel_for</span><span class="p">(</span><span class="n">range</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">N</span><span class="w"> </span><span class="p">},</span><span class="w"> </span><span class="p">[</span><span class="o">=</span><span class="p">](</span><span class="n">id</span><span class="o">&lt;</span><span class="mi">1</span><span class="o">&gt;</span><span class="w"> </span><span class="n">id</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="n">aB</span><span class="p">[</span><span class="n">id</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">2</span><span class="p">;</span>
+<span class="w">    </span><span class="p">});</span>
+<span class="w">  </span><span class="p">});</span>
+
+<span class="w">  </span><span class="c1">// task C</span>
+<span class="w">  </span><span class="n">Q</span><span class="p">.</span><span class="n">submit</span><span class="p">([</span><span class="o">&amp;</span><span class="p">](</span><span class="n">handler</span><span class="w"> </span><span class="o">&amp;</span><span class="n">h</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">accessor</span><span class="w"> </span><span class="n">aA</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">A</span><span class="p">,</span><span class="w"> </span><span class="n">h</span><span class="w"> </span><span class="p">};</span>
+<span class="w">    </span><span class="n">accessor</span><span class="w"> </span><span class="n">aB</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">B</span><span class="p">,</span><span class="w"> </span><span class="n">h</span><span class="p">,</span><span class="w"> </span><span class="n">read_only</span><span class="w"> </span><span class="p">};</span>
+<span class="w">    </span><span class="n">h</span><span class="p">.</span><span class="n">parallel_for</span><span class="p">(</span><span class="n">range</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">N</span><span class="w"> </span><span class="p">},</span><span class="w"> </span><span class="p">[</span><span class="o">=</span><span class="p">](</span><span class="n">id</span><span class="o">&lt;</span><span class="mi">1</span><span class="o">&gt;</span><span class="w"> </span><span class="n">id</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="n">aA</span><span class="p">[</span><span class="n">id</span><span class="p">]</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="n">aB</span><span class="p">[</span><span class="n">id</span><span class="p">];</span>
+<span class="w">    </span><span class="p">});</span>
+<span class="w">  </span><span class="p">});</span>
+
+<span class="w">  </span><span class="c1">// task D</span>
+<span class="w">  </span><span class="n">Q</span><span class="p">.</span><span class="n">submit</span><span class="p">([</span><span class="o">&amp;</span><span class="p">](</span><span class="n">handler</span><span class="w"> </span><span class="o">&amp;</span><span class="n">h</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">accessor</span><span class="w"> </span><span class="n">aA</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">A</span><span class="p">,</span><span class="w"> </span><span class="n">h</span><span class="w"> </span><span class="p">};</span>
+<span class="w">    </span><span class="n">h</span><span class="p">.</span><span class="n">single_task</span><span class="p">([</span><span class="o">=</span><span class="p">]()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">N</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span>
+<span class="w">        </span><span class="n">aA</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="n">aA</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+
+<span class="w">      </span><span class="n">aA</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="w"> </span><span class="o">/=</span><span class="w"> </span><span class="mi">3</span><span class="p">;</span>
+<span class="w">    </span><span class="p">});</span>
+<span class="w">  </span><span class="p">});</span>
+</pre></div>
+</div>
+</div><div aria-labelledby="tab-0-0-2" class="sphinx-tabs-panel" hidden="true" id="panel-0-0-2" name="0-2" role="tabpanel" tabindex="0"><p>An in-order queue executes tasks in the exact order in which they were
+enqueued. Task A and B, which are independent in the Y pattern, are
+executed in sequence.</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="w">  </span><span class="n">queue</span><span class="w"> </span><span class="n">Q</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">property</span><span class="o">::</span><span class="n">queue</span><span class="o">::</span><span class="n">in_order</span><span class="p">()</span><span class="w"> </span><span class="p">};</span>
+
+<span class="w">  </span><span class="k">auto</span><span class="w"> </span><span class="n">A</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">malloc_shared</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="n">N</span><span class="p">,</span><span class="w"> </span><span class="n">Q</span><span class="p">);</span>
+<span class="w">  </span><span class="k">auto</span><span class="w"> </span><span class="n">B</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">malloc_shared</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="n">N</span><span class="p">,</span><span class="w"> </span><span class="n">Q</span><span class="p">);</span>
+
+<span class="w">  </span><span class="c1">// task A</span>
+<span class="w">  </span><span class="n">Q</span><span class="p">.</span><span class="n">parallel_for</span><span class="p">(</span><span class="n">range</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">N</span><span class="w"> </span><span class="p">},</span><span class="w"> </span><span class="p">[</span><span class="o">=</span><span class="p">](</span><span class="n">id</span><span class="o">&lt;</span><span class="mi">1</span><span class="o">&gt;</span><span class="w"> </span><span class="n">id</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">A</span><span class="p">[</span><span class="n">id</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+<span class="w">  </span><span class="p">});</span>
+
+<span class="w">  </span><span class="c1">// task B</span>
+<span class="w">  </span><span class="n">Q</span><span class="p">.</span><span class="n">parallel_for</span><span class="p">(</span><span class="n">range</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">N</span><span class="w"> </span><span class="p">},</span><span class="w"> </span><span class="p">[</span><span class="o">=</span><span class="p">](</span><span class="n">id</span><span class="o">&lt;</span><span class="mi">1</span><span class="o">&gt;</span><span class="w"> </span><span class="n">id</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">B</span><span class="p">[</span><span class="n">id</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">2</span><span class="p">;</span>
+<span class="w">  </span><span class="p">});</span>
+
+<span class="w">  </span><span class="c1">// task C</span>
+<span class="w">  </span><span class="n">Q</span><span class="p">.</span><span class="n">parallel_for</span><span class="p">(</span><span class="n">range</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">N</span><span class="w"> </span><span class="p">},</span><span class="w"> </span><span class="p">[</span><span class="o">=</span><span class="p">](</span><span class="n">id</span><span class="o">&lt;</span><span class="mi">1</span><span class="o">&gt;</span><span class="w"> </span><span class="n">id</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">A</span><span class="p">[</span><span class="n">id</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="n">B</span><span class="p">[</span><span class="n">id</span><span class="p">[</span><span class="mi">0</span><span class="p">]];</span>
+<span class="w">  </span><span class="p">});</span>
+
+<span class="w">  </span><span class="c1">// task D</span>
+<span class="w">  </span><span class="n">Q</span><span class="p">.</span><span class="n">single_task</span><span class="p">([</span><span class="o">=</span><span class="p">]()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">N</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span>
+<span class="w">      </span><span class="n">A</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="n">A</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+
+<span class="w">    </span><span class="n">A</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="w"> </span><span class="o">/=</span><span class="w"> </span><span class="mi">3</span><span class="p">;</span>
+<span class="w">  </span><span class="p">});</span>
+</pre></div>
+</div>
+</div></div>
+</div>
+</section>
+<section id="synchronization-with-the-host">
+<h2>Synchronization with the host<a class="headerlink" href="#synchronization-with-the-host" title="Permalink to this heading"></a></h2>
+<p>We have seen how to handle dependencies between tasks to be run on devices,
+let’s talk about what happens on the host. Once our device computations are
+done, we’d obviously like to get the results back on the host. In CUDA/HIP this
+usually takes the form of device-to-host copies. These represent implicit
+synchronization points between host and device: we wait until all kernels have
+completed and then perform the copy. In SYCL, we have few options:</p>
+<ol class="arabic">
+<li><p>We can use the <code class="docutils literal notranslate"><span class="pre">wait</span></code> method on the <code class="docutils literal notranslate"><span class="pre">queue</span></code> object. Even though this has
+been used extensively in our example, it is also the <strong>coarsest</strong>
+synchronization level and might not be a good idea in larger-scale
+applications.
+We might submit <em>many</em> actions to a queue and using <code class="docutils literal notranslate"><span class="pre">wait</span></code> will <em>block</em>
+execution until <em>each and every one of them</em> has completed, which is clearly
+not always ideal.</p></li>
+<li><p>For finer control, you can synchronize on events: either a single one or a list.</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="c1">// waiting on a single event</span>
+
+<span class="k">auto</span><span class="w"> </span><span class="n">e1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Q</span><span class="p">.</span><span class="n">parallel_for</span><span class="p">(...);</span>
+<span class="n">e1</span><span class="p">.</span><span class="n">wait</span><span class="p">();</span>
+
+<span class="c1">// waiting on multiple events</span>
+<span class="k">auto</span><span class="w"> </span><span class="n">e2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Q</span><span class="p">.</span><span class="n">parallel_for</span><span class="p">(...);</span>
+<span class="k">auto</span><span class="w"> </span><span class="n">e3</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Q</span><span class="p">.</span><span class="n">single_task</span><span class="p">(...);</span>
+<span class="n">event</span><span class="o">::</span><span class="n">wait</span><span class="p">({</span><span class="n">e2</span><span class="p">,</span><span class="w"> </span><span class="n">e3</span><span class="p">});</span>
+</pre></div>
+</div>
+</li>
+<li><p>Use of objects of <code class="docutils literal notranslate"><span class="pre">host_accessor</span></code> type sits at an even finer level. They
+define a new dependency between a task in the graph and the host, such that
+execution cannot proceed past their construction until the data they access
+is available on the host. More concisely, construction of an
+<code class="docutils literal notranslate"><span class="pre">host_accessor</span></code> is blocking.</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="c1">// declare buffer</span>
+<span class="n">buffer</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="w"> </span><span class="n">A</span><span class="p">{</span><span class="n">range</span><span class="p">{</span><span class="mi">256</span><span class="p">}};</span>
+
+<span class="c1">// fill with ones</span>
+<span class="n">Q</span><span class="p">.</span><span class="n">submit</span><span class="p">([</span><span class="o">&amp;</span><span class="p">](</span><span class="n">handler</span><span class="w"> </span><span class="o">&amp;</span><span class="n">cgh</span><span class="p">){</span>
+<span class="w">  </span><span class="n">accessor</span><span class="w"> </span><span class="n">aA</span><span class="p">{</span><span class="n">A</span><span class="p">,</span><span class="w"> </span><span class="n">cgh</span><span class="p">};</span>
+<span class="w">  </span><span class="n">cgh</span><span class="p">.</span><span class="n">parallel_for</span><span class="p">(</span><span class="n">range</span><span class="p">{</span><span class="n">N</span><span class="p">},</span><span class="w"> </span><span class="p">[</span><span class="o">=</span><span class="p">](</span><span class="n">id</span><span class="o">&lt;</span><span class="mi">1</span><span class="o">&gt;</span><span class="w"> </span><span class="n">id</span><span class="p">){</span>
+<span class="w">    </span><span class="n">aA</span><span class="p">[</span><span class="n">id</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1.0</span><span class="p">;</span>
+<span class="w">  </span><span class="p">});</span>
+<span class="p">});</span>
+
+<span class="c1">// enqueue more work</span>
+
+<span class="c1">// host accessor for buffer A</span>
+<span class="c1">// the constructor will *block* until data is available on host</span>
+<span class="n">host_accessor</span><span class="w"> </span><span class="n">h_a</span><span class="p">{</span><span class="n">A</span><span class="p">};</span>
+</pre></div>
+</div>
+<p>Note that the same data accessed by an host accessor <strong>cannot</strong> be “touched”
+on the device as long as the <code class="docutils literal notranslate"><span class="pre">host_accessor</span></code> object exists.
+We can achieve the same behavior just with buffers. We have seen that buffer
+destructors are also <em>blocking</em>: when a buffer goes out of scope, it will
+implicitly wait for all actions that use it to complete. If the buffer was
+initialized with a host pointer, <a class="footnote-reference brackets" href="#id7" id="id3" role="doc-noteref"><span class="fn-bracket">[</span>†<span class="fn-bracket">]</span></a> then the runtime will schedule a copy back
+to the host:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="w"> </span><span class="nf">a</span><span class="p">(</span><span class="mi">256</span><span class="p">,</span><span class="w"> </span><span class="mf">0.0</span><span class="p">);</span>
+
+<span class="p">{</span><span class="w"> </span><span class="c1">// open scope</span>
+<span class="w">  </span><span class="c1">// buffer to a</span>
+<span class="w">  </span><span class="n">buffer</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="w"> </span><span class="n">buf_a</span><span class="p">(</span><span class="n">a</span><span class="p">.</span><span class="n">data</span><span class="p">(),</span><span class="w"> </span><span class="n">range</span><span class="p">{</span><span class="mi">256</span><span class="p">});</span>
+
+<span class="w">  </span><span class="c1">// use buffer in work submitted to the queue</span>
+<span class="w">  </span><span class="n">Q</span><span class="p">.</span><span class="n">submit</span><span class="p">([</span><span class="o">&amp;</span><span class="p">](</span><span class="n">handler</span><span class="w"> </span><span class="o">&amp;</span><span class="n">cgh</span><span class="p">){</span>
+<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">acc_a</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">accessor</span><span class="p">(</span><span class="n">buf_a</span><span class="p">,</span><span class="w"> </span><span class="n">cgh</span><span class="p">);</span>
+
+<span class="w">    </span><span class="n">cgh</span><span class="p">.</span><span class="n">parallel_for</span><span class="p">(...);</span>
+<span class="w">  </span><span class="p">});</span>
+<span class="p">}</span><span class="w"> </span><span class="c1">// close scope: buffer destructor will wait and host data will be updated</span>
+</pre></div>
+</div>
+</li>
+</ol>
+</section>
+<section id="kernel-level-communication">
+<h2>Kernel-level communication<a class="headerlink" href="#kernel-level-communication" title="Permalink to this heading"></a></h2>
+<section id="work-group-local-memory">
+<h3>Work-group local memory<a class="headerlink" href="#work-group-local-memory" title="Permalink to this heading"></a></h3>
+<p>ND-range parallel kernels gives us access to kernel-level communication patterns
+between work-items. <a class="footnote-reference brackets" href="#id8" id="id4" role="doc-noteref"><span class="fn-bracket">[</span>‡<span class="fn-bracket">]</span></a> Recall that when using ND-ranges, we partition the
+execution space of a data-parallel kernel into global and local ranges. Each
+local range is a work-group within the ND-range and it’s in turn partitioned
+into work-items, the actual units of work in a kernel.  Work-items in a
+work-group have access to <strong>work-group local memory</strong> which we can use to
+coordinate efficient execution of the kernel.
+We work with local memory by using the <code class="docutils literal notranslate"><span class="pre">local_accessor</span></code> type:</p>
+<div class="admonition-local-accessor signature toggle-shown dropdown admonition" id="signature-0">
+<p class="admonition-title"><code class="docutils literal notranslate"><span class="pre">local_accessor</span></code></p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">T</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">dimensions</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="o">&gt;</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">local_accessor</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>This type of accessor only has <em>two</em> template parameters: the access
+mode is always <code class="docutils literal notranslate"><span class="pre">read_write</span></code> and the access target is always local memory.
+Dedicated local memory is not always available, but you can implement a
+selector that checks that through the <code class="docutils literal notranslate"><span class="pre">info::device::local_mem_type</span></code> query to
+<code class="docutils literal notranslate"><span class="pre">get_info</span></code>.</p>
+</div>
+<figure class="align-center" id="id10">
+<img alt="../_images/work-groups_work-items.svg" src="../_images/work-groups_work-items.svg" /><figcaption>
+<p><span class="caption-text">Schematic view of a 3-dimensional <code class="docutils literal notranslate"><span class="pre">nd_range</span></code> object constructed from global
+<span class="math notranslate nohighlight">\(8\times 8 \times 8\)</span> and local <span class="math notranslate nohighlight">\(4\times 4 \times 4\)</span> ranges,
+respectively. The different colors represent the <em>work-groups</em> in the
+ND-range, each made of 64 <em>work-items</em>.  Work-items with the same color can
+cooperate to each other during kernel execution: they have access to
+<strong>work-group local memory</strong> and can use it to communicate with each other.
+Communication between work-items in differently colored work-groups will most
+likely result in a deadlock.</span><a class="headerlink" href="#id10" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<p>It is essential to keep in mind these facts about work-group local memory:</p>
+<ol class="arabic simple">
+<li><p>It is only accessible once a work-group start execution. In practice, this
+means that <code class="docutils literal notranslate"><span class="pre">local_accessor</span></code> constructors require a <code class="docutils literal notranslate"><span class="pre">handler</span></code> object.</p></li>
+<li><p>It is not initialized when a work-group starts execution.</p></li>
+<li><p>It does not persist once the work-group finishes.</p></li>
+</ol>
+<p>Furthermore, it is our responsibility as programmers to <strong>synchronize</strong> between
+accesses within the same work-group.  We use the <code class="docutils literal notranslate"><span class="pre">barrier</span></code> method on objects
+of <code class="docutils literal notranslate"><span class="pre">item</span></code> type to synchronize work-items.  The concept of a barrier might be
+familiar from MPI programming: when work-items encounter it, they can only move
+past it at the same time. Work-items that execute faster will wait for those
+that lag behind.  We should use barriers whenever work-items <em>read from</em>/<em>write
+to</em> local memory that was previously <em>written to</em>/<em>read from</em> by another
+work-item.  This ensures, for example, that results of an operation are actually
+available before we use them and also that the work-group local memory is
+<em>consistent</em> for all work-items once we move past the barrier.</p>
+<div class="admonition-tiled-matmul exercise important admonition" id="exercise-0">
+<p class="admonition-title">Tiled MatMul</p>
+<p>We can further optimize the ND-range implementation of matrix multiplication
+by using <em>tiling</em>. The basic idea is to exploit the fact that each row of the
+left operand <span class="math notranslate nohighlight">\(\mathbf{A}\)</span> is reused multiple times to compute elements
+in the result. If we can structure the local iteration range to work over
+tiles (subsections) of it, we can achieve better locality.</p>
+<p>Each work-item will compute an element in the result matrix
+<span class="math notranslate nohighlight">\(\mathbf{C}\)</span> by loading a <strong>tile</strong> (subsection) of a row of
+<span class="math notranslate nohighlight">\(\mathbf{A}\)</span> into work-group local memory and multiplying it with an
+appropriately sized portion of columns of <span class="math notranslate nohighlight">\(\mathbf{B}\)</span>.  The result
+matrix is held in global memory and addressed through the global range of the
+ND-range object. Local memory accesses should be faster and each tile is
+reused multiple times.</p>
+<figure class="align-center" id="id11">
+<img alt="../_images/tiled_matmul.svg" src="../_images/tiled_matmul.svg" /><figcaption>
+<p><span class="caption-text">Schematics of a <em>tiled</em> implementation of matrix multiplication:
+<span class="math notranslate nohighlight">\(C_{ij} = \sum_{k}A_{ik}B_{kj}\)</span>. The computation is split into
+work-groups, each with own local memory. We first load a <strong>tile</strong> (cyan)
+of the left operand matrix <span class="math notranslate nohighlight">\(\mathbf{A}\)</span> into local memory. The tile
+will be reused multiple times by each work-item to compute the result
+(green), held in global memory.  The right operand matrix
+<span class="math notranslate nohighlight">\(\mathbf{B}\)</span> is also accessed from global memory.
+Figure adapted from <span id="id5">[<a class="reference internal" href="../zbibliography/#id2" title="James Reinders, Ben Ashbaugh, James Brodman, Michael Kinsner, John Pennycook, and Xinmin Tian. Data Parallel C++: Mastering DPC++ for Programming of Heterogeneous Systems using C++ and SYCL. Apress, Berkeley, CA, 2021. ISBN 9781484255735. URL: https://link.springer.com/book/10.1007%2F978-1-4842-5574-2, doi:10.1007/978-1-4842-5574-2.">RAB+21</a>]</span>.</span><a class="headerlink" href="#id11" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<p><strong>Don’t do this at home, use optimized BLAS!</strong></p>
+<p>You can find a scaffold for the code in the
+<code class="docutils literal notranslate"><span class="pre">content/code/day-2/04_tiled-matmul/tiled-matmul.cpp</span></code> file,
+alongside the CMake script to build the executable. You will have to complete
+the source code to compile and run correctly: follow the hints in the source
+file.  A working solution is in the <code class="docutils literal notranslate"><span class="pre">solution</span></code> subfolder.</p>
+<ol class="arabic">
+<li><p>We create a queue and map it to the GPU.</p></li>
+<li><p>We declare the operands as <code class="docutils literal notranslate"><span class="pre">std::vector&lt;double&gt;</span></code>. Generalize the
+example in the previous exercise to allow multiplication of non-square
+matrices. The right-hand side operands are filled with random numbers.</p></li>
+<li><p>We define buffers to the operands and result in our matrix multiplication.</p></li>
+<li><p>We submit work to the queue through a command group handler.</p></li>
+<li><p>We set up accessors for the matrix buffers. We can use access targets and
+properties to guide the runtime in the creation of the task graph.</p></li>
+<li><p>We also have to set up a local accessor to our tiles. Note that the tile
+is a 1-dimensional range.</p></li>
+<li><p>Within the handler, we launch a <code class="docutils literal notranslate"><span class="pre">parallel_for</span></code> with an appropriately
+sized <code class="docutils literal notranslate"><span class="pre">nd_range</span></code> execution range.  The tile will be our local range and
+it is 1-dimensional.</p></li>
+<li><p>Obtain indices in the global and local ranges:</p>
+<ul class="simple">
+<li><p>The “global” indices are used to address rows of the left operand,
+columns of the right operand, and the element in the result matrix..</p></li>
+<li><p>The “local” indices are used to address the tile, <em>i.e.</em> the local
+memory buffer.</p></li>
+</ul>
+</li>
+<li><p>Define the matrix multiplication kernel function, where we have:</p>
+<ul class="simple">
+<li><p>A tile-strided loop to load data for <span class="math notranslate nohighlight">\(\mathbf{A}\)</span> from global to
+local memory.</p></li>
+<li><p>A loop over work-items in the tile to compute their product with
+<span class="math notranslate nohighlight">\(\mathbf{B}\)</span>.</p></li>
+</ul>
+<p>Remember that we need to ensure that the local memory is <em>consistent</em>
+across work-items after every load and/or store operation!</p>
+</li>
+<li><p>Retrieve the result using a <code class="docutils literal notranslate"><span class="pre">host_accessor</span></code>.</p></li>
+<li><p>Check that your results are correct.</p></li>
+</ol>
+</div>
+<div class="admonition-keypoints keypoints admonition" id="keypoints-0">
+<p class="admonition-title">Keypoints</p>
+<ul class="simple">
+<li><p>The SYCL <em>task graph</em> is built by the runtime and governs execution of our
+program on heterogeneous hardware.</p></li>
+<li><p>Data dependencies are the main ingredients in the task graph construction.</p></li>
+<li><p>We can influence the task graph explicitly through events.</p></li>
+<li><p>In a data-parallel kernel, work-items within a work-group can cooperate and
+we can leverage this to our advantage.</p></li>
+</ul>
+</div>
+<p class="rubric">Footnotes</p>
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="id6" role="note">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">*</a><span class="fn-bracket">]</span></span>
+<p>And with great power, comes great responsibility.</p>
+</aside>
+<aside class="footnote brackets" id="id7" role="note">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id3">†</a><span class="fn-bracket">]</span></span>
+<p>One could also set the host pointer <em>after</em> buffer construction using the <code class="docutils literal notranslate"><span class="pre">set_final_data</span></code> method.</p>
+</aside>
+<aside class="footnote brackets" id="id8" role="note">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id4">‡</a><span class="fn-bracket">]</span></span>
+<p>This is true also for hierarchical parallel kernels.</p>
+</aside>
+</aside>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../expressing-parallelism-nd-range/" class="btn btn-neutral float-left" title="Expressing parallelism with SYCL: nd-range data-parallel kernels" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../heat-equation/" class="btn btn-neutral float-right" title="Heat equation mini-app" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021, Roberto Di Remigio and individual contributors..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

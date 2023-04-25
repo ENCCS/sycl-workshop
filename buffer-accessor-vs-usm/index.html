@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Buffer-accessor model vs unified shared memory &mdash; Heterogeneous programming with SYCL  documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/copybutton.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/togglebutton.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/sphinx_lesson.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/sphinx_rtd_theme_ext_color_contrast.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/tabs.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/overrides.css" type="text/css" />
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
+        <script src="../_static/clipboard.min.js"></script>
+        <script src="../_static/copybutton.js"></script>
+        <script src="../_static/minipres.js"></script>
+        <script>let toggleHintShow = 'Click to show';</script>
+        <script>let toggleHintHide = 'Click to hide';</script>
+        <script>let toggleOpenOnPrint = 'true';</script>
+        <script src="../_static/togglebutton.js"></script>
+        <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+        <script data-domain="enccs.github.io/sycl-workshop" defer="defer" src="https://plausible.io/js/script.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex/" />
+    <link rel="search" title="Search" href="../search/" />
+    <link rel="next" title="Quick Reference" href="../quick-reference/" />
+    <link rel="prev" title="Profiling SYCL applications" href="../profiling/" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../" class="icon icon-home">
+            Heterogeneous programming with SYCL
+              <img src="../_static/ENCCS.jpg" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search/" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../karolina/">Setting up your system</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">The lesson</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../what-is-sycl/">What is SYCL?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../device-discovery/">Device discovery</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../queues-cgs-kernels/">Queues, command groups, and kernels</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../buffers-accessors/">Data management with buffers and accessors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../unified-shared-memory/">Data management with unified shared memory</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../expressing-parallelism-basic/">Expressing parallelism with SYCL: basic data-parallel kernels</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../expressing-parallelism-nd-range/">Expressing parallelism with SYCL: nd-range data-parallel kernels</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../task-graphs-synchronization/">The task graph: data, dependencies, synchronization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../heat-equation/">Heat equation mini-app</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../sub-groups/">Using sub-groups in SYCL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../profiling/">Profiling SYCL applications</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Buffer-accessor model <em>vs</em> unified shared memory</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../quick-reference/">Quick Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../zbibliography/">Bibliography</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guide/">Instructor’s guide</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../">Heterogeneous programming with SYCL</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Buffer-accessor model <em>vs</em> unified shared memory</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/ENCCS/sycl-workshop/blob/main/content/buffer-accessor-vs-usm.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="buffer-accessor-model-vs-unified-shared-memory">
+<span id="buffer-accessor-vs-usm"></span><h1>Buffer-accessor model <em>vs</em> unified shared memory<a class="headerlink" href="#buffer-accessor-model-vs-unified-shared-memory" title="Permalink to this heading"></a></h1>
+<div class="admonition-questions questions admonition" id="questions-0">
+<p class="admonition-title">Questions</p>
+<ul class="simple">
+<li><p>When should I use the buffer-accessor model and when is <a class="reference internal" href="../quick-reference/#term-USM"><span class="xref std std-term">USM</span></a> more appropriate?</p></li>
+</ul>
+</div>
+<div class="admonition-objectives objectives admonition" id="objectives-0">
+<p class="admonition-title">Objectives</p>
+<ul class="simple">
+<li><p>Learn the trade-offs of the buffer-accessor and <a class="reference internal" href="../quick-reference/#term-USM"><span class="xref std std-term">USM</span></a> models.</p></li>
+</ul>
+</div>
+<p>In episodes <a class="reference internal" href="../buffers-accessors/#buffers-accessors"><span class="std std-ref">Data management with buffers and accessors</span></a> and <a class="reference internal" href="../unified-shared-memory/#unified-shared-memory"><span class="std std-ref">Data management with unified shared memory</span></a>, we saw
+what the current SYCL standard has to offer in terms of data management models.
+Some of the exercises showed how to implement the same task using both models.
+What is the “best” strategy? The answer is, unsurprinsingly, <strong>“it depends”</strong>.
+The question should rather be: would you like the runtime to manage data
+transfers or do you want to be fully in control?  The following chart offers a
+guide to inform a decision between the two models.</p>
+<figure class="align-center" id="id2">
+<img alt="../_images/data-management-strategy.svg" src="../_images/data-management-strategy.svg" /><figcaption>
+<p><span class="caption-text">Choosing between the USM and buffer-accessor model in SYCL. The fundamental
+question is how comfortable we are with the runtime managing data movement
+for us.</span><a class="headerlink" href="#id2" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<p>The chart does not take into consideration whether or not we are working with an
+established codebase. If that is the case, USM, which is a pointer-based approach,
+might provide an easier porting path to SYCL.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Why can’t we use <em>both</em> models in the same application? The current standard
+<em>does not</em> describe how to achieve interoperability between buffers and
+USM-allocated memory. This might lead to unnecessary copies and degraded
+performance and the even more unfortunate consequence that, once a data
+management model is chosen, the application is effectively locked into it
+forever. Future SYCL standards might remedy this situation. In the meantime,
+hipSYCL <em>does offer</em> buffer-USM interoperability as an extension to the
+standard:
+<a class="reference external" href="https://hipsycl.github.io/hipsycl/extension/hipsycl-091-buffer-usm-interop/">https://hipsycl.github.io/hipsycl/extension/hipsycl-091-buffer-usm-interop/</a></p>
+</div>
+<div class="admonition-porting-the-heat-equation-mini-app-to-sycl exercise important admonition" id="exercise-0">
+<p class="admonition-title">Porting the heat equation mini-app to SYCL</p>
+<p>As a last assignment for this workshop, we’ll re-write our port of the heat
+equation mini-app in ref:<cite>heat-equation</cite> using USM.</p>
+<div class="admonition-todo admonition" id="id1">
+<p class="admonition-title">Todo</p>
+<p>WRITE THE USM PORT!</p>
+</div>
+</div>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../profiling/" class="btn btn-neutral float-left" title="Profiling SYCL applications" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../quick-reference/" class="btn btn-neutral float-right" title="Quick Reference" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021, Roberto Di Remigio and individual contributors..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

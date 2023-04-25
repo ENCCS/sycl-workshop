@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Queues, command groups, and kernels &mdash; Heterogeneous programming with SYCL  documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/copybutton.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/togglebutton.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/sphinx_lesson.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/sphinx_rtd_theme_ext_color_contrast.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/tabs.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/overrides.css" type="text/css" />
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
+        <script src="../_static/clipboard.min.js"></script>
+        <script src="../_static/copybutton.js"></script>
+        <script src="../_static/minipres.js"></script>
+        <script>let toggleHintShow = 'Click to show';</script>
+        <script>let toggleHintHide = 'Click to hide';</script>
+        <script>let toggleOpenOnPrint = 'true';</script>
+        <script src="../_static/togglebutton.js"></script>
+        <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+        <script data-domain="enccs.github.io/sycl-workshop" defer="defer" src="https://plausible.io/js/script.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex/" />
+    <link rel="search" title="Search" href="../search/" />
+    <link rel="next" title="Data management with buffers and accessors" href="../buffers-accessors/" />
+    <link rel="prev" title="Device discovery" href="../device-discovery/" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../" class="icon icon-home">
+            Heterogeneous programming with SYCL
+              <img src="../_static/ENCCS.jpg" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search/" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../karolina/">Setting up your system</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">The lesson</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../what-is-sycl/">What is SYCL?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../device-discovery/">Device discovery</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Queues, command groups, and kernels</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#kernels">Kernels</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#queues">Queues</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#command-groups">Command groups</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../buffers-accessors/">Data management with buffers and accessors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../unified-shared-memory/">Data management with unified shared memory</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../expressing-parallelism-basic/">Expressing parallelism with SYCL: basic data-parallel kernels</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../expressing-parallelism-nd-range/">Expressing parallelism with SYCL: nd-range data-parallel kernels</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../task-graphs-synchronization/">The task graph: data, dependencies, synchronization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../heat-equation/">Heat equation mini-app</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../sub-groups/">Using sub-groups in SYCL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../profiling/">Profiling SYCL applications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../buffer-accessor-vs-usm/">Buffer-accessor model <em>vs</em> unified shared memory</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../quick-reference/">Quick Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../zbibliography/">Bibliography</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guide/">Instructor’s guide</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../">Heterogeneous programming with SYCL</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Queues, command groups, and kernels</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/ENCCS/sycl-workshop/blob/main/content/queues-cgs-kernels.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="queues-command-groups-and-kernels">
+<span id="queues-cgs-kernels"></span><h1>Queues, command groups, and kernels<a class="headerlink" href="#queues-command-groups-and-kernels" title="Permalink to this heading"></a></h1>
+<div class="admonition-questions questions admonition" id="questions-0">
+<p class="admonition-title">Questions</p>
+<ul class="simple">
+<li><p>How do we organize work in a SYCL application?</p></li>
+</ul>
+</div>
+<div class="admonition-objectives objectives admonition" id="objectives-0">
+<p class="admonition-title">Objectives</p>
+<ul class="simple">
+<li><p>Learn about queues to describe ordering of operations.</p></li>
+<li><p>Command groups.</p></li>
+<li><p>Understand that kernels are units of parallelism in SYCL.</p></li>
+</ul>
+</div>
+<p>SYCL <code class="docutils literal notranslate"><span class="pre">queue</span></code> objects are the abstraction connecting a host program to a single
+device.  The <a class="reference internal" href="../quick-reference/#term-queue"><span class="xref std std-term">queue</span></a> is a central abstraction in <a class="reference external" href="https://www.khronos.org/sycl/">SYCL</a>: all device code is
+<strong>submitted</strong> to a queue as <em>actions</em>. The runtime <strong>schedules</strong> the actions and
+executes them <strong>asynchronously</strong>.  The runtime keeps track of action
+prerequisites in its scheduling, for example, availability of data.
+We can state that the tracking of actions and their dependencies is the essence
+of <a class="reference external" href="https://www.khronos.org/sycl/">SYCL</a>.  The SYCL standard models our program as a <strong>task graph</strong>, a set of
+<em>nodes</em> connected by <em>edges</em>:</p>
+<ul class="simple">
+<li><p><strong>Nodes</strong> are actions to be performed on a device, such as the invocation of a
+kernel or explicit data movements.</p></li>
+<li><p><strong>Edges</strong> are dependencies between the actions and express when it’s legal for
+a node to execute. Edges arise most often because of data dependencies between
+nodes.</p></li>
+</ul>
+<p>The task graph is a <em>directed acyclic graph (DAG)</em>: it has a well-defined
+start-to-finish direction and no nodes are self-connected.
+The SYCL runtime can resolve dependencies and thus <strong>generate</strong> the task graph.
+Furthermore, it can schedule how to execute the nodes, <em>i.e.</em> <strong>traversal</strong> of
+the task graph, in a completely asynchronous manner from the execution of the
+host code.
+We will see in <a class="reference internal" href="../task-graphs-synchronization/#task-graphs-synchronization"><span class="std std-ref">The task graph: data, dependencies, synchronization</span></a> how to manually modify the
+task graph.</p>
+<p>Two kinds of actions can be part of the task graph:</p>
+<dl class="simple">
+<dt>Execution of device code</dt><dd><p>These actions add nodes to the graph that will, eventually, execute device
+code. They accept kernel code and its execution space as argument and you
+invoke them as methods on the <code class="docutils literal notranslate"><span class="pre">queue</span></code> class directly or on the <code class="docutils literal notranslate"><span class="pre">handler</span></code>
+class. They come in three flavors, which represent different abstractions for
+work distribution in SYCL:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">single_task</span></code>: as the name says, this will execute one single instance of
+the kernel code.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">parallel_for</span></code>: this will launch a kernel with given work-size
+specification in a single instruction, multiple threads (SIMT) fashion.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">parallel_for_work_group</span></code>: launches a kernel with hierarchical
+parallelism. This is only available on the <code class="docutils literal notranslate"><span class="pre">handler</span></code> class.</p></li>
+</ul>
+</dd>
+<dt>Explicit memory operations.</dt><dd><p>These actions add nodes to the graph that will, eventually, perform data migrations.
+You invoke them as methods on the <code class="docutils literal notranslate"><span class="pre">queue</span></code> class directly or on the <code class="docutils literal notranslate"><span class="pre">handler</span></code>
+class:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">copy</span></code>: copies data.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">update_host</span></code>: updates data in the buffer on the host-side.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">fill</span></code>: initializes data in a buffer to the given value.</p></li>
+</ul>
+</dd>
+</dl>
+<p>We have given a high-level overview of the abstractions in the execution model:
+from the queue to the execution on a device, passing through submission of work,
+described as a data-parallel kernel.</p>
+<p>But how do we write a kernel?</p>
+<section id="kernels">
+<h2>Kernels<a class="headerlink" href="#kernels" title="Permalink to this heading"></a></h2>
+<p>Kernels are the fundamental building blocks for performing work in a SYCL
+program. We will only consider two ways of writing kernels in SYCL:</p>
+<dl>
+<dt><a class="reference external" href="https://en.cppreference.com/w/cpp/language/lambda">lambda expressions</a></dt><dd><p>Kernels as lambdas are very concise, thanks especially to the <em>capture</em>
+syntax. They cannot be templated and might be cumbersome to reuse. In some
+cases, lambdas can be too terse.</p>
+<div class="admonition-as-a-lambda demo admonition" id="demo-0">
+<p class="admonition-title">+1 as a lambda</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="o">=</span><span class="p">](</span><span class="n">id</span><span class="o">&lt;</span><span class="mi">1</span><span class="o">&gt;</span><span class="w"> </span><span class="n">idx</span><span class="p">)</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="n">data_acc</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</dd>
+<dt><a class="reference external" href="https://en.cppreference.com/w/cpp/utility/functional">function objects</a></dt><dd><p>A kernel is a class that overloads <code class="docutils literal notranslate"><span class="pre">operator()</span></code> function call operator. They
+can be templated, easily reused, and give full control over what data is
+passed in and out.  They are more verbosee.</p>
+<div class="admonition-as-a-function-object demo admonition" id="demo-1">
+<p class="admonition-title">+1 as a function object</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">PlusOne</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">public</span><span class="o">:</span>
+<span class="w">   </span><span class="n">PlusOne</span><span class="p">(</span><span class="n">accessor</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="w"> </span><span class="n">acc</span><span class="p">)</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">data_acc_</span><span class="p">(</span><span class="n">acc</span><span class="p">)</span><span class="w"> </span><span class="p">{}</span>
+
+<span class="w">   </span><span class="kt">void</span><span class="w"> </span><span class="k">operator</span><span class="p">()(</span><span class="n">id</span><span class="o">&lt;</span><span class="mi">1</span><span class="o">&gt;</span><span class="w"> </span><span class="n">idx</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">     </span><span class="n">data_acc</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+<span class="w">   </span><span class="p">}</span>
+
+<span class="w">  </span><span class="k">private</span><span class="o">:</span>
+<span class="w">   </span><span class="n">accessor</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="w"> </span><span class="n">data_acc_</span><span class="p">;</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+</div>
+</dd>
+</dl>
+<p>There are no technical reasons to prefer one style over the other, it will ultimately boil down to personal preference. Regardless of the chosen style, kernel code has some restrictions:</p>
+<ul class="simple">
+<li><p>It must have <code class="docutils literal notranslate"><span class="pre">void</span></code> as return type.</p></li>
+<li><p>It cannot use <a class="reference external" href="https://en.m.wikibooks.org/wiki/C%2B%2B_Programming/RTTI">runtime type identification (RTTI)</a>.</p></li>
+<li><p>It cannot dynamic allocate memory.</p></li>
+</ul>
+</section>
+<section id="queues">
+<h2>Queues<a class="headerlink" href="#queues" title="Permalink to this heading"></a></h2>
+<p>One queue maps to one device: the mapping happens upon construction of a
+<code class="docutils literal notranslate"><span class="pre">queue</span></code> object and cannot be changed subsequently.
+It is not possible to use a single <code class="docutils literal notranslate"><span class="pre">queue</span></code> object to:</p>
+<ul class="simple">
+<li><p>manage more than one device. The runtime would face ambiguities in deciding
+which device should actually do the work!</p></li>
+<li><p>spread enqueued work over multiple devices.</p></li>
+</ul>
+<p>While these might appear as limitations, we are free to declare as many
+<code class="docutils literal notranslate"><span class="pre">queue</span></code> object as we like in our programs. It is also valid to create multiple
+queues to the <em>same</em> device.  Thus, the relation between queues and devices is
+<strong>many-to-one</strong>.</p>
+<p>Work on a device can be enqueued with the shortcut methods described above. For
+example, we can launch a data-parallel kernel with <code class="docutils literal notranslate"><span class="pre">parallel_for</span></code>  invoked on
+the desired queue object:</p>
+<div class="admonition-creating-work-on-a-device-using-queue-shortcuts demo admonition" id="demo-2">
+<p class="admonition-title">Creating work on a device using <code class="docutils literal notranslate"><span class="pre">queue</span></code> shortcuts.</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">auto</span><span class="w"> </span><span class="n">Q</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">queue</span><span class="p">{</span><span class="n">my_selector</span><span class="p">{}};</span>
+
+<span class="n">Q</span><span class="p">.</span><span class="n">parallel_for</span><span class="p">(</span><span class="n">range</span><span class="o">&lt;</span><span class="mi">1</span><span class="o">&gt;</span><span class="p">{</span><span class="n">sz</span><span class="p">},</span><span class="w"> </span><span class="p">[</span><span class="o">=</span><span class="p">](</span><span class="k">auto</span><span class="w"> </span><span class="o">&amp;</span><span class="n">idx</span><span class="p">){</span>
+<span class="w">  </span><span class="cm">/* kernel code */</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="command-groups">
+<h2>Command groups<a class="headerlink" href="#command-groups" title="Permalink to this heading"></a></h2>
+<p>A command group handler gives more control over how code is submitted to the
+queue. Submission is slightly more verbose, but we get access to features of
+hierarchical parallelism.
+The abstraction for command groups is the class <code class="docutils literal notranslate"><span class="pre">handler</span></code>: these objects are
+constructed for us by the SYCL runtime.  As such, we will meet them only as
+arguments of the lambda functions passed to the <code class="docutils literal notranslate"><span class="pre">submit</span></code> method of our queues.
+A command group handler contains:</p>
+<ul class="simple">
+<li><p>host code, to set up the dependencies of the corresponding node in the task graph.
+Host code is executed immediately upon submission.</p></li>
+<li><p><strong>exactly one</strong> action of the ones described above. The action executes
+asynchronously on the device.  Parallel work actions will, furthermore, need
+an execution range and a kernel function.</p></li>
+</ul>
+<div class="admonition-creating-work-on-a-device-using-a-command-group-handler demo admonition" id="demo-3">
+<p class="admonition-title">Creating work on a device using a command group <code class="docutils literal notranslate"><span class="pre">handler</span></code>.</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">auto</span><span class="w"> </span><span class="n">Q</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">queue</span><span class="p">{</span><span class="n">my_selector</span><span class="p">{}};</span>
+
+<span class="n">Q</span><span class="p">.</span><span class="n">submit</span><span class="p">([</span><span class="o">&amp;</span><span class="p">](</span><span class="n">handler</span><span class="w"> </span><span class="o">&amp;</span><span class="n">cgh</span><span class="p">){</span>
+<span class="w"> </span><span class="cm">/* host code: sets up the dependencies of this node. It executes **immediately!** */</span>
+<span class="w"> </span><span class="n">accessor</span><span class="w"> </span><span class="n">acc</span><span class="p">{</span><span class="n">B</span><span class="p">,</span><span class="w"> </span><span class="n">h</span><span class="p">};</span>
+
+<span class="w"> </span><span class="cm">/* exactly **one** of the available actions. It executes **asynchronously** */</span>
+<span class="w"> </span><span class="n">cgh</span><span class="p">.</span><span class="n">parallel_for</span><span class="p">(</span><span class="n">range</span><span class="o">&lt;</span><span class="mi">1</span><span class="o">&gt;</span><span class="p">{</span><span class="n">sz</span><span class="p">},</span><span class="w"> </span><span class="p">[</span><span class="o">=</span><span class="p">](</span><span class="k">auto</span><span class="w"> </span><span class="o">&amp;</span><span class="n">idx</span><span class="p">){</span>
+<span class="w">    </span><span class="cm">/* kernel code */</span>
+<span class="w"> </span><span class="p">});</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</div>
+<div class="admonition-single-task-and-streams exercise important admonition" id="exercise-0">
+<p class="admonition-title"><code class="docutils literal notranslate"><span class="pre">single_task</span></code> and streams</p>
+<p>We’ll walk through the use of the <code class="docutils literal notranslate"><span class="pre">single_task</span></code> method to create work on a
+device.
+As the name suggests, this will create a task for sequential execution:
+probably not a method you will use often, but definitely something to be
+aware of!
+The task we would like to perform is a print-out on the device. If you are
+familiar with CUDA/HIP, you probably know that <code class="docutils literal notranslate"><span class="pre">printf</span></code> can be used in
+device code. In keeping with C++, the SYCL standard defines a <code class="docutils literal notranslate"><span class="pre">stream</span></code>
+class, which works similar to the standard streams. A SYCL stream needs a
+<code class="docutils literal notranslate"><span class="pre">handler</span></code> object on construction:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">auto</span><span class="w"> </span><span class="n">out</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">stream</span><span class="p">(</span><span class="mi">1024</span><span class="p">,</span><span class="w"> </span><span class="cm">/* maximum size of output per kernel invocation */</span>
+<span class="w">                   </span><span class="mi">256</span><span class="p">,</span><span class="w"> </span><span class="cm">/* maximum size before flushing the stream */</span>
+<span class="w">                   </span><span class="n">cgh</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>SYCL streams behave just like standard C++ streams. We can write something to
+a stream using <code class="docutils literal notranslate"><span class="pre">operator&lt;&lt;</span></code>:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">out</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;my message&quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>You can find a scaffold for the code in the
+<code class="docutils literal notranslate"><span class="pre">content/code/day-1/04_single-task/single-task.cpp</span></code> file,
+alongside the CMake script to build the executable. You will have to complete
+the source code to compile and run correctly: follow the hints in the source
+file.  A working solution is in the <code class="docutils literal notranslate"><span class="pre">solution</span></code> subfolder.</p>
+<ol class="arabic">
+<li><p>Create a queue object. You’re free to use any of the device selection
+strategies we have encountered in the previous episode.</p></li>
+<li><p>Submit work to the queue using a command handler group.</p></li>
+<li><p>Create a <code class="docutils literal notranslate"><span class="pre">stream</span></code> object.</p></li>
+<li><p>Create a single task on the <code class="docutils literal notranslate"><span class="pre">handler</span></code> printing a string to the stream. A
+<code class="docutils literal notranslate"><span class="pre">single_task</span></code> only accepts a function with no input arguments as
+parameter:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">cgh</span><span class="p">.</span><span class="n">single_task</span><span class="p">([</span><span class="o">=</span><span class="p">](){</span>
+<span class="w">  </span><span class="cm">/* task code */</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</li>
+</ol>
+</div>
+<div class="admonition-keypoints keypoints admonition" id="keypoints-0">
+<p class="admonition-title">Keypoints</p>
+<ul class="simple">
+<li><p>One queue maps to one device, such that there is no ambiguity in
+spreading work.</p></li>
+<li><p>A program can have as many queues as desired. Multiple queues can use the
+same device: the queue-device mapping is many-to-one.</p></li>
+<li><p>Enqueing actions can happen by submitting <strong>command groups</strong> using the <code class="docutils literal notranslate"><span class="pre">handler</span></code> class.</p></li>
+<li><p>You can also enqueue actions with <em>shortcut</em> methods on the <code class="docutils literal notranslate"><span class="pre">queue</span></code> class.</p></li>
+<li><p>Work can be enqueued with a command group handler. This gives more
+flexibility over the definition of the corresponding node in the task
+graph.</p></li>
+<li><p>Kernels are <a class="reference external" href="https://en.cppreference.com/w/cpp/named_req/Callable">callables</a>: either lambda
+functions or function objects.</p></li>
+<li><p>Kernel code cannot use neither RTTI nor dynamic memory allocation.</p></li>
+</ul>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../device-discovery/" class="btn btn-neutral float-left" title="Device discovery" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../buffers-accessors/" class="btn btn-neutral float-right" title="Data management with buffers and accessors" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021, Roberto Di Remigio and individual contributors..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

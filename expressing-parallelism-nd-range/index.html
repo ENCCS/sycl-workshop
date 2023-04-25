@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Expressing parallelism with SYCL: nd-range data-parallel kernels &mdash; Heterogeneous programming with SYCL  documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/copybutton.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/togglebutton.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/sphinx_lesson.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/sphinx_rtd_theme_ext_color_contrast.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/tabs.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/overrides.css" type="text/css" />
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
+        <script src="../_static/clipboard.min.js"></script>
+        <script src="../_static/copybutton.js"></script>
+        <script src="../_static/minipres.js"></script>
+        <script src="../_static/tabs.js"></script>
+        <script>let toggleHintShow = 'Click to show';</script>
+        <script>let toggleHintHide = 'Click to hide';</script>
+        <script>let toggleOpenOnPrint = 'true';</script>
+        <script src="../_static/togglebutton.js"></script>
+        <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+        <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+        <script data-domain="enccs.github.io/sycl-workshop" defer="defer" src="https://plausible.io/js/script.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex/" />
+    <link rel="search" title="Search" href="../search/" />
+    <link rel="next" title="The task graph: data, dependencies, synchronization" href="../task-graphs-synchronization/" />
+    <link rel="prev" title="Expressing parallelism with SYCL: basic data-parallel kernels" href="../expressing-parallelism-basic/" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../" class="icon icon-home">
+            Heterogeneous programming with SYCL
+              <img src="../_static/ENCCS.jpg" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search/" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../karolina/">Setting up your system</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">The lesson</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../what-is-sycl/">What is SYCL?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../device-discovery/">Device discovery</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../queues-cgs-kernels/">Queues, command groups, and kernels</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../buffers-accessors/">Data management with buffers and accessors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../unified-shared-memory/">Data management with unified shared memory</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../expressing-parallelism-basic/">Expressing parallelism with SYCL: basic data-parallel kernels</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Expressing parallelism with SYCL: nd-range data-parallel kernels</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#nd-range-data-parallel-kernels">ND-range data-parallel kernels</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#work-groups-and-work-items-in-nd-ranges">Work-groups and work-items in ND-ranges</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../task-graphs-synchronization/">The task graph: data, dependencies, synchronization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../heat-equation/">Heat equation mini-app</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../sub-groups/">Using sub-groups in SYCL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../profiling/">Profiling SYCL applications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../buffer-accessor-vs-usm/">Buffer-accessor model <em>vs</em> unified shared memory</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../quick-reference/">Quick Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../zbibliography/">Bibliography</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guide/">Instructor’s guide</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../">Heterogeneous programming with SYCL</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Expressing parallelism with SYCL: nd-range data-parallel kernels</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/ENCCS/sycl-workshop/blob/main/content/expressing-parallelism-nd-range.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="expressing-parallelism-with-sycl-nd-range-data-parallel-kernels">
+<span id="expressing-parallelism-nd-range"></span><h1>Expressing parallelism with SYCL: nd-range data-parallel kernels<a class="headerlink" href="#expressing-parallelism-with-sycl-nd-range-data-parallel-kernels" title="Permalink to this heading"></a></h1>
+<div class="admonition-questions questions admonition" id="questions-0">
+<p class="admonition-title">Questions</p>
+<ul class="simple">
+<li><p>How do we write parallel kernels in <a class="reference external" href="https://www.khronos.org/sycl/">SYCL</a>?</p></li>
+</ul>
+</div>
+<div class="admonition-objectives objectives admonition" id="objectives-0">
+<p class="admonition-title">Objectives</p>
+<ul class="simple">
+<li><p>Learn the difference between <em>task</em> and <em>data</em> parallelism.</p></li>
+<li><p>Learn about <em>work-items</em>, <em>work-groups</em>, and <em>ND-ranges</em>.</p></li>
+</ul>
+</div>
+<section id="nd-range-data-parallel-kernels">
+<h2>ND-range data-parallel kernels<a class="headerlink" href="#nd-range-data-parallel-kernels" title="Permalink to this heading"></a></h2>
+<p>The basic flavor of data-parallel kernel allows to map 1-, 2-, and 3-dimensional
+problems to the available hardware. However, the semantics of the <code class="docutils literal notranslate"><span class="pre">range</span></code>
+class is quite limited: we have no way of expressing notions of locality within
+these kernels.
+This was quite evident in the matrix multiplication exercise: each work-item
+addressed one element in the output matrix and would load a full (contiguous)
+row of the left operand and a full (non-contiguous) column of the right operand.
+Loading of operands would happen <em>multiple</em> times.</p>
+<p>ND-ranges are represented with objects of type <code class="docutils literal notranslate"><span class="pre">nd_range</span></code>, templated over the number of dimensions:</p>
+<div class="admonition-nd-range-constructor signature toggle-shown dropdown admonition" id="signature-0">
+<p class="admonition-title"><code class="docutils literal notranslate"><span class="pre">nd_range</span></code> constructor</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">nd_range</span><span class="p">(</span><span class="n">range</span><span class="o">&lt;</span><span class="n">dimensions</span><span class="o">&gt;</span><span class="w"> </span><span class="n">globalSize</span><span class="p">,</span><span class="w"> </span><span class="n">range</span><span class="o">&lt;</span><span class="n">dimensions</span><span class="o">&gt;</span><span class="w"> </span><span class="n">localSize</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<p>these are constructed using <em>two</em> <code class="docutils literal notranslate"><span class="pre">range</span></code> objects, representing the
+<em>global</em> and <em>local</em> execution ranges:</p>
+<ul class="simple">
+<li><p>The <em>global range</em> gives the total size of the <code class="docutils literal notranslate"><span class="pre">nd_range</span></code>: a 1-, 2-, or
+3-dimensional collection of <strong>work-items</strong>. This is exactly like <code class="docutils literal notranslate"><span class="pre">range</span></code>
+objects: at their coarsest level the two objects look exactly the same.</p></li>
+<li><p>The <em>local range</em> gives the size of each <strong>work-group</strong> comprising the
+<code class="docutils literal notranslate"><span class="pre">nd_range</span></code>.</p></li>
+<li><p>The implementation can further subdivide each work-group into 1-dimensional
+<strong>sub-groups</strong>. Since this is an implementation-dependent feature, its size
+cannot be set in the <code class="docutils literal notranslate"><span class="pre">nd_range</span></code> constructor.</p></li>
+</ul>
+<p>Note that:</p>
+<ol class="arabic simple">
+<li><p>The local sizes in each dimension have to divide exactly the corresponding
+global sizes.</p></li>
+<li><p>The contiguous dimensions of the ND-range and its work-groups coincide.</p></li>
+<li><p>Sub-groups, if available, are along the contiguous dimension of their
+work-groups.</p></li>
+</ol>
+<figure class="align-center" id="id5">
+<a class="reference internal image-reference" href="../_images/nd_range.svg"><img alt="../_images/nd_range.svg" height="561" src="../_images/nd_range.svg" width="396" /></a>
+<figcaption>
+<p><span class="caption-text">Depiction of a 3-dimensional ND-range and its further subvisions. The global
+execution range is <span class="math notranslate nohighlight">\(8\times 8 \times 8\)</span>, thus containing 512
+<strong>work-items</strong>. The global range is further subdivided into 8 <strong>work-groups</strong>
+each comprised of <span class="math notranslate nohighlight">\(4 \times 4 \times 4\)</span> work-items. At an even finer
+level, each work-group has <strong>sub-groups</strong> of 4 work-items.
+The availability of sub-groups is implementation-dependent.
+Note that the contiguous dimension (dimension 2 in this example) of ND-range
+and work-group coincide. Furthermore, sub-groups are laid out along the
+contiguous dimension of their work-groups.
+Figure adapted from <span id="id1">[<a class="reference internal" href="../zbibliography/#id2" title="James Reinders, Ben Ashbaugh, James Brodman, Michael Kinsner, John Pennycook, and Xinmin Tian. Data Parallel C++: Mastering DPC++ for Programming of Heterogeneous Systems using C++ and SYCL. Apress, Berkeley, CA, 2021. ISBN 9781484255735. URL: https://link.springer.com/book/10.1007%2F978-1-4842-5574-2, doi:10.1007/978-1-4842-5574-2.">RAB+21</a>]</span>.</span><a class="headerlink" href="#id5" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+</section>
+<section id="work-groups-and-work-items-in-nd-ranges">
+<h2>Work-groups and work-items in ND-ranges<a class="headerlink" href="#work-groups-and-work-items-in-nd-ranges" title="Permalink to this heading"></a></h2>
+<p>As for basic ranges, the work-items in an ND-range represent instances of a kernel function:</p>
+<ul class="simple">
+<li><p>they cannot communicate, nor sychronize with each other. <a class="footnote-reference brackets" href="#id4" id="id2" role="doc-noteref"><span class="fn-bracket">[</span>*<span class="fn-bracket">]</span></a></p></li>
+<li><p>they are scheduled for execution in any order.</p></li>
+</ul>
+<p>Work-groups are the novelty of ND-ranges and the fact that work-items are
+grouped together gives us more programming tools:</p>
+<ul class="simple">
+<li><p>Each work-group has <em>work-group local memory</em>. Each work-item in the group can
+access this memory. How the memory is made available is up to the hardware and
+the SYCL implementation.</p></li>
+<li><p>We can use group-level <em>barriers</em> and <em>fences</em> to synchronize
+work-items within a group.</p></li>
+<li><p>We can use group-level collectives, for communication, <em>e.g.</em> broadcasting, or
+computation, <em>e.g.</em> scans.</p></li>
+</ul>
+<p>Work-items in a work-group are scheduled <strong>concurrently</strong> to a single compute
+unit, however:</p>
+<ul class="simple">
+<li><p>There can be many more work-groups in an ND-range than compute units in the
+hardware. It’s fine to oversubscribe the hardware and if we avoid to make our
+code <em>too</em> device-specific, we have a better chance at achieving portability.</p></li>
+<li><p>Work-items are <strong>not</strong> guaranteed to make <em>independent</em> progress. Interleaving
+execution of a work-item with barriers and fences, effectively running in a
+sequential fashion, <em>is</em> a valid execution model and the runtime may decide to
+do just so.</p></li>
+</ul>
+<p>In ND-range data-parallel kernels, the kernel function passed as second argument
+to the <code class="docutils literal notranslate"><span class="pre">parallel_for</span></code> invocation accepts objects of type <code class="docutils literal notranslate"><span class="pre">nd_item</span></code>, which
+generalize the <code class="docutils literal notranslate"><span class="pre">item</span></code> type.
+The <code class="docutils literal notranslate"><span class="pre">nd_item</span></code> gives access to its ids in the global and local ranges with the
+<code class="docutils literal notranslate"><span class="pre">get_global_id</span></code> and <code class="docutils literal notranslate"><span class="pre">get_local_id</span></code> methods, respectively. It is often
+clearer, however, to first obtain a handle to the work-group (sub-group) with
+the <code class="docutils literal notranslate"><span class="pre">get_group</span></code> (<code class="docutils literal notranslate"><span class="pre">get_sub_group</span></code>) method and then interrogate ids and ranges
+from the returned <code class="docutils literal notranslate"><span class="pre">group</span></code> (<code class="docutils literal notranslate"><span class="pre">sub_group</span></code>) objects.</p>
+<div class="admonition-less-naive-matmul exercise important admonition" id="exercise-0">
+<p class="admonition-title">Less naïve MatMul</p>
+<p>Using the ND-range flavor of data-parallelism should let us optimize memory
+accesses a bit more.  In this exercise, we will rewrite the matrix
+multiplication kernel to use <code class="docutils literal notranslate"><span class="pre">nd_range</span></code> s.</p>
+<p>Each work-item will compute an element in the result matrix
+<span class="math notranslate nohighlight">\(\mathbf{C}\)</span> by accessing a full row of <span class="math notranslate nohighlight">\(\mathbf{A}\)</span> and a full
+column of <span class="math notranslate nohighlight">\(\mathbf{B}\)</span>.  However, at variance with the previous
+implementation, the work-item is in a work-group, and thus the data loaded
+for the operands can be reused by all work-items, improving locality of
+accesses.</p>
+<figure class="align-center" id="id6">
+<img alt="../_images/less_naive_matmul.svg" src="../_images/less_naive_matmul.svg" /><figcaption>
+<p><span class="caption-text">Schematics of a <em>less</em> naïve implementation of matrix multiplication:
+<span class="math notranslate nohighlight">\(C_{ij} = \sum_{k}A_{ik}B_{kj}\)</span>. The computation is split into
+work-groups to optimize the locality of memory accesses. Each work-item
+(green) will compute an element in the result matrix
+<span class="math notranslate nohighlight">\(\mathbf{C}\)</span> by accessing a full row of <span class="math notranslate nohighlight">\(\mathbf{A}\)</span> and a
+full column of <span class="math notranslate nohighlight">\(\mathbf{B}\)</span>.  However, since the work-item is in a
+work-group (orange), the data loaded for the operands can be reused by all
+work-items.
+Figure adapted from <span id="id3">[<a class="reference internal" href="../zbibliography/#id2" title="James Reinders, Ben Ashbaugh, James Brodman, Michael Kinsner, John Pennycook, and Xinmin Tian. Data Parallel C++: Mastering DPC++ for Programming of Heterogeneous Systems using C++ and SYCL. Apress, Berkeley, CA, 2021. ISBN 9781484255735. URL: https://link.springer.com/book/10.1007%2F978-1-4842-5574-2, doi:10.1007/978-1-4842-5574-2.">RAB+21</a>]</span>.</span><a class="headerlink" href="#id6" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<p><strong>Don’t do this at home, use optimized BLAS!</strong></p>
+<div class="sphinx-tabs docutils container">
+<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-0-0-0" aria-selected="true" class="sphinx-tabs-tab" id="tab-0-0-0" name="0-0" role="tab" tabindex="0">Using buffers and accessors</button><button aria-controls="panel-0-0-1" aria-selected="false" class="sphinx-tabs-tab" id="tab-0-0-1" name="0-1" role="tab" tabindex="-1">Using USM</button></div><div aria-labelledby="tab-0-0-0" class="sphinx-tabs-panel" id="panel-0-0-0" name="0-0" role="tabpanel" tabindex="0"><p>You can find a scaffold for the code in the
+<code class="docutils literal notranslate"><span class="pre">content/code/day-2/02_nd_range-matmul/nd_range-matmul.cpp</span></code> file,
+alongside the CMake script to build the executable. You will have to complete
+the source code to compile and run correctly: follow the hints in the source
+file.  A working solution is in the <code class="docutils literal notranslate"><span class="pre">solution</span></code> subfolder.</p>
+<ol class="arabic">
+<li><p>We first create a queue and map it to the GPU, either explicitly:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">queue</span><span class="w"> </span><span class="n">Q</span><span class="p">{</span><span class="n">gpu_selector</span><span class="p">{}};</span>
+</pre></div>
+</div>
+<p>or implicitly, by compiling with the appropriate <code class="docutils literal notranslate"><span class="pre">HIPSYCL_TARGETS</span></code> value.</p>
+</li>
+<li><p>We declare the operands as <code class="docutils literal notranslate"><span class="pre">std::vector&lt;double&gt;</span></code> the
+right-hand side operands are filled with random numbers:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">constexpr</span><span class="w"> </span><span class="kt">size_t</span><span class="w"> </span><span class="n">N</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">256</span><span class="p">;</span>
+<span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="w"> </span><span class="n">a</span><span class="p">(</span><span class="n">N</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">N</span><span class="p">),</span><span class="w"> </span><span class="n">b</span><span class="p">(</span><span class="n">N</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">N</span><span class="p">),</span><span class="w"> </span><span class="n">c</span><span class="p">(</span><span class="n">N</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">N</span><span class="p">);</span>
+
+<span class="c1">// fill a and b with random numbers in the unit interval</span>
+<span class="n">std</span><span class="o">::</span><span class="n">random_device</span><span class="w"> </span><span class="n">rd</span><span class="p">;</span>
+<span class="n">std</span><span class="o">::</span><span class="n">mt19937</span><span class="w"> </span><span class="nf">mt</span><span class="p">(</span><span class="n">rd</span><span class="p">());</span>
+<span class="n">std</span><span class="o">::</span><span class="n">uniform_real_distribution</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="w"> </span><span class="n">dist</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span><span class="w"> </span><span class="mf">1.0</span><span class="p">);</span>
+
+<span class="n">std</span><span class="o">::</span><span class="n">generate</span><span class="p">(</span><span class="n">a</span><span class="p">.</span><span class="n">begin</span><span class="p">(),</span><span class="w"> </span><span class="n">a</span><span class="p">.</span><span class="n">end</span><span class="p">(),</span><span class="w"> </span><span class="p">[</span><span class="o">&amp;</span><span class="n">dist</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">mt</span><span class="p">]()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="n">dist</span><span class="p">(</span><span class="n">mt</span><span class="p">);</span>
+<span class="p">});</span>
+<span class="n">std</span><span class="o">::</span><span class="n">generate</span><span class="p">(</span><span class="n">b</span><span class="p">.</span><span class="n">begin</span><span class="p">(),</span><span class="w"> </span><span class="n">b</span><span class="p">.</span><span class="n">end</span><span class="p">(),</span><span class="w"> </span><span class="p">[</span><span class="o">&amp;</span><span class="n">dist</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">mt</span><span class="p">]()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="n">dist</span><span class="p">(</span><span class="n">mt</span><span class="p">);</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+<p>while the result matrix is zeroed out:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="w"> </span><span class="n">c</span><span class="p">(</span><span class="n">N</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">N</span><span class="p">);</span>
+
+<span class="c1">// zero-out c</span>
+<span class="n">std</span><span class="o">::</span><span class="n">fill</span><span class="p">(</span><span class="n">c</span><span class="p">.</span><span class="n">begin</span><span class="p">(),</span><span class="w"> </span><span class="n">c</span><span class="p">.</span><span class="n">end</span><span class="p">(),</span><span class="w"> </span><span class="mf">0.0</span><span class="p">);</span>
+</pre></div>
+</div>
+</li>
+<li><p>We define buffers to the operands in our matrix multiplication. For
+example, for the matrix <span class="math notranslate nohighlight">\(\mathbf{A}\)</span>:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">buffer</span><span class="o">&lt;</span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="o">&gt;</span><span class="w"> </span><span class="n">a_buf</span><span class="p">(</span><span class="n">a</span><span class="p">.</span><span class="n">data</span><span class="p">(),</span><span class="w"> </span><span class="n">range</span><span class="o">&lt;</span><span class="mi">2</span><span class="o">&gt;</span><span class="p">(</span><span class="n">N</span><span class="p">,</span><span class="w"> </span><span class="n">N</span><span class="p">));</span>
+</pre></div>
+</div>
+<p>Since we will be using the ND-range version, we will also need a
+local, 2-dimensional iteration range, with size <span class="math notranslate nohighlight">\(B\times B\)</span>:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">constexpr</span><span class="w"> </span><span class="kt">size_t</span><span class="w"> </span><span class="n">B</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">4</span><span class="p">;</span>
+</pre></div>
+</div>
+</li>
+<li><p>We submit work to the queue through a command group handler:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">Q</span><span class="p">.</span><span class="n">submit</span><span class="p">([</span><span class="o">&amp;</span><span class="p">](</span><span class="n">handler</span><span class="o">&amp;</span><span class="w"> </span><span class="n">cgh</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="cm">/* work for the queue */</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</li>
+<li><p>We declare accessors to the buffers. For example, for the matrix <span class="math notranslate nohighlight">\(\mathbf{A}\)</span>:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">accessor</span><span class="w"> </span><span class="n">a</span><span class="p">{</span><span class="w"> </span><span class="n">a_buf</span><span class="p">,</span><span class="w"> </span><span class="n">cgh</span><span class="w"> </span><span class="p">};</span>
+</pre></div>
+</div>
+<p>We also need the global and local 2-dimensional iteration ranges:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">range</span><span class="w"> </span><span class="n">global</span><span class="p">{</span><span class="n">N</span><span class="p">,</span><span class="w"> </span><span class="n">N</span><span class="p">};</span>
+<span class="n">range</span><span class="w"> </span><span class="n">local</span><span class="p">{</span><span class="n">B</span><span class="p">,</span><span class="w"> </span><span class="n">B</span><span class="p">};</span>
+</pre></div>
+</div>
+</li>
+<li><p>Within the handler, we launch a <code class="docutils literal notranslate"><span class="pre">parallel_for</span></code>. The parallel
+region iterates over the 2-dimensional ranges of global and local
+indices, with an inner loop to span the common dimension of the
+<span class="math notranslate nohighlight">\(\mathbf{A}\)</span> and <span class="math notranslate nohighlight">\(\mathbf{B}\)</span> operand matrices:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">cgh</span><span class="p">.</span><span class="n">parallel_for</span><span class="p">(</span>
+<span class="w">  </span><span class="n">nd_range</span><span class="p">{</span><span class="w"> </span><span class="cm">/* global range */</span><span class="p">,</span><span class="w"> </span><span class="cm">/* local range */</span><span class="w"> </span><span class="p">},</span>
+<span class="w">  </span><span class="p">[</span><span class="o">=</span><span class="p">](</span><span class="n">nd_item</span><span class="o">&lt;</span><span class="mi">2</span><span class="o">&gt;</span><span class="w"> </span><span class="n">it</span><span class="p">){</span>
+<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">j</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">it</span><span class="p">.</span><span class="n">get_global_id</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">it</span><span class="p">.</span><span class="n">get_global_id</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="k">auto</span><span class="w"> </span><span class="n">k</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">k</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">N</span><span class="p">;</span><span class="w"> </span><span class="o">++</span><span class="n">k</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="n">c</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="p">...;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">);</span>
+</pre></div>
+</div>
+</li>
+<li><p>Check that your results are correct.</p></li>
+</ol>
+</div><div aria-labelledby="tab-0-0-1" class="sphinx-tabs-panel" hidden="true" id="panel-0-0-1" name="0-1" role="tabpanel" tabindex="0"><p>You can find a scaffold for the code in the
+<code class="docutils literal notranslate"><span class="pre">content/code/day-2/03_usm-nd_range-matmul/usm-nd_range-matmul.cpp</span></code> file,
+alongside the CMake script to build the executable. You will have to complete
+the source code to compile and run correctly: follow the hints in the source
+file.  A working solution is in the <code class="docutils literal notranslate"><span class="pre">solution</span></code> subfolder.</p>
+<ol class="arabic">
+<li><p>We first create a queue and map it to the GPU, either explicitly:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">queue</span><span class="w"> </span><span class="n">Q</span><span class="p">{</span><span class="n">gpu_selector</span><span class="p">{}};</span>
+</pre></div>
+</div>
+<p>or implicitly, by compiling with the appropriate <code class="docutils literal notranslate"><span class="pre">HIPSYCL_TARGETS</span></code> value.</p>
+</li>
+<li><p>We allocate the operands as USM buffers and fill them with random
+numbers. We can do this with untyped or typed <code class="docutils literal notranslate"><span class="pre">malloc</span></code>-style or
+<code class="docutils literal notranslate"><span class="pre">usm_allocator</span></code> APIs. Should operands be host, device, or shared
+allocations?</p></li>
+<li><p>We allocate the result as USM buffer and zero it out.  We can do
+this with untyped or typed <code class="docutils literal notranslate"><span class="pre">malloc</span></code>-style or <code class="docutils literal notranslate"><span class="pre">usm_allocator</span></code>
+APIs. Should this be host, device, or shared allocation?</p></li>
+<li><p>We submit work to the queue. Note that we need to linearize indices
+for row-major access to our buffers:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">auto</span><span class="w"> </span><span class="n">irow</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">...;</span>
+<span class="k">auto</span><span class="w"> </span><span class="n">jcol</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">...;</span>
+<span class="k">auto</span><span class="w"> </span><span class="n">row_major_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">irow</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">N</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">jcol</span><span class="p">;</span>
+</pre></div>
+</div>
+</li>
+<li><p>Check that your results are correct.</p></li>
+</ol>
+</div></div>
+</div>
+<div class="admonition-keypoints keypoints admonition" id="keypoints-0">
+<p class="admonition-title">Keypoints</p>
+<ul class="simple">
+<li><p>ND-range kernels should be used for more sophisticated control over
+performance aspects.</p></li>
+</ul>
+</div>
+<p class="rubric">Footnotes</p>
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="id4" role="note">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id2">*</a><span class="fn-bracket">]</span></span>
+<p>Atomic operations are a way to synchronize work-items, but we will not go
+into that in this workshop.</p>
+</aside>
+</aside>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../expressing-parallelism-basic/" class="btn btn-neutral float-left" title="Expressing parallelism with SYCL: basic data-parallel kernels" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../task-graphs-synchronization/" class="btn btn-neutral float-right" title="The task graph: data, dependencies, synchronization" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021, Roberto Di Remigio and individual contributors..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

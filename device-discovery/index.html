@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Device discovery &mdash; Heterogeneous programming with SYCL  documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/copybutton.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/togglebutton.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/sphinx_lesson.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/sphinx_rtd_theme_ext_color_contrast.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/tabs.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/overrides.css" type="text/css" />
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
+        <script src="../_static/clipboard.min.js"></script>
+        <script src="../_static/copybutton.js"></script>
+        <script src="../_static/minipres.js"></script>
+        <script>let toggleHintShow = 'Click to show';</script>
+        <script>let toggleHintHide = 'Click to hide';</script>
+        <script>let toggleOpenOnPrint = 'true';</script>
+        <script src="../_static/togglebutton.js"></script>
+        <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+        <script data-domain="enccs.github.io/sycl-workshop" defer="defer" src="https://plausible.io/js/script.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex/" />
+    <link rel="search" title="Search" href="../search/" />
+    <link rel="next" title="Queues, command groups, and kernels" href="../queues-cgs-kernels/" />
+    <link rel="prev" title="What is SYCL?" href="../what-is-sycl/" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../" class="icon icon-home">
+            Heterogeneous programming with SYCL
+              <img src="../_static/ENCCS.jpg" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search/" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../karolina/">Setting up your system</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">The lesson</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../what-is-sycl/">What is SYCL?</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Device discovery</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#introspection-with-get-info">Introspection with <code class="docutils literal notranslate"><span class="pre">get_info</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#writing-your-own-selector">Writing your own selector</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#using-inheritance">Using inheritance</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#using-aspects">Using aspects</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../queues-cgs-kernels/">Queues, command groups, and kernels</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../buffers-accessors/">Data management with buffers and accessors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../unified-shared-memory/">Data management with unified shared memory</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../expressing-parallelism-basic/">Expressing parallelism with SYCL: basic data-parallel kernels</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../expressing-parallelism-nd-range/">Expressing parallelism with SYCL: nd-range data-parallel kernels</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../task-graphs-synchronization/">The task graph: data, dependencies, synchronization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../heat-equation/">Heat equation mini-app</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../sub-groups/">Using sub-groups in SYCL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../profiling/">Profiling SYCL applications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../buffer-accessor-vs-usm/">Buffer-accessor model <em>vs</em> unified shared memory</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../quick-reference/">Quick Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../zbibliography/">Bibliography</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guide/">Instructor’s guide</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../">Heterogeneous programming with SYCL</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Device discovery</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/ENCCS/sycl-workshop/blob/main/content/device-discovery.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="device-discovery">
+<span id="id1"></span><h1>Device discovery<a class="headerlink" href="#device-discovery" title="Permalink to this heading"></a></h1>
+<div class="admonition-questions questions admonition" id="questions-0">
+<p class="admonition-title">Questions</p>
+<ul class="simple">
+<li><p>How can we make <a class="reference external" href="https://www.khronos.org/sycl/">SYCL</a> aware of the available hardware?</p></li>
+<li><p>Is it possible to specialize our code for the available hardware?</p></li>
+</ul>
+</div>
+<div class="admonition-objectives objectives admonition" id="objectives-0">
+<p class="admonition-title">Objectives</p>
+<ul class="simple">
+<li><p>Learn how to query device information with <code class="docutils literal notranslate"><span class="pre">get_info</span></code>.</p></li>
+<li><p>Learn how to use and write <a class="reference internal" href="../quick-reference/#term-selectors"><span class="xref std std-term">selectors</span></a>.</p></li>
+</ul>
+</div>
+<p>The examples in the <a class="reference internal" href="../what-is-sycl/#what-is-sycl"><span class="std std-ref">What is SYCL?</span></a> episode highlighted the importance of
+the <a class="reference internal" href="../quick-reference/#term-queue"><span class="xref std std-term">queue</span></a> abstraction in <a class="reference external" href="https://www.khronos.org/sycl/">SYCL</a>. All device code is <strong>submitted</strong> to a
+<a class="reference internal" href="../quick-reference/#term-queue"><span class="xref std std-term">queue</span></a> as <em>actions</em>:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">queue</span><span class="w"> </span><span class="n">Q</span><span class="p">;</span>
+
+<span class="n">Q</span><span class="p">.</span><span class="n">submit</span><span class="p">(</span>
+<span class="w">  </span><span class="cm">/* device code action */</span>
+<span class="p">);</span>
+</pre></div>
+</div>
+<p>the runtime <strong>schedules</strong> the actions and executes them <strong>asynchronously</strong>.
+We will discuss queues in further detail in <a class="reference internal" href="../queues-cgs-kernels/#queues-cgs-kernels"><span class="std std-ref">Queues, command groups, and kernels</span></a>. At this
+point, it is important to stress that a queue can be mapped to one device only.
+The mapping happens at queue construction and cannot be changed afterwards.</p>
+<p>We have five strategies to run our device code:</p>
+<dl>
+<dt>Somewhere</dt><dd><p>This is what we have done so far and it’s achieved by simply using the
+<code class="docutils literal notranslate"><span class="pre">queue</span></code> object default constructor:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">queue</span><span class="w"> </span><span class="n">Q</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>Most likely you want to have more control on what device queues in your code
+will use, especially as your SYCL code matures.</p>
+</dd>
+</dl>
+<p>In order to gain more control, we will use the following constructor:</p>
+<div class="admonition-queue-constructor signature toggle-shown dropdown admonition" id="signature-0">
+<p class="admonition-title"><code class="docutils literal notranslate"><span class="pre">queue</span></code> constructor</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">DeviceSelector</span><span class="o">&gt;</span>
+<span class="k">explicit</span><span class="w"> </span><span class="n">queue</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">DeviceSelector</span><span class="w"> </span><span class="o">&amp;</span><span class="n">deviceSelector</span><span class="p">,</span>
+<span class="w">               </span><span class="k">const</span><span class="w"> </span><span class="n">property_list</span><span class="w"> </span><span class="o">&amp;</span><span class="n">propList</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{});</span>
+</pre></div>
+</div>
+</div>
+<p>The <strong>selector</strong> passed as first parameter lets us specify <em>how</em> the runtime
+should go about mapping the queue to a device.</p>
+<dl>
+<dt>On the <em>host device</em></dt><dd><p>A standards-compliant SYCL implementation will always define a host device
+and we can bind a queue to it by passing the <code class="docutils literal notranslate"><span class="pre">host_selector</span></code> object to its
+constructor:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">queue</span><span class="w"> </span><span class="n">Q</span><span class="p">{</span><span class="n">host_selector</span><span class="p">{}};</span>
+</pre></div>
+</div>
+<p>The host device makes the host CPU “look like” an <em>independent</em> device, such
+that device code will run regardless of whether the hardware is available.
+This is especially useful in three scenarios:</p>
+<ol class="arabic simple">
+<li><p>Developing heterogeneous code on a machine without hardware.</p></li>
+<li><p>Debugging device code using CPU tooling.</p></li>
+<li><p>Fallback option to guarantee functional portability.</p></li>
+</ol>
+</dd>
+<dt>On a <em>specific</em> class of devices</dt><dd><p>Such as GPUs or FPGAs. The <a class="reference external" href="https://www.khronos.org/sycl/">SYCL</a> standard defines a few <em>selectors</em> for this
+use case.</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">queue</span><span class="w"> </span><span class="n">Q_cpu</span><span class="p">{</span><span class="n">default_selector</span><span class="p">{}};</span>
+
+<span class="n">queue</span><span class="w"> </span><span class="n">Q_cpu</span><span class="p">{</span><span class="n">cpu_selector</span><span class="p">{}};</span>
+
+<span class="n">queue</span><span class="w"> </span><span class="n">Q_device</span><span class="p">{</span><span class="n">gpu_selector</span><span class="p">{}};</span>
+
+<span class="n">queue</span><span class="w"> </span><span class="n">Q_accelerator</span><span class="p">{</span><span class="n">accelerator_selector</span><span class="p">{}};</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">default_selector</span></code> is the implementation-defined default device. This is
+not portable between SYCL compilers.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">cpu_selector</span></code> a CPU device.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">gpu_selector</span></code> a GPU device.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">accelerator_selector</span></code> an accelerator device, including FPGAs.</p></li>
+</ul>
+</dd>
+<dt>On a <em>specific</em> device in a <em>specific</em> class</dt><dd><p>For example on a GPU with well-defined compute capabilities. <a class="reference external" href="https://www.khronos.org/sycl/">SYCL</a> defines
+the <code class="docutils literal notranslate"><span class="pre">device_selector</span></code> base class, which we can inherit from and customize
+to our needs.</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">special_device_selector</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">device_selector</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="cm">/* we will look at what goes here soon! */</span>
+<span class="p">};</span>
+
+<span class="n">queue</span><span class="w"> </span><span class="n">Q</span><span class="p">{</span><span class="n">special_device_selector</span><span class="p">{}};</span>
+</pre></div>
+</div>
+<p>Coincidentally, this is the most flexible and portable way of
+<em>parameterizing</em> our code to work on a diverse set of devices.</p>
+</dd>
+</dl>
+<div class="admonition-hipsycl-and-hipsycl-targets exercise important admonition" id="exercise-0">
+<p class="admonition-title">hipSYCL and <code class="docutils literal notranslate"><span class="pre">HIPSYCL_TARGETS</span></code></p>
+<p><a class="reference external" href="https://www.khronos.org/sycl/">SYCL</a> is all about being able to write code <em>once</em> and execute it on
+different hardware. The sample code in folder
+<code class="docutils literal notranslate"><span class="pre">content/code/day-1/01_hello-selectors</span></code> used the default queue constructor:
+essentially, the runtime decides which device will be used for us.
+Let us explore how that works with <a class="reference external" href="https://hipsycl.github.io">hipSYCL</a>. When
+configuring the code we can set the <code class="docutils literal notranslate"><span class="pre">HIPSYCL_TARGETS</span></code> CMake
+option to influence the behavior.</p>
+<ol class="arabic simple">
+<li><p>Compile to target the GPU, using <code class="docutils literal notranslate"><span class="pre">-DHIPSYCL_TARGETS=&quot;cuda:sm_80&quot;</span></code> in the
+configuration step.  What output do you see? Is the code running on the
+device you expect?</p></li>
+<li><p>Compile to target the GPU <em>and</em> the host device using OpenMP with
+<code class="docutils literal notranslate"><span class="pre">-DHIPSYCL_TARGETS=&quot;cuda:sm_80;omp&quot;</span></code>. What output do you see now?</p></li>
+<li><p>Extend the code to create multiple queues, each using one of the standard
+selectors, and compile with <code class="docutils literal notranslate"><span class="pre">-DHIPSYCL_TARGETS=&quot;cuda:sm_80;omp&quot;</span></code>.
+What output do you expect to see?</p></li>
+</ol>
+<p>To learn more about the compilation model in <a class="reference external" href="https://hipsycl.github.io">hipSYCL</a>, check out <a class="reference external" href="https://github.com/illuhad/hipSYCL/blob/develop/doc/compilation.md">its
+documentation</a>.</p>
+</div>
+<section id="introspection-with-get-info">
+<h2>Introspection with <code class="docutils literal notranslate"><span class="pre">get_info</span></code><a class="headerlink" href="#introspection-with-get-info" title="Permalink to this heading"></a></h2>
+<p>It is not a good idea to depend explicitly on vendor and/or device names in our
+program: for maximum portability, our device code should rather be parameterized
+on <em>compute capabilities</em>, <em>available memory</em>, and so forth.
+Introspection into such parameters is achieved with the <code class="docutils literal notranslate"><span class="pre">get_info</span></code> template function:</p>
+<div class="admonition-get-info signature toggle-shown dropdown admonition" id="signature-1">
+<p class="admonition-title"><code class="docutils literal notranslate"><span class="pre">get_info</span></code></p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">param</span><span class="o">&gt;</span>
+<span class="k">typename</span><span class="w"> </span><span class="nc">param</span><span class="o">::</span><span class="n">return_type</span><span class="w"> </span><span class="n">get_info</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+<p>This is a method available for many of the classes defined by the SYCL standard
+including <code class="docutils literal notranslate"><span class="pre">device</span></code>, of course. The template parameter specifies which
+information we would like to obtain.
+In the previous examples, we have used <code class="docutils literal notranslate"><span class="pre">info::device::vendor</span></code> and
+<code class="docutils literal notranslate"><span class="pre">info::device::name</span></code> to build our selectors.
+Valid <code class="docutils literal notranslate"><span class="pre">get_info</span></code> queries for devices are in the <code class="docutils literal notranslate"><span class="pre">info::device</span></code> namespace
+and can be roughly classified in two groups of queries, which can:</p>
+<ol class="arabic simple">
+<li><p>decide whether a kernel can run correctly on a given device. For example,
+querying for <code class="docutils literal notranslate"><span class="pre">info::device::global_mem_size</span></code> and
+<code class="docutils literal notranslate"><span class="pre">info::device::local_mem_size</span></code> would return the size, in bytes, of the
+global and local memory, respectively.</p></li>
+<li><p>help tune kernel code to a given device. For example, querying
+<code class="docutils literal notranslate"><span class="pre">info::device::local_mem_type</span></code> would return which kind of local memory is
+available on the device: none, dedicated local storage, or an abstraction
+built using global memory.</p></li>
+</ol>
+<p>We will not list all possible device queries here: a complete list is <a class="reference external" href="https://www.khronos.org/registry/SYCL/specs/sycl-2020/html/sycl-2020.html#_device_information_descriptors">available
+on the webpage of the standard</a>.</p>
+<div class="admonition-nosing-around-on-our-system exercise important admonition" id="exercise-1">
+<p class="admonition-title">Nosing around on our system</p>
+<p>We will write a chatty program to report properties of all devices available
+on our system. We will have to keep the <a class="reference external" href="https://www.khronos.org/registry/SYCL/specs/sycl-2020/html/sycl-2020.html#_device_information_descriptors">list of queries</a>
+at hand for this task.</p>
+<p>You can find a scaffold for the code in the
+<code class="docutils literal notranslate"><span class="pre">content/code/day-1/03_platform-devices/platform-devices.cpp</span></code> file,
+alongside the CMake script to build the executable. You will have to complete
+the source code to compile and run correctly: follow the hints in the source
+file.  A working solution is in the <code class="docutils literal notranslate"><span class="pre">solution</span></code> subfolder.</p>
+<p>The code is a double loop:</p>
+<ol class="arabic">
+<li><p>First over all <em>platforms</em></p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">p</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">platform</span><span class="o">::</span><span class="n">get_platforms</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="p">...</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>A <code class="docutils literal notranslate"><span class="pre">platform</span></code> is an abstraction mapping to a backend.</p>
+</li>
+<li><p>Then over all <em>devices</em> available on each platform:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="k">auto</span><span class="o">&amp;</span><span class="w"> </span><span class="n">d</span><span class="o">:</span><span class="w"> </span><span class="n">p</span><span class="p">.</span><span class="n">get_devices</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="p">...</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+<li><p>We will query the device with <code class="docutils literal notranslate"><span class="pre">get_info</span></code> in the inner loop. For example:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;name: &quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">d</span><span class="p">.</span><span class="n">get_info</span><span class="o">&lt;</span><span class="n">info</span><span class="o">::</span><span class="n">device</span><span class="o">::</span><span class="n">name</span><span class="o">&gt;</span><span class="p">()</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+</pre></div>
+</div>
+</li>
+<li><p>Add queries and print out information on global and local memory, work
+items, and work groups.</p></li>
+</ol>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Not all queries make sense on all devices:</p>
+<ul class="simple">
+<li><p>A property might be unlimited on a particular device/backend, <em>e.g.</em>,
+no real maximum allocation size on most host operating systems due to
+modern virtual memory implementations with first-touch allocation
+policy.</p></li>
+<li><p>hipSYCL does not know the result, <em>e.g.</em> because the query does not
+apply or make sense to the backend, or the backend cannot provide this
+information.</p></li>
+</ul>
+<p>Compiling with hipSYCL might return alarming values in some cases, but
+this is not necessarily an issue.</p>
+</div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">info::</span></code> namespace is <strong>vast!</strong> You can query many aspects of a SYCL code
+at runtime using <code class="docutils literal notranslate"><span class="pre">get_info</span></code>, not just devices. The classes <code class="docutils literal notranslate"><span class="pre">platform</span></code>,
+<code class="docutils literal notranslate"><span class="pre">context</span></code>, <code class="docutils literal notranslate"><span class="pre">queue</span></code>, <code class="docutils literal notranslate"><span class="pre">event</span></code>, and <code class="docutils literal notranslate"><span class="pre">kernel</span></code> also offer a <code class="docutils literal notranslate"><span class="pre">get_info</span></code>
+method. The queries in the <code class="docutils literal notranslate"><span class="pre">info::kernel_device_specific</span></code>  <a class="reference external" href="https://www.khronos.org/registry/SYCL/specs/sycl-2020/html/sycl-2020.html#table.kernel.devicespecificinfo">namespace</a>
+can be helpful with performance tuning.</p>
+</section>
+<section id="writing-your-own-selector">
+<h2>Writing your own selector<a class="headerlink" href="#writing-your-own-selector" title="Permalink to this heading"></a></h2>
+<section id="using-inheritance">
+<h3>Using inheritance<a class="headerlink" href="#using-inheritance" title="Permalink to this heading"></a></h3>
+<p>All the standard selectors are derived types of the abstract <code class="docutils literal notranslate"><span class="pre">device_selector</span></code>
+class. This class defines, among other things, a pure virtual overload of the
+function-call operator:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">virtual</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="nf">operator</span><span class="p">()(</span><span class="k">const</span><span class="w"> </span><span class="n">device</span><span class="w"> </span><span class="o">&amp;</span><span class="n">dev</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>The method takes a <code class="docutils literal notranslate"><span class="pre">device</span></code> object and return a <strong>score</strong> for it, an integer
+value, and the highest score gets selected.
+The runtime will call this method exactly once for each device that it has
+access to, in order to build the ranking of device scores.
+Devices might be completely excluded from the ranking if their score is a
+<em>negative</em> number.
+We can write our own selector by simply inheriting from this abstract base class
+and implementing our own custom logic for scoring devices:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">special_device_selector</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">device_selector</span>
+<span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="k">operator</span><span class="p">()(</span><span class="k">const</span><span class="w"> </span><span class="n">sycl</span><span class="o">::</span><span class="n">device</span><span class="o">&amp;</span><span class="w"> </span><span class="n">dev</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span>
+<span class="w">  </span><span class="p">{</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">dev</span><span class="p">.</span><span class="n">is_gpu</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="k">auto</span><span class="w"> </span><span class="n">vendorName</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">dev</span><span class="p">.</span><span class="n">get_info</span><span class="o">&lt;</span><span class="n">sycl</span><span class="o">::</span><span class="n">info</span><span class="o">::</span><span class="n">device</span><span class="o">::</span><span class="n">vendor</span><span class="o">&gt;</span><span class="p">();</span>
+<span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">vendorName</span><span class="p">.</span><span class="n">find</span><span class="p">(</span><span class="s">&quot;Intel&quot;</span><span class="p">)</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">::</span><span class="n">npos</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="mi">-1</span><span class="p">;</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">};</span>
+
+<span class="k">auto</span><span class="w"> </span><span class="n">Q</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">queue</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">special_device_selector</span><span class="w"> </span><span class="p">{}</span><span class="w"> </span><span class="p">};</span>
+</pre></div>
+</div>
+<div class="admonition-write-a-custom-selector exercise important admonition" id="exercise-2">
+<p class="admonition-title">Write a custom selector</p>
+<p>It’s not that far of a stretch to imagine that in a not-so-distant future, a
+node in a cluster might be equipped with accelarators from different vendors.
+In this exercise, you’ll write a selector to score GPUs from different
+vendors according to your preferences.</p>
+<p>You can find a scaffold for the code in the
+<code class="docutils literal notranslate"><span class="pre">content/code/day-1/02_custom-selectors/custom-selectors.cpp</span></code> file,
+alongside the CMake script to build the executable. You will have to complete
+the source code to compile and run correctly: follow the hints in the source
+file.  A working solution is in the <code class="docutils literal notranslate"><span class="pre">solution</span></code> subfolder.</p>
+<ol class="arabic">
+<li><p>Load the necessary modules:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>module<span class="w"> </span>load<span class="w"> </span>CMake<span class="w"> </span>hipSYCL
+</pre></div>
+</div>
+</li>
+<li><p>Configure, compile, and run the code:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>cmake<span class="w"> </span>-S.<span class="w"> </span>-Bbuild<span class="w"> </span>-DHIPSYCL_TARGETS<span class="o">=</span><span class="s2">&quot;cuda:sm_80;omp&quot;</span>
+<span class="gp">$ </span>cmake<span class="w"> </span>--build<span class="w"> </span>build<span class="w"> </span>--<span class="w"> </span><span class="nv">VERBOSE</span><span class="o">=</span><span class="m">1</span>
+<span class="gp">$ </span>./build/custom-selectors
+</pre></div>
+</div>
+</li>
+</ol>
+<p>Try compiling and executing on a non-GPU node. What happens? How can you make
+the code more robust?</p>
+</div>
+</section>
+<section id="using-aspects">
+<h3>Using aspects<a class="headerlink" href="#using-aspects" title="Permalink to this heading"></a></h3>
+<p>The standard defines the <code class="docutils literal notranslate"><span class="pre">aspect_selector</span></code> free function, which
+return a selectors based on desired device <strong>aspects</strong>:</p>
+<div class="admonition-aspect-selector signature toggle-shown dropdown admonition" id="signature-2">
+<p class="admonition-title"><code class="docutils literal notranslate"><span class="pre">aspect_selector</span></code></p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">class</span><span class="p">...</span><span class="w"> </span><span class="n">aspectListTN</span><span class="o">&gt;</span>
+<span class="k">auto</span><span class="w"> </span><span class="n">aspect_selector</span><span class="p">(</span><span class="n">aspectListTN</span><span class="p">...</span><span class="w"> </span><span class="n">aspectList</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<p>Available aspects are defined in the <code class="docutils literal notranslate"><span class="pre">aspect</span></code> enumeration and can be probed
+using the <code class="docutils literal notranslate"><span class="pre">has</span></code> method of the <code class="docutils literal notranslate"><span class="pre">device</span></code> class. For example,
+<code class="docutils literal notranslate"><span class="pre">dev.has(aspect::gpu)</span></code> is equivalent to <code class="docutils literal notranslate"><span class="pre">dev.is_gpu()</span></code>.
+A selector for GPUs supporting half-precision floating-point numbers (FP16) and <a class="reference internal" href="../quick-reference/#term-USM"><span class="xref std std-term">USM</span></a> device allocations can be implemented with a one-liner:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">auto</span><span class="w"> </span><span class="n">my_selector</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">aspect_selector</span><span class="p">(</span><span class="n">aspect</span><span class="o">::</span><span class="n">usm_device_allocations</span><span class="p">,</span><span class="w"> </span><span class="n">aspect</span><span class="o">::</span><span class="n">fp16</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>The aspects available, according to the standard, are <a class="reference external" href="https://www.khronos.org/registry/SYCL/specs/sycl-2020/html/sycl-2020.html#sec:device-aspects">available here</a>.
+Currently, we cannot use aspects to filter devices based on vendors.</p>
+<div class="admonition-keypoints keypoints admonition" id="keypoints-0">
+<p class="admonition-title">Keypoints</p>
+<ul class="simple">
+<li><p>Device selection is essential to tailor execution to the available hardware
+and is achieved using the <code class="docutils literal notranslate"><span class="pre">device_selector</span></code> abstraction.</p></li>
+<li><p>Custom selectors with complex logic can be implemented with inheritance.</p></li>
+<li><p>You should use <code class="docutils literal notranslate"><span class="pre">get_info</span></code> to probe your system. Device selection should
+be done based on compute capabilities, not on vendor and/or device names.</p></li>
+</ul>
+</div>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../what-is-sycl/" class="btn btn-neutral float-left" title="What is SYCL?" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../queues-cgs-kernels/" class="btn btn-neutral float-right" title="Queues, command groups, and kernels" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021, Roberto Di Remigio and individual contributors..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

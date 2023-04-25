@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>What is SYCL? &mdash; Heterogeneous programming with SYCL  documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/copybutton.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/togglebutton.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/sphinx_lesson.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/sphinx_rtd_theme_ext_color_contrast.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/tabs.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/overrides.css" type="text/css" />
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
+        <script src="../_static/clipboard.min.js"></script>
+        <script src="../_static/copybutton.js"></script>
+        <script src="../_static/minipres.js"></script>
+        <script src="../_static/tabs.js"></script>
+        <script>let toggleHintShow = 'Click to show';</script>
+        <script>let toggleHintHide = 'Click to hide';</script>
+        <script>let toggleOpenOnPrint = 'true';</script>
+        <script src="../_static/togglebutton.js"></script>
+        <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+        <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+        <script data-domain="enccs.github.io/sycl-workshop" defer="defer" src="https://plausible.io/js/script.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex/" />
+    <link rel="search" title="Search" href="../search/" />
+    <link rel="next" title="Device discovery" href="../device-discovery/" />
+    <link rel="prev" title="Setting up your system" href="../karolina/" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../" class="icon icon-home">
+            Heterogeneous programming with SYCL
+              <img src="../_static/ENCCS.jpg" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search/" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../karolina/">Setting up your system</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">The lesson</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">What is SYCL?</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#the-sycl-compiler">The SYCL compiler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#hello-sycl">Hello, SYCL!</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../device-discovery/">Device discovery</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../queues-cgs-kernels/">Queues, command groups, and kernels</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../buffers-accessors/">Data management with buffers and accessors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../unified-shared-memory/">Data management with unified shared memory</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../expressing-parallelism-basic/">Expressing parallelism with SYCL: basic data-parallel kernels</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../expressing-parallelism-nd-range/">Expressing parallelism with SYCL: nd-range data-parallel kernels</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../task-graphs-synchronization/">The task graph: data, dependencies, synchronization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../heat-equation/">Heat equation mini-app</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../sub-groups/">Using sub-groups in SYCL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../profiling/">Profiling SYCL applications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../buffer-accessor-vs-usm/">Buffer-accessor model <em>vs</em> unified shared memory</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../quick-reference/">Quick Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../zbibliography/">Bibliography</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guide/">Instructor’s guide</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../">Heterogeneous programming with SYCL</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">What is SYCL?</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/ENCCS/sycl-workshop/blob/main/content/what-is-sycl.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="what-is-sycl">
+<span id="id1"></span><h1>What is SYCL?<a class="headerlink" href="#what-is-sycl" title="Permalink to this heading"></a></h1>
+<div class="admonition-questions questions admonition" id="questions-0">
+<p class="admonition-title">Questions</p>
+<ul class="simple">
+<li><p>What is <a class="reference external" href="https://www.khronos.org/sycl/">SYCL</a> and why should I care?</p></li>
+</ul>
+</div>
+<div class="admonition-objectives objectives admonition" id="objectives-0">
+<p class="admonition-title">Objectives</p>
+<ul class="simple">
+<li><p>Learn how to write a simple C++ <a class="reference external" href="https://www.khronos.org/sycl/">SYCL</a> code.</p></li>
+<li><p>Learn how to compile with <a class="reference external" href="https://hipsycl.github.io">hipSYCL</a>.</p></li>
+</ul>
+</div>
+<p>The high-performance computing landscape is increasingly dominated by machines
+whose high FLOP count is delivered by <em>heterogeneous hardware</em>: large-core
+count CPUs in tandem with ever more powerful GPUs are now the norm in the HPC
+datacenter.  This trend is likely to continue, with the appearance of new
+hardware architectures, sometimes tailored for specific operations.</p>
+<p>Each new architecture comes equipped with its own, usually low-level,
+programming language. Adapting applications for a heterogeneous computing
+environment proceeds in tight cycles of profiling and porting. These are
+time-consuming, error-prone, and scarcely portable:</p>
+<ul class="simple">
+<li><p>Mastering low-level programming languages may require years.</p></li>
+<li><p>The codebase can <em>diverge</em> significantly to work with different hardware.</p></li>
+</ul>
+<p>Let’s look at a simple example: the single-precision vector addition kernel
+<span class="math notranslate nohighlight">\(y := \alpha x + y\)</span>, better known as <code class="docutils literal notranslate"><span class="pre">SAXPY</span></code>:</p>
+<div class="sphinx-tabs docutils container">
+<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-0-0-0" aria-selected="true" class="sphinx-tabs-tab" id="tab-0-0-0" name="0-0" role="tab" tabindex="0">CUDA</button><button aria-controls="panel-0-0-1" aria-selected="false" class="sphinx-tabs-tab" id="tab-0-0-1" name="0-1" role="tab" tabindex="-1">HIP</button><button aria-controls="panel-0-0-2" aria-selected="false" class="sphinx-tabs-tab" id="tab-0-0-2" name="0-2" role="tab" tabindex="-1">OpenMP</button><button aria-controls="panel-0-0-3" aria-selected="false" class="sphinx-tabs-tab" id="tab-0-0-3" name="0-3" role="tab" tabindex="-1">OpenACC</button></div><div aria-labelledby="tab-0-0-0" class="sphinx-tabs-panel" id="panel-0-0-0" name="0-0" role="tabpanel" tabindex="0"><div class="highlight-cuda notranslate"><div class="highlight"><pre><span></span><span class="kr">__global__</span>
+<span class="kt">void</span><span class="w"> </span><span class="n">saxpy</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">sz</span><span class="p">,</span><span class="w"> </span><span class="kt">float</span><span class="w"> </span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="kt">float</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="kr">restrict</span><span class="w"> </span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="kt">float</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="kr">restrict</span><span class="w"> </span><span class="n">y</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">blockIdx</span><span class="p">.</span><span class="n">x</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="nb">blockDim</span><span class="p">.</span><span class="n">x</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nb">threadIdx</span><span class="p">.</span><span class="n">x</span><span class="p">;</span>
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">sz</span><span class="p">)</span><span class="w"> </span>
+<span class="w">    </span><span class="n">y</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">y</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>This code is an example of <em>prescriptive</em> parallelism.</p>
+</div><div aria-labelledby="tab-0-0-1" class="sphinx-tabs-panel" hidden="true" id="panel-0-0-1" name="0-1" role="tabpanel" tabindex="0"><div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">__global__</span><span class="w"> </span><span class="kt">void</span>
+<span class="n">saxpy</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">sz</span><span class="p">,</span><span class="w"> </span><span class="kt">float</span><span class="w"> </span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="kt">float</span><span class="o">*</span><span class="w"> </span><span class="k">restrict</span><span class="w"> </span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="kt">float</span><span class="o">*</span><span class="w"> </span><span class="k">restrict</span><span class="w"> </span><span class="n">y</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">blockIdx</span><span class="p">.</span><span class="n">x</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">blockDim</span><span class="p">.</span><span class="n">x</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">threadIdx</span><span class="p">.</span><span class="n">x</span><span class="p">;</span>
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">sz</span><span class="p">)</span><span class="w"> </span><span class="n">y</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">y</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>This code is an example of <em>prescriptive</em> parallelism.</p>
+</div><div aria-labelledby="tab-0-0-2" class="sphinx-tabs-panel" hidden="true" id="panel-0-0-2" name="0-2" role="tabpanel" tabindex="0"><div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span>
+<span class="nf">saxpy</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">sz</span><span class="p">,</span><span class="w"> </span><span class="kt">float</span><span class="w"> </span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="kt">float</span><span class="w"> </span><span class="o">*</span><span class="k">restrict</span><span class="w"> </span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="kt">float</span><span class="w"> </span><span class="o">*</span><span class="k">restrict</span><span class="w"> </span><span class="n">y</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="cp">#pragma omp target teams distribute parallel for simd num_teams(num_blocks) \</span>
+<span class="cp">  map(to                                                                    \</span>
+<span class="cp">      : x [0:sz]) map(tofrom                                                \</span>
+<span class="cp">                      : y [0:sz])</span>
+<span class="w">  </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">sz</span><span class="p">;</span><span class="w"> </span><span class="o">++</span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">y</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">y</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>This code is an example of <em>descriptive</em> parallelism.</p>
+</div><div aria-labelledby="tab-0-0-3" class="sphinx-tabs-panel" hidden="true" id="panel-0-0-3" name="0-3" role="tabpanel" tabindex="0"><div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span><span class="w"> </span><span class="nf">saxpy</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">sz</span><span class="p">,</span><span class="w"> </span><span class="kt">float</span><span class="w"> </span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="kt">float</span><span class="w"> </span><span class="o">*</span><span class="kr">restrict</span><span class="w"> </span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="kt">float</span><span class="w"> </span><span class="o">*</span><span class="kr">restrict</span><span class="w"> </span><span class="n">y</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="cp">#pragma acc kernels</span>
+<span class="w">  </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">sz</span><span class="p">;</span><span class="w"> </span><span class="o">++</span><span class="n">i</span><span class="p">)</span>
+<span class="w">    </span><span class="n">y</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">y</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>This code is an example of <em>descriptive</em> parallelism.</p>
+</div></div>
+<p>There are few things to notice in this example:</p>
+<ul class="simple">
+<li><p>We work with <em>prescriptive</em> parallelism with <a class="reference external" href="https://docs.nvidia.com/cuda/index.html">CUDA</a> and <a class="reference external" href="https://rocmdocs.amd.com/en/latest/">HIP</a>: we explicitly
+divide up the work between threads inside the kernel function.</p></li>
+<li><p>In the <a class="reference external" href="https://www.openmp.org/">OpenMP</a> and <a class="reference external" href="https://www.openacc.org/">OpenACC</a> models, we describe data movement and worksharing,
+but rely on the compiler to generate correct code. Hence the qualification of
+<em>descriptive</em> parallelism.</p></li>
+<li><p>When using low-level APIs, a certain degree of code duplication between host
+and device code <strong>is inevitable</strong>. Parallelization strategies between host
+and device will be different.  On top of this, the expressiveness of
+low-level language extensions is limited, which might increase the
+maintenance burden.</p></li>
+<li><p>Low-level APIs might only be available with proprietary, vendor-specific
+compilers. This limits both <em>functional</em> and <em>performance</em> portability.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">pragma</span></code>-based schemes are standardized, but compiler support is not always
+optimal.</p></li>
+</ul>
+<p>When programming for heterogeneous platforms, there is no silver bullet: we have
+to carefully evaluate the tradeoffs between performance, productivity, and
+portability.
+<a class="reference external" href="https://www.khronos.org/sycl/">SYCL</a> is an attempt at improving this state of affairs. <a class="footnote-reference brackets" href="#id4" id="id2" role="doc-noteref"><span class="fn-bracket">[</span>*<span class="fn-bracket">]</span></a> It is a
+<em>standards-based</em> and <em>vendor-agnostic</em> domain-specific embedded language for
+parallel programming, for heterogeneous and homogeneous architectures.
+The <a class="reference external" href="https://www.khronos.org/sycl/">SYCL</a> standard is developed by the <a class="reference external" href="https://www.khronos.org/">Khronos group</a>:</p>
+<ul class="simple">
+<li><p>It is built as a <strong>header-only</strong> library for ISO C++17. <a class="reference external" href="https://www.khronos.org/sycl/">SYCL</a> code can be
+compiled with a standards-compliant compiler and the necessary headers: it
+does <strong>not</strong> require special compiler extensions.</p></li>
+<li><p>It is a <strong>single-source</strong>-style framework. Host and device code are in the
+same <em>translation unit</em>.</p></li>
+<li><p>It is <strong>asynchronous</strong>. The programmer describes computations, memory
+allocations, and data migrations; the runtime generates a task graph and works
+its way through it when executing the program.</p></li>
+</ul>
+<section id="the-sycl-compiler">
+<h2>The SYCL compiler<a class="headerlink" href="#the-sycl-compiler" title="Permalink to this heading"></a></h2>
+<p>Despite the fact that SYCL is a header-only library for ISO C++17, we will still
+need a SYCL-aware compiler.
+ISO C++17 compilers will be unaware of how to generate optimal code for core
+abstractions, such as <a class="reference internal" href="../quick-reference/#term-queues"><span class="xref std std-term">queues</span></a> and <a class="reference internal" href="../quick-reference/#term-unified-shared-memory"><span class="xref std std-term">unified shared memory</span></a>.
+A SYCL compiler will be able to optimize our parallel code and will also be
+aware of which low-level framework to use to target specific architectures.
+Fortunately, there are many SYCL implementations to choose from!</p>
+<figure class="align-center" id="id5">
+<img alt="../_images/sycl_impls%2Bbackends.svg" src="../_images/sycl_impls%2Bbackends.svg" /><figcaption>
+<p><span class="caption-text"><a class="reference external" href="https://www.khronos.org/sycl/">SYCL</a> is an open standard for heterogeneous parallelism build on top of modern ISO C++.
+The <a class="reference external" href="https://www.khronos.org/">Khronos group</a> spearheads the standardization effort.
+There are numerous compilers implementing the <a class="reference external" href="https://www.khronos.org/sycl/">SYCL</a> standard and they use
+different <strong>backends</strong> to target CPUs, GPUs, and even specialized hardware
+such as field-programmable gate arrays (<a class="reference internal" href="../quick-reference/#term-FPGA"><span class="xref std std-term">FPGA</span></a>) and <a class="reference internal" href="../quick-reference/#term-vector-engines"><span class="xref std std-term">vector engines</span></a>.
+The figure shows the route, as of today, from <a class="reference external" href="https://www.khronos.org/sycl/">SYCL</a> source code to hardware
+through the various implementations and backends.  The red, dashed lines show
+experimental backends, as of today.  The figure was adapted <a class="reference external" href="https://www.khronos.org/sycl/">from here</a> and
+<a class="reference external" href="https://github.com/illuhad/hipSYCL/raw/develop/doc/img/sycl-targets.png">here</a>.</span><a class="headerlink" href="#id5" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+</section>
+<section id="hello-sycl">
+<h2>Hello, SYCL!<a class="headerlink" href="#hello-sycl" title="Permalink to this heading"></a></h2>
+<p>Let’s dig in with a “Hello, world” example.</p>
+<div class="admonition-hello-world-with-sycl typealong toggle-shown dropdown admonition" id="typealong-0">
+<p class="admonition-title">“Hello, world” with SYCL</p>
+<p>You can find the file with the complete source code in the
+<code class="docutils literal notranslate"><span class="pre">content/code/day-1/00_hello</span></code> folder. Worry not about the details in the
+code, we will dig into what is happening here at great length during the rest
+of the lesson.</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;iostream&gt;</span>
+
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;sycl/sycl.hpp&gt;</span>
+
+<span class="k">using</span><span class="w"> </span><span class="k">namespace</span><span class="w"> </span><span class="nn">sycl</span><span class="p">;</span>
+
+<span class="kt">int</span>
+<span class="nf">main</span><span class="p">()</span>
+<span class="p">{</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">secret</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="s">&quot;Ifmmp-!xpsme</span><span class="se">\&quot;\012</span><span class="s">J(n!tpssz-!Ebwf/!&quot;</span>
+<span class="w">                             </span><span class="s">&quot;J(n!bgsbje!J!dbo(u!ep!uibu/!.!IBM</span><span class="se">\01</span><span class="s">&quot;</span><span class="w"> </span><span class="p">};</span>
+
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">sz</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">secret</span><span class="p">.</span><span class="n">size</span><span class="p">();</span>
+
+<span class="w">  </span><span class="n">queue</span><span class="w"> </span><span class="n">Q</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;Running on: &quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">Q</span><span class="p">.</span><span class="n">get_device</span><span class="p">().</span><span class="n">get_info</span><span class="o">&lt;</span><span class="n">info</span><span class="o">::</span><span class="n">device</span><span class="o">::</span><span class="n">name</span><span class="o">&gt;</span><span class="p">()</span>
+<span class="w">            </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+
+<span class="w">  </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">malloc_shared</span><span class="o">&lt;</span><span class="kt">char</span><span class="o">&gt;</span><span class="p">(</span><span class="n">sz</span><span class="p">,</span><span class="w"> </span><span class="n">Q</span><span class="p">);</span>
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">memcpy</span><span class="p">(</span><span class="n">result</span><span class="p">,</span><span class="w"> </span><span class="n">secret</span><span class="p">.</span><span class="n">data</span><span class="p">(),</span><span class="w"> </span><span class="n">sz</span><span class="p">);</span>
+
+<span class="w">  </span><span class="n">Q</span><span class="p">.</span><span class="n">parallel_for</span><span class="p">(</span>
+<span class="w">     </span><span class="n">range</span><span class="o">&lt;</span><span class="mi">1</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">sz</span><span class="w"> </span><span class="p">},</span>
+<span class="hll"><span class="w">     </span><span class="p">[</span><span class="o">=</span><span class="p">](</span><span class="n">id</span><span class="o">&lt;</span><span class="mi">1</span><span class="o">&gt;</span><span class="w"> </span><span class="n">tid</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span class="hll"><span class="w">       </span><span class="n">result</span><span class="p">[</span><span class="n">tid</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span><span class="w"> </span><span class="o">-=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+</span><span class="hll"><span class="w">     </span><span class="p">})</span>
+</span><span class="w">    </span><span class="p">.</span><span class="n">wait</span><span class="p">();</span>
+
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">free</span><span class="p">(</span><span class="n">result</span><span class="p">,</span><span class="w"> </span><span class="n">Q</span><span class="p">);</span>
+
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<ol class="arabic">
+<li><p>Log in to <a class="reference external" href="https://docs.it4i.cz/general/shell-and-data-access/">Karolina</a> and clone the
+repository for this workshop. Navigate to the correct folder. This
+contains a source file, <code class="docutils literal notranslate"><span class="pre">hello.cpp</span></code>, and the CMake script to build it.</p></li>
+<li><p>Load the necessary modules:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>module<span class="w"> </span>load<span class="w"> </span>hipSYCL<span class="w"> </span>CMake/3.20.1-GCCcore-10.2.0
+</pre></div>
+</div>
+</li>
+<li><p>Configure and compile the code:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>cmake<span class="w"> </span>-S.<span class="w"> </span>-Bbuild<span class="w"> </span>-DHIPSYCL_TARGETS<span class="o">=</span><span class="s2">&quot;omp&quot;</span>
+<span class="gp">$ </span>cmake<span class="w"> </span>--build<span class="w"> </span>build<span class="w"> </span>--<span class="w"> </span><span class="nv">VERBOSE</span><span class="o">=</span><span class="m">1</span>
+</pre></div>
+</div>
+</li>
+<li><p>Run the code! What result do you get?</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">./build/hello</span>
+</pre></div>
+</div>
+</li>
+<li><p>We can configure again to target the GPU:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>cmake<span class="w"> </span>-S.<span class="w"> </span>-Bbuild<span class="w"> </span>-DHIPSYCL_TARGETS<span class="o">=</span><span class="s2">&quot;cuda:sm_80&quot;</span>
+<span class="gp">$ </span>cmake<span class="w"> </span>--build<span class="w"> </span>build<span class="w"> </span>--<span class="w"> </span><span class="nv">VERBOSE</span><span class="o">=</span><span class="m">1</span>
+<span class="gp">$ </span>./build/hello
+</pre></div>
+</div>
+<p>What output do you see? We will talk more about <em>device selection</em> in <a class="reference internal" href="../device-discovery/#device-discovery"><span class="std std-ref">Device discovery</span></a>.</p>
+</li>
+</ol>
+</div>
+<p>This source code introduces a number of fundamental concepts in <a class="reference external" href="https://www.khronos.org/sycl/">SYCL</a>:</p>
+<ol class="arabic">
+<li><p>SYCL is a template library and its classes and functions are behind the
+<code class="docutils literal notranslate"><span class="pre">sycl::</span></code> namespace.  The SYCL runtime is provided by an optimizing
+compiler, in our case <a class="reference external" href="https://hipsycl.github.io">hipSYCL</a>:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;sycl/sycl.hpp&gt;</span>
+
+<span class="k">using</span><span class="w"> </span><span class="k">namespace</span><span class="w"> </span><span class="nn">sycl</span><span class="p">;</span>
+</pre></div>
+</div>
+</li>
+<li><p>Host and device code are in the same translation unit.</p></li>
+<li><p>Thanks to <strong>unified shared memory</strong> we can use a pointer-based approach to
+memory management that transparently works <em>across</em> host and devices:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">malloc_shared</span><span class="o">&lt;</span><span class="kt">char</span><span class="o">&gt;</span><span class="p">(</span><span class="n">sz</span><span class="p">,</span><span class="w"> </span><span class="n">Q</span><span class="p">);</span>
+<span class="n">std</span><span class="o">::</span><span class="n">memcpy</span><span class="p">(</span><span class="n">result</span><span class="p">,</span><span class="w"> </span><span class="n">secret</span><span class="p">.</span><span class="n">data</span><span class="p">(),</span><span class="w"> </span><span class="n">sz</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>We will cover memory management in <a class="reference internal" href="../buffers-accessors/#buffers-accessors"><span class="std std-ref">Data management with buffers and accessors</span></a> and
+<a class="reference internal" href="../unified-shared-memory/#unified-shared-memory"><span class="std std-ref">Data management with unified shared memory</span></a>.</p>
+</li>
+<li><p>A <strong>queue</strong> is the mechanism by which we orchestrate work on our devices.
+For example, getting the device on which our <strong>actions</strong> will run:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">queue</span><span class="w"> </span><span class="n">Q</span><span class="p">;</span>
+<span class="n">Q</span><span class="p">.</span><span class="n">get_device</span><span class="p">().</span><span class="n">get_info</span><span class="o">&lt;</span><span class="n">info</span><span class="o">::</span><span class="n">device</span><span class="o">::</span><span class="n">name</span><span class="o">&gt;</span><span class="p">();</span>
+</pre></div>
+</div>
+<p>We will explore <code class="docutils literal notranslate"><span class="pre">get_info</span></code> and mechanisms for device selection in the
+<a class="reference internal" href="../device-discovery/#device-discovery"><span class="std std-ref">Device discovery</span></a> section.</p>
+</li>
+<li><p>An <strong>action</strong> is submitted to a queue and it runs on a device. In this
+example, our action is a <code class="docutils literal notranslate"><span class="pre">parallel_for</span></code> on a 1-dimensional <strong>range</strong> of
+work-items</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">Q</span><span class="p">.</span><span class="n">parallel_for</span><span class="p">(</span>
+<span class="w">   </span><span class="n">range</span><span class="o">&lt;</span><span class="mi">1</span><span class="o">&gt;</span><span class="p">{</span><span class="n">sz</span><span class="p">},</span><span class="w">  </span><span class="cm">/* range of work-items */</span>
+<span class="w">   </span><span class="p">...</span>
+<span class="p">);</span>
+</pre></div>
+</div>
+</li>
+<li><p>Within actions, we execute <strong>kernels</strong>:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="o">=</span><span class="p">](</span><span class="n">id</span><span class="o">&lt;</span><span class="mi">1</span><span class="o">&gt;</span><span class="w"> </span><span class="n">tid</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="n">result</span><span class="p">[</span><span class="n">tid</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span><span class="w"> </span><span class="o">-=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>the <code class="docutils literal notranslate"><span class="pre">result</span></code> array is indexed using an <code class="docutils literal notranslate"><span class="pre">id</span></code> object: a mapping between a
+<code class="docutils literal notranslate"><span class="pre">range</span></code> of work-items and available workers.
+Kernels are either <a class="reference external" href="https://en.cppreference.com/w/cpp/language/lambda">lambda functions</a> or
+<a class="reference external" href="https://en.cppreference.com/w/cpp/utility/functional">function objects</a>.</p>
+</li>
+<li><p>Actions are executed <strong>asynchronously</strong>. The host enqueues work and moves on
+with its tasks. If results are neeeded from an action, then we need to wait
+for it to complete:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">Q</span><span class="p">.</span><span class="n">parallel_for</span><span class="p">(</span>
+<span class="w">   </span><span class="n">range</span><span class="o">&lt;</span><span class="mi">1</span><span class="o">&gt;</span><span class="p">{</span><span class="n">sz</span><span class="p">},</span><span class="w">        </span><span class="cm">/* range of work-items */</span>
+<span class="w">   </span><span class="p">[</span><span class="o">=</span><span class="p">](</span><span class="n">id</span><span class="o">&lt;</span><span class="mi">1</span><span class="o">&gt;</span><span class="w"> </span><span class="n">tid</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">     </span><span class="cm">/* kernel code */</span>
+<span class="w">     </span><span class="n">result</span><span class="p">[</span><span class="n">tid</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span><span class="w"> </span><span class="o">-=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+<span class="w">   </span><span class="p">}</span>
+<span class="p">).</span><span class="n">wait</span><span class="p">();</span>
+</pre></div>
+</div>
+</li>
+</ol>
+<p>We have introduced two functions to manage <a class="reference internal" href="../quick-reference/#term-USM"><span class="xref std std-term">USM</span></a>:
+<code class="docutils literal notranslate"><span class="pre">malloc_shared</span></code> and <code class="docutils literal notranslate"><span class="pre">free</span></code>, for memory allocation and deallocation:</p>
+<div class="admonition-malloc-shared signature toggle-shown dropdown admonition" id="signature-0">
+<p class="admonition-title"><code class="docutils literal notranslate"><span class="pre">malloc_shared</span></code></p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">T</span><span class="o">&gt;</span>
+<span class="n">T</span><span class="o">*</span><span class="w"> </span><span class="n">malloc_shared</span><span class="p">(</span><span class="kt">size_t</span><span class="w"> </span><span class="n">count</span><span class="p">,</span>
+<span class="w">                 </span><span class="k">const</span><span class="w"> </span><span class="n">queue</span><span class="o">&amp;</span><span class="w"> </span><span class="n">syclQueue</span><span class="p">,</span>
+<span class="w">                 </span><span class="k">const</span><span class="w"> </span><span class="n">property_list</span><span class="w"> </span><span class="o">&amp;</span><span class="n">propList</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{})</span>
+</pre></div>
+</div>
+</div>
+<div class="admonition-parameters parameters dropdown admonition" id="parameters-0">
+<p class="admonition-title">Parameters</p>
+<dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">T</span></code></dt><dd><p>Type of the allocation.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">count</span></code></dt><dd><p>How many elements to allocate.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">syclQueue</span></code></dt><dd><p>Queue on which to perform the allocation.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">propList</span></code></dt><dd><p>Properties of the allocation.</p>
+</dd>
+</dl>
+</div>
+<div class="admonition-free signature toggle-shown dropdown admonition" id="signature-1">
+<p class="admonition-title"><code class="docutils literal notranslate"><span class="pre">free</span></code></p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span><span class="w"> </span><span class="n">free</span><span class="p">(</span><span class="kt">void</span><span class="o">*</span><span class="w"> </span><span class="n">ptr</span><span class="p">,</span><span class="w"> </span><span class="n">sycl</span><span class="o">::</span><span class="n">queue</span><span class="o">&amp;</span><span class="w"> </span><span class="n">syclQueue</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="admonition-parameters parameters dropdown admonition" id="parameters-1">
+<p class="admonition-title">Parameters</p>
+<dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">ptr</span></code></dt><dd><p>Memory to deallocate. It <strong>must</strong> have been allocated using any of the
+<a class="reference internal" href="../quick-reference/#term-USM"><span class="xref std std-term">USM</span></a> functions.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">syclQueue</span></code></dt><dd><p>Queue on which to perform the deallocation.</p>
+</dd>
+</dl>
+</div>
+<p>We have handled memory migration using <code class="docutils literal notranslate"><span class="pre">std::memcpy</span></code>, which is part of the <a class="reference external" href="https://en.cppreference.com/w/cpp/string/byte/memcpy">C++ standard</a>.</p>
+<div class="admonition-keypoints keypoints admonition" id="keypoints-0">
+<p class="admonition-title">Keypoints</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://www.khronos.org/sycl/">SYCL</a> is an <em>open-source standard</em> to describe parallelism on heterogeneous
+platforms using the C++ programming language.</p></li>
+<li><p><a class="reference external" href="https://www.khronos.org/sycl/">SYCL</a> is <em>single-source</em>, <em>heterogeneous</em>, and <em>asynchronous</em>.</p></li>
+<li><p>There are many implementations of the <a class="reference external" href="https://www.khronos.org/sycl/">SYCL</a> standard, targeting diverse hardware with different strategies:</p>
+<ul>
+<li><p><a class="reference external" href="https://hipsycl.github.io">hipSYCL</a>,</p></li>
+<li><p><a class="reference external" href="https://software.intel.com/content/www/us/en/develop/tools/oneapi/data-parallel-c-plus-plus.html#gs.cm2rrt">Intel DPC++</a>,</p></li>
+<li><p><a class="reference external" href="https://developer.codeplay.com/products/computecpp/ce/home/">CodePlay ComputeCPP</a>.</p></li>
+<li><p><a class="reference external" href="https://github.com/triSYCL/triSYCL">triSYCL</a>.</p></li>
+<li><p><a class="reference external" href="https://dl.acm.org/doi/abs/10.1145/3432261.3432268">neoSYCL</a>.</p></li>
+</ul>
+</li>
+</ul>
+</div>
+<p class="rubric">Footnotes</p>
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="id4" role="note">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id2">*</a><span class="fn-bracket">]</span></span>
+<p>Kokkos, Raja, and Alpaka are other frameworks with a similar approach to parallel programming.</p>
+</aside>
+</aside>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../karolina/" class="btn btn-neutral float-left" title="Setting up your system" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../device-discovery/" class="btn btn-neutral float-right" title="Device discovery" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021, Roberto Di Remigio and individual contributors..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

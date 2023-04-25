@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Expressing parallelism with SYCL: basic data-parallel kernels &mdash; Heterogeneous programming with SYCL  documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/copybutton.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/togglebutton.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/sphinx_lesson.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/sphinx_rtd_theme_ext_color_contrast.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/tabs.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/overrides.css" type="text/css" />
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
+        <script src="../_static/clipboard.min.js"></script>
+        <script src="../_static/copybutton.js"></script>
+        <script src="../_static/minipres.js"></script>
+        <script src="../_static/tabs.js"></script>
+        <script>let toggleHintShow = 'Click to show';</script>
+        <script>let toggleHintHide = 'Click to hide';</script>
+        <script>let toggleOpenOnPrint = 'true';</script>
+        <script src="../_static/togglebutton.js"></script>
+        <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+        <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+        <script data-domain="enccs.github.io/sycl-workshop" defer="defer" src="https://plausible.io/js/script.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex/" />
+    <link rel="search" title="Search" href="../search/" />
+    <link rel="next" title="Expressing parallelism with SYCL: nd-range data-parallel kernels" href="../expressing-parallelism-nd-range/" />
+    <link rel="prev" title="Data management with unified shared memory" href="../unified-shared-memory/" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../" class="icon icon-home">
+            Heterogeneous programming with SYCL
+              <img src="../_static/ENCCS.jpg" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search/" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../karolina/">Setting up your system</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">The lesson</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../what-is-sycl/">What is SYCL?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../device-discovery/">Device discovery</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../queues-cgs-kernels/">Queues, command groups, and kernels</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../buffers-accessors/">Data management with buffers and accessors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../unified-shared-memory/">Data management with unified shared memory</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Expressing parallelism with SYCL: basic data-parallel kernels</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#data-and-task-parallelism">Data and task parallelism </a></li>
+<li class="toctree-l2"><a class="reference internal" href="#basic-data-parallel-kernels">Basic data-parallel kernels</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#when-to-use-id-and-when-to-use-item-as-arguments-in-the-kernel-function">When to use <code class="docutils literal notranslate"><span class="pre">id</span></code> and when to use <code class="docutils literal notranslate"><span class="pre">item</span></code> as arguments in the kernel function?</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../expressing-parallelism-nd-range/">Expressing parallelism with SYCL: nd-range data-parallel kernels</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../task-graphs-synchronization/">The task graph: data, dependencies, synchronization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../heat-equation/">Heat equation mini-app</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../sub-groups/">Using sub-groups in SYCL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../profiling/">Profiling SYCL applications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../buffer-accessor-vs-usm/">Buffer-accessor model <em>vs</em> unified shared memory</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../quick-reference/">Quick Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../zbibliography/">Bibliography</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guide/">Instructor’s guide</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../">Heterogeneous programming with SYCL</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Expressing parallelism with SYCL: basic data-parallel kernels</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/ENCCS/sycl-workshop/blob/main/content/expressing-parallelism-basic.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="expressing-parallelism-with-sycl-basic-data-parallel-kernels">
+<span id="expressing-parallelism-basic"></span><h1>Expressing parallelism with SYCL: basic data-parallel kernels<a class="headerlink" href="#expressing-parallelism-with-sycl-basic-data-parallel-kernels" title="Permalink to this heading"></a></h1>
+<div class="admonition-questions questions admonition" id="questions-0">
+<p class="admonition-title">Questions</p>
+<ul class="simple">
+<li><p>How do we write parallel kernels in <a class="reference external" href="https://www.khronos.org/sycl/">SYCL</a>?</p></li>
+</ul>
+</div>
+<div class="admonition-objectives objectives admonition" id="objectives-0">
+<p class="admonition-title">Objectives</p>
+<ul class="simple">
+<li><p>Learn the difference between <em>task</em> and <em>data</em> parallelism.</p></li>
+<li><p>Learn about <em>work-items</em>, <em>work-groups</em>, and <em>ND-ranges</em>.</p></li>
+</ul>
+</div>
+<p>We should have acquired a good enough understanding of the anatomy of a SYCL
+program: queues, kernels, and memory management strategies. We have, however,
+not really discussed about strategies for <em>expressing parallelism</em> in a SYCL
+program. Indeed, the kernels that we have seen and written so far in the exercises
+always used a 1-dimensional work distribution, exemplified by the use of
+<code class="docutils literal notranslate"><span class="pre">range&lt;1&gt;</span></code> and <code class="docutils literal notranslate"><span class="pre">id&lt;1&gt;</span></code> objects as arguments of <code class="docutils literal notranslate"><span class="pre">parallel_for</span></code> and the
+kernel lambdas, respectively.
+Our particular problem domain might have additional structure and our program
+might benefit, in terms of performance, from exploiting it.</p>
+<section id="data-and-task-parallelism">
+<h2>Data and task parallelism <a class="footnote-reference brackets" href="#id4" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>*<span class="fn-bracket">]</span></a><a class="headerlink" href="#data-and-task-parallelism" title="Permalink to this heading"></a></h2>
+<p>The are two types of parallelism that can be explored and exploited:</p>
+<dl class="simple">
+<dt>Data parallelism</dt><dd><p>The data can be distributed across computational units that can run in
+parallel.  Each unit processes the data applying the same or very similar
+operations to different data elements.  A common example is applying a blur
+filter to an image: the same function is applied to <em>all</em> the pixels the
+image is made of.  This parallelism is natural for the GPU, where the same
+instruction set is executed in multiple threads.</p>
+</dd>
+<dt>Task parallelism</dt><dd><p>When an application consists of many tasks that perform different operations
+with (the same or) different data. An example of task parallelism is cooking:
+slicing vegetables and grilling are very different tasks and can be done at
+the same time, if more cooks are available.  Note that the tasks can consume
+totally different resources, for example a CPU and a GPU, adding yet another
+dimension for performance optimization.</p>
+</dd>
+</dl>
+<figure class="align-center" id="id5">
+<a class="reference internal image-reference" href="../_images/ENCCS-OpenACC-CUDA_TaskParallelism_Explanation.png"><img alt="../_images/ENCCS-OpenACC-CUDA_TaskParallelism_Explanation.png" src="../_images/ENCCS-OpenACC-CUDA_TaskParallelism_Explanation.png" style="width: 715.2px; height: 265.6px;" /></a>
+<figcaption>
+<p><span class="caption-text">Data parallelism and task parallelism.  We have data parallelism when the
+same operation applies to multiple data, <em>e.g.</em> multiple elements of an array
+are transformed. Task parallelism implies that there are more than one
+independent task that, in principle, can be executed in parallel.</span><a class="headerlink" href="#id5" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<p>In SYCL, we can largely delegate task parallelism to the runtime scheduler:
+actions on queues will be arranged in a DAG and tasks that are independent <em>may</em>
+execute in an overlapping fashion. Episode <a class="reference internal" href="../task-graphs-synchronization/#task-graphs-synchronization"><span class="std std-ref">The task graph: data, dependencies, synchronization</span></a>
+will show how to gain more direct control.
+The <code class="docutils literal notranslate"><span class="pre">parallel_for</span></code> function is the basic data-parallel construct in SYCL and it accepts two arguments: an <em>execution range</em> and a <em>kernel</em> function.
+Based on the way we specify the execution range, we can distinguish three
+flavors of data-parallel kernels in SYCL:</p>
+<ul>
+<li><p>basic: when execution is parameterized over a 1-, 2- or 3-dimensional
+<code class="docutils literal notranslate"><span class="pre">range</span></code> object. As the name suggests, simple kernels do not provide control
+over low-level features, for example, control over the locality of memory
+accesses.</p>
+<div class="admonition-simple-parallel-for signature toggle-shown dropdown admonition" id="signature-0">
+<p class="admonition-title">simple <code class="docutils literal notranslate"><span class="pre">parallel_for</span></code></p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">KernelName</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">Dims</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="p">...</span><span class="w"> </span><span class="n">Rest</span><span class="o">&gt;</span>
+<span class="n">event</span><span class="w"> </span><span class="n">parallel_for</span><span class="p">(</span><span class="n">range</span><span class="o">&lt;</span><span class="n">Dims</span><span class="o">&gt;</span><span class="w"> </span><span class="n">numWorkItems</span><span class="p">,</span><span class="w"> </span><span class="n">Rest</span><span class="o">&amp;&amp;</span><span class="p">...</span><span class="w"> </span><span class="n">rest</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+</li>
+<li><p>ND-range: when execution is parameterized over a 1-, 2-, or 3-dimensional
+<code class="docutils literal notranslate"><span class="pre">nd_range</span></code> object. While superficially similar to simple kernels, the use of
+<code class="docutils literal notranslate"><span class="pre">nd_range</span></code> will allow you to group instances of the kernel together. You
+will gain more flexible control over locality and mapping to hardware
+resources.</p>
+<div class="admonition-nd-range-parallel-for signature toggle-shown dropdown admonition" id="signature-1">
+<p class="admonition-title">ND-range <code class="docutils literal notranslate"><span class="pre">parallel_for</span></code></p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">KernelName</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">Dims</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="p">...</span><span class="w"> </span><span class="n">Rest</span><span class="o">&gt;</span>
+<span class="n">event</span><span class="w"> </span><span class="n">parallel_for</span><span class="p">(</span><span class="n">nd_range</span><span class="o">&lt;</span><span class="n">Dims</span><span class="o">&gt;</span><span class="w"> </span><span class="n">executionRange</span><span class="p">,</span><span class="w"> </span><span class="n">Rest</span><span class="o">&amp;&amp;</span><span class="p">...</span><span class="w"> </span><span class="n">rest</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+</li>
+<li><p>hierarchical: these form allows to <em>nest</em> kernel invocations, affording some
+simplifications with respect to ND-range kernels. <strong>We will not discuss</strong>
+hierarchical parallel kernels. This is a fast-changing area in the standard:
+support in various implementation varies and may not work properly.</p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>A data-parallel kernel <strong>is not</strong> a loop. When we launch a kernel through a
+<code class="docutils literal notranslate"><span class="pre">parallel_for</span></code>, the runtime will instantiate the same operation over all
+data elements in the execution range. These instances run in parallel (but
+not necessarily in lockstep!) As such, a data-parallel kernel is not
+performing any iterations and should be viewed as a <em>descriptive abstraction</em>
+on top of the execution model and the backend.</p>
+</div>
+</section>
+<section id="basic-data-parallel-kernels">
+<h2>Basic data-parallel kernels<a class="headerlink" href="#basic-data-parallel-kernels" title="Permalink to this heading"></a></h2>
+<p>Basic data-parallel kernels are the most suited for <strong>embarassing data
+parallelism</strong>, such as the blurring filter example above.  The first argument to
+the <code class="docutils literal notranslate"><span class="pre">parallel_for</span></code> invocation is the execution range, represented by a
+<code class="docutils literal notranslate"><span class="pre">range</span></code> object in 1-, 2-, or 3-dimensions. A <code class="docutils literal notranslate"><span class="pre">range</span></code> is a grid of <strong>work-items</strong> of
+type <code class="docutils literal notranslate"><span class="pre">item</span></code>, each <code class="docutils literal notranslate"><span class="pre">item</span></code> is an instance of the kernel and is uniquely
+addressable through objects of <code class="docutils literal notranslate"><span class="pre">id</span></code> type. <span class="math notranslate nohighlight">\(N\)</span>-dimensional ranges are
+arranged in <em>row-major order</em>: dimension <span class="math notranslate nohighlight">\(N-1\)</span> is contiguous.</p>
+<figure class="align-center" id="id6">
+<a class="reference internal image-reference" href="../_images/2d_range.svg"><img alt="../_images/2d_range.svg" height="276" src="../_images/2d_range.svg" width="351" /></a>
+<figcaption>
+<p><span class="caption-text">A <code class="docutils literal notranslate"><span class="pre">range&lt;2&gt;</span></code> object, representing a 2-dimensional execution range. Each
+element in the range is of type <code class="docutils literal notranslate"><span class="pre">item&lt;2&gt;</span></code> and is indexed by an object of
+type <code class="docutils literal notranslate"><span class="pre">id&lt;2&gt;</span></code>. Items are instances of the kernel. An <span class="math notranslate nohighlight">\(N\)</span>-dimensional
+range is in row-major order: dimension <span class="math notranslate nohighlight">\(N-1\)</span> is contiguous.
+Figure adapted from <span id="id2">[<a class="reference internal" href="../zbibliography/#id2" title="James Reinders, Ben Ashbaugh, James Brodman, Michael Kinsner, John Pennycook, and Xinmin Tian. Data Parallel C++: Mastering DPC++ for Programming of Heterogeneous Systems using C++ and SYCL. Apress, Berkeley, CA, 2021. ISBN 9781484255735. URL: https://link.springer.com/book/10.1007%2F978-1-4842-5574-2, doi:10.1007/978-1-4842-5574-2.">RAB+21</a>]</span>.</span><a class="headerlink" href="#id6" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<p>In basic data-parallel kernels, the kernel function passed as second argument to
+the <code class="docutils literal notranslate"><span class="pre">parallel_for</span></code> invocation can accept either objects of <code class="docutils literal notranslate"><span class="pre">id</span></code> or of
+<code class="docutils literal notranslate"><span class="pre">item</span></code> type.
+In all cases, the <code class="docutils literal notranslate"><span class="pre">range</span></code> class describes the sizes of <em>both</em> buffers <strong>and</strong>
+execution range of the kernel.</p>
+<section id="when-to-use-id-and-when-to-use-item-as-arguments-in-the-kernel-function">
+<h3>When to use <code class="docutils literal notranslate"><span class="pre">id</span></code> and when to use <code class="docutils literal notranslate"><span class="pre">item</span></code> as arguments in the kernel function?<a class="headerlink" href="#when-to-use-id-and-when-to-use-item-as-arguments-in-the-kernel-function" title="Permalink to this heading"></a></h3>
+<div class="admonition-id-knows-about-the-individual-kernel-instance-only demo admonition" id="demo-0">
+<p class="admonition-title"><code class="docutils literal notranslate"><span class="pre">id</span></code> knows about the individual kernel instance only.</p>
+<p>In this kernel, we set all elements in a 2-dimensional array to the magic
+value of 42. This is embarrassingly parallel and each instance of the kernel
+only needs access to one element in the buffer, indexed by the <code class="docutils literal notranslate"><span class="pre">id</span></code> of the
+instance.</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">Q</span><span class="p">.</span><span class="n">submit</span><span class="p">([</span><span class="o">&amp;</span><span class="p">](</span><span class="n">handler</span><span class="w"> </span><span class="o">&amp;</span><span class="n">cgh</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="n">accessor</span><span class="w"> </span><span class="n">acc</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">buf</span><span class="p">,</span><span class="w"> </span><span class="n">cgh</span><span class="p">,</span><span class="w"> </span><span class="n">write_only</span><span class="w"> </span><span class="p">};</span>
+
+<span class="w">  </span><span class="n">cgh</span><span class="p">.</span><span class="n">parallel_for</span><span class="p">(</span><span class="n">range</span><span class="o">&lt;</span><span class="mi">2</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">n_work_items</span><span class="w"> </span><span class="p">},</span><span class="w"> </span><span class="p">[</span><span class="o">=</span><span class="p">](</span><span class="n">id</span><span class="o">&lt;</span><span class="mi">2</span><span class="o">&gt;</span><span class="w"> </span><span class="n">idx</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">acc</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">42.0</span><span class="p">;</span>
+<span class="w">  </span><span class="p">});</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</div>
+<div class="admonition-item-knows-about-the-individual-kernel-instance-and-the-global-execution-range demo admonition" id="demo-1">
+<p class="admonition-title"><code class="docutils literal notranslate"><span class="pre">item</span></code> knows about the individual kernel instance <em>and</em> the global execution range.</p>
+<p>In this kernel, we sum two vectors using a 1-dimensional execution range.
+Passing <code class="docutils literal notranslate"><span class="pre">item&lt;1&gt;</span></code> as argument to the kernel lets us probe the global index
+of the individual kernel instance in the <code class="docutils literal notranslate"><span class="pre">parallel_for</span></code>. We use it to index
+our accessors to the buffers.</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">Q</span><span class="p">.</span><span class="n">submit</span><span class="p">([</span><span class="o">&amp;</span><span class="p">](</span><span class="n">handler</span><span class="o">&amp;</span><span class="w"> </span><span class="n">cgh</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">auto</span><span class="w"> </span><span class="n">accA</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">bufA</span><span class="p">.</span><span class="n">get_access</span><span class="o">&lt;</span><span class="n">access</span><span class="o">::</span><span class="n">mode</span><span class="o">::</span><span class="n">read</span><span class="o">&gt;</span><span class="p">(</span><span class="n">cgh</span><span class="p">);</span>
+<span class="w">  </span><span class="k">auto</span><span class="w"> </span><span class="n">accB</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">bufB</span><span class="p">.</span><span class="n">get_access</span><span class="o">&lt;</span><span class="n">access</span><span class="o">::</span><span class="n">mode</span><span class="o">::</span><span class="n">read</span><span class="o">&gt;</span><span class="p">(</span><span class="n">cgh</span><span class="p">);</span>
+<span class="w">  </span><span class="k">auto</span><span class="w"> </span><span class="n">accR</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">bufR</span><span class="p">.</span><span class="n">get_access</span><span class="o">&lt;</span><span class="n">access</span><span class="o">::</span><span class="n">mode</span><span class="o">::</span><span class="n">write</span><span class="o">&gt;</span><span class="p">(</span><span class="n">cgh</span><span class="p">);</span>
+
+<span class="w">  </span><span class="n">cgh</span><span class="p">.</span><span class="n">parallel_for</span><span class="p">(</span><span class="n">range</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">dataSize</span><span class="w"> </span><span class="p">},</span><span class="w"> </span><span class="p">[</span><span class="o">=</span><span class="p">](</span><span class="n">item</span><span class="o">&lt;</span><span class="mi">1</span><span class="o">&gt;</span><span class="w"> </span><span class="n">itm</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">globalId</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="n">itm</span><span class="p">.</span><span class="n">get_id</span><span class="p">();</span>
+<span class="w">    </span><span class="n">accR</span><span class="p">[</span><span class="n">globalId</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">accA</span><span class="p">[</span><span class="n">globalId</span><span class="p">]</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">accB</span><span class="p">[</span><span class="n">globalId</span><span class="p">];</span>
+<span class="w">  </span><span class="p">});</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</div>
+<div class="admonition-naive-matmul exercise important admonition" id="exercise-0">
+<p class="admonition-title">Naïve MatMul</p>
+<p>Let’s now write a data-parallel kernel of the basic flavor to perform a
+matrix multiplication. Given the problem, <code class="docutils literal notranslate"><span class="pre">buffer</span></code> s, <code class="docutils literal notranslate"><span class="pre">accessor</span></code> s,
+<code class="docutils literal notranslate"><span class="pre">range</span></code> s, and <code class="docutils literal notranslate"><span class="pre">id</span></code> s will all be 2-dimensional.</p>
+<figure class="align-center" id="id7">
+<img alt="../_images/naive_matmul.svg" src="../_images/naive_matmul.svg" /><figcaption>
+<p><span class="caption-text">Schematics of a naïve implementation of matrix multiplication:
+<span class="math notranslate nohighlight">\(C_{ij} = \sum_{k}A_{ik}B_{kj}\)</span>. Each kernel instance will compute
+an element in the result matrix <span class="math notranslate nohighlight">\(\mathbf{C}\)</span> by accessing a full row
+of <span class="math notranslate nohighlight">\(\mathbf{A}\)</span> and a full column of <span class="math notranslate nohighlight">\(\mathbf{B}\)</span>.
+Figure adapted from <span id="id3">[<a class="reference internal" href="../zbibliography/#id2" title="James Reinders, Ben Ashbaugh, James Brodman, Michael Kinsner, John Pennycook, and Xinmin Tian. Data Parallel C++: Mastering DPC++ for Programming of Heterogeneous Systems using C++ and SYCL. Apress, Berkeley, CA, 2021. ISBN 9781484255735. URL: https://link.springer.com/book/10.1007%2F978-1-4842-5574-2, doi:10.1007/978-1-4842-5574-2.">RAB+21</a>]</span>.</span><a class="headerlink" href="#id7" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<p><strong>Don’t do this at home, use optimized BLAS!</strong></p>
+<div class="sphinx-tabs docutils container">
+<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-0-0-0" aria-selected="true" class="sphinx-tabs-tab" id="tab-0-0-0" name="0-0" role="tab" tabindex="0">Using buffers and accessors</button><button aria-controls="panel-0-0-1" aria-selected="false" class="sphinx-tabs-tab" id="tab-0-0-1" name="0-1" role="tab" tabindex="-1">Using USM</button></div><div aria-labelledby="tab-0-0-0" class="sphinx-tabs-panel" id="panel-0-0-0" name="0-0" role="tabpanel" tabindex="0"><p>You can find a scaffold for the code in the
+<code class="docutils literal notranslate"><span class="pre">content/code/day-2/00_range-matmul/range-matmul.cpp</span></code> file,
+alongside the CMake script to build the executable. You will have to complete
+the source code to compile and run correctly: follow the hints in the source
+file.  A working solution is in the <code class="docutils literal notranslate"><span class="pre">solution</span></code> subfolder.</p>
+<ol class="arabic">
+<li><p>We first create a queue and map it to the GPU, either explicitly:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">queue</span><span class="w"> </span><span class="n">Q</span><span class="p">{</span><span class="n">gpu_selector</span><span class="p">{}};</span>
+</pre></div>
+</div>
+<p>or implicitly, by compiling with the appropriate <code class="docutils literal notranslate"><span class="pre">HIPSYCL_TARGETS</span></code> value.</p>
+</li>
+<li><p>We declare the operands as <code class="docutils literal notranslate"><span class="pre">std::vector&lt;double&gt;</span></code> the
+right-hand side operands are filled with random numbers, while the
+result matrix is zeroed out:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">random_device</span><span class="w"> </span><span class="n">rd</span><span class="p">;</span>
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">mt19937</span><span class="w"> </span><span class="nf">mt</span><span class="p">(</span><span class="n">rd</span><span class="p">());</span>
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">uniform_real_distribution</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="w"> </span><span class="n">dist</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span><span class="w"> </span><span class="mf">1.0</span><span class="p">);</span>
+
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">generate</span><span class="p">(</span><span class="n">a</span><span class="p">.</span><span class="n">begin</span><span class="p">(),</span><span class="w"> </span><span class="n">a</span><span class="p">.</span><span class="n">end</span><span class="p">(),</span><span class="w"> </span><span class="p">[</span><span class="o">&amp;</span><span class="n">dist</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">mt</span><span class="p">]()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">dist</span><span class="p">(</span><span class="n">mt</span><span class="p">);</span>
+<span class="w">  </span><span class="p">});</span>
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">generate</span><span class="p">(</span><span class="n">b</span><span class="p">.</span><span class="n">begin</span><span class="p">(),</span><span class="w"> </span><span class="n">b</span><span class="p">.</span><span class="n">end</span><span class="p">(),</span><span class="w"> </span><span class="p">[</span><span class="o">&amp;</span><span class="n">dist</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">mt</span><span class="p">]()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">dist</span><span class="p">(</span><span class="n">mt</span><span class="p">);</span>
+<span class="w">  </span><span class="p">});</span>
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">fill</span><span class="p">(</span><span class="n">c</span><span class="p">.</span><span class="n">begin</span><span class="p">(),</span><span class="w"> </span><span class="n">c</span><span class="p">.</span><span class="n">end</span><span class="p">(),</span><span class="w"> </span><span class="mf">0.0</span><span class="p">);</span>
+</pre></div>
+</div>
+</li>
+<li><p>We define buffers to the operands in our matrix multiplication. For
+example, for the matrix <span class="math notranslate nohighlight">\(\mathbf{A}\)</span>:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">buffer</span><span class="o">&lt;</span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="o">&gt;</span><span class="w"> </span><span class="n">a_buf</span><span class="p">(</span><span class="n">a</span><span class="p">.</span><span class="n">data</span><span class="p">(),</span><span class="w"> </span><span class="n">range</span><span class="o">&lt;</span><span class="mi">2</span><span class="o">&gt;</span><span class="p">(</span><span class="n">N</span><span class="p">,</span><span class="w"> </span><span class="n">N</span><span class="p">));</span>
+</pre></div>
+</div>
+</li>
+<li><p>We submit work to the queue through a command group handler:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">Q</span><span class="p">.</span><span class="n">submit</span><span class="p">([</span><span class="o">&amp;</span><span class="p">](</span><span class="n">handler</span><span class="o">&amp;</span><span class="w"> </span><span class="n">cgh</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="cm">/* work for the queue */</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</li>
+<li><p>We declare accessors to the buffers. For example, for the matrix <span class="math notranslate nohighlight">\(\mathbf{A}\)</span>:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">accessor</span><span class="w"> </span><span class="n">a</span><span class="p">{</span><span class="w"> </span><span class="n">a_buf</span><span class="p">,</span><span class="w"> </span><span class="n">cgh</span><span class="w"> </span><span class="p">};</span>
+</pre></div>
+</div>
+</li>
+<li><p>Within the handler, we launch a <code class="docutils literal notranslate"><span class="pre">parallel_for</span></code>. The parallel
+region iterates over the 2-dimensional range of indices spanned by
+the output matrix <span class="math notranslate nohighlight">\(\mathbf{C}\)</span> and for every output index
+pair, performs an iteration over the inner index <span class="math notranslate nohighlight">\(k\)</span>:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">cgh</span><span class="p">.</span><span class="n">parallel_for</span><span class="p">(</span>
+<span class="w">  </span><span class="n">range</span><span class="p">{</span><span class="w"> </span><span class="cm">/* number of rows in C */</span><span class="p">,</span><span class="w"> </span><span class="cm">/* number of columns in C */</span><span class="w"> </span><span class="p">},</span>
+<span class="w">  </span><span class="p">[</span><span class="o">=</span><span class="p">](</span><span class="n">id</span><span class="o">&lt;</span><span class="mi">2</span><span class="o">&gt;</span><span class="w"> </span><span class="n">idx</span><span class="p">){</span>
+<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">j</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">idx</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
+<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">idx</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="k">auto</span><span class="w"> </span><span class="n">k</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">k</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">N</span><span class="p">;</span><span class="w"> </span><span class="o">++</span><span class="n">k</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="n">c</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="p">...;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">);</span>
+</pre></div>
+</div>
+</li>
+<li><p>Check that your results are correct.</p></li>
+</ol>
+</div><div aria-labelledby="tab-0-0-1" class="sphinx-tabs-panel" hidden="true" id="panel-0-0-1" name="0-1" role="tabpanel" tabindex="0"><p>You can find a scaffold for the code in the
+<code class="docutils literal notranslate"><span class="pre">content/code/day-2/01_usm-range-matmul/usm-range-matmul.cpp</span></code> file,
+alongside the CMake script to build the executable. You will have to complete
+the source code to compile and run correctly: follow the hints in the source
+file.  A working solution is in the <code class="docutils literal notranslate"><span class="pre">solution</span></code> subfolder.</p>
+<ol class="arabic">
+<li><p>We first create a queue and map it to the GPU, either explicitly:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">queue</span><span class="w"> </span><span class="n">Q</span><span class="p">{</span><span class="n">gpu_selector</span><span class="p">{}};</span>
+</pre></div>
+</div>
+<p>or implicitly, by compiling with the appropriate <code class="docutils literal notranslate"><span class="pre">HIPSYCL_TARGETS</span></code> value.</p>
+</li>
+<li><p>We allocate the operands as USM buffers and fill them with random
+numbers. We can do this with untyped or typed <code class="docutils literal notranslate"><span class="pre">malloc</span></code>-style or
+<code class="docutils literal notranslate"><span class="pre">usm_allocator</span></code> APIs. Should operands be host, device, or shared
+allocations?</p></li>
+<li><p>We allocate the result as USM buffer and zero it out.  We can do
+this with untyped or typed <code class="docutils literal notranslate"><span class="pre">malloc</span></code>-style or <code class="docutils literal notranslate"><span class="pre">usm_allocator</span></code>
+APIs. Should this be host, device, or shared allocation?</p></li>
+<li><p>We submit work to the queue. Note that we need to linearize indices
+for row-major access to our buffers:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">auto</span><span class="w"> </span><span class="n">irow</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">...;</span>
+<span class="k">auto</span><span class="w"> </span><span class="n">jcol</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">...;</span>
+<span class="k">auto</span><span class="w"> </span><span class="n">row_major_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">irow</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">N</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">jcol</span><span class="p">;</span>
+</pre></div>
+</div>
+</li>
+<li><p>Check that your results are correct.</p></li>
+</ol>
+</div></div>
+</div>
+<div class="admonition-keypoints keypoints admonition" id="keypoints-0">
+<p class="admonition-title">Keypoints</p>
+<ul class="simple">
+<li><p>The task graph abstraction in SYCL can take care of task parallelism for us.</p></li>
+<li><p>Data parallelism is achieved with <code class="docutils literal notranslate"><span class="pre">parallel_for</span></code> and kernel-based programming.</p></li>
+<li><p>There are three flavors of data-parallel kernels. The basic and ND-range
+forms are stable in SYCL 2020.</p></li>
+<li><p>Basic kernels are especially well-suited for embarassing parallelism.</p></li>
+</ul>
+</div>
+<p class="rubric">Footnotes</p>
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="id4" role="note">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">*</a><span class="fn-bracket">]</span></span>
+<p>This section is adapted, with permission, from the training material for the <a class="reference external" href="https://enccs.github.io/CUDA/1.01_GPUIntroduction/#exposing-parallelism">ENCCS CUDA workshop</a>.</p>
+</aside>
+</aside>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../unified-shared-memory/" class="btn btn-neutral float-left" title="Data management with unified shared memory" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../expressing-parallelism-nd-range/" class="btn btn-neutral float-right" title="Expressing parallelism with SYCL: nd-range data-parallel kernels" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021, Roberto Di Remigio and individual contributors..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

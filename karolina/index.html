@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Setting up your system &mdash; Heterogeneous programming with SYCL  documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/copybutton.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/togglebutton.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/sphinx_lesson.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/sphinx_rtd_theme_ext_color_contrast.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/tabs.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/overrides.css" type="text/css" />
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
+        <script src="../_static/clipboard.min.js"></script>
+        <script src="../_static/copybutton.js"></script>
+        <script src="../_static/minipres.js"></script>
+        <script>let toggleHintShow = 'Click to show';</script>
+        <script>let toggleHintHide = 'Click to hide';</script>
+        <script>let toggleOpenOnPrint = 'true';</script>
+        <script src="../_static/togglebutton.js"></script>
+        <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+        <script data-domain="enccs.github.io/sycl-workshop" defer="defer" src="https://plausible.io/js/script.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex/" />
+    <link rel="search" title="Search" href="../search/" />
+    <link rel="next" title="What is SYCL?" href="../what-is-sycl/" />
+    <link rel="prev" title="Heterogeneous programming with SYCL" href="../" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../" class="icon icon-home">
+            Heterogeneous programming with SYCL
+              <img src="../_static/ENCCS.jpg" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search/" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Setting up your system</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#how-to-follow-along">How to follow along</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#working-on-karolina">Working on Karolina</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#graphical-sessions-using-vnc">Graphical sessions using VNC</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">The lesson</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../what-is-sycl/">What is SYCL?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../device-discovery/">Device discovery</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../queues-cgs-kernels/">Queues, command groups, and kernels</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../buffers-accessors/">Data management with buffers and accessors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../unified-shared-memory/">Data management with unified shared memory</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../expressing-parallelism-basic/">Expressing parallelism with SYCL: basic data-parallel kernels</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../expressing-parallelism-nd-range/">Expressing parallelism with SYCL: nd-range data-parallel kernels</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../task-graphs-synchronization/">The task graph: data, dependencies, synchronization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../heat-equation/">Heat equation mini-app</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../sub-groups/">Using sub-groups in SYCL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../profiling/">Profiling SYCL applications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../buffer-accessor-vs-usm/">Buffer-accessor model <em>vs</em> unified shared memory</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../quick-reference/">Quick Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../zbibliography/">Bibliography</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guide/">Instructor’s guide</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../">Heterogeneous programming with SYCL</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Setting up your system</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/ENCCS/sycl-workshop/blob/main/content/karolina.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="setting-up-your-system">
+<h1>Setting up your system<a class="headerlink" href="#setting-up-your-system" title="Permalink to this heading"></a></h1>
+<p>Thanks to <a class="reference external" href="https://www.it4i.cz/en">IT4I</a>, we will have an allocation on the Karolina supercomputer for the
+whole duration of the workshop.
+The required software stack is already installed and available through the
+module system on the supercomputer.</p>
+<p>If you prefer to install the required software locally, we refer you to the
+<a class="reference external" href="https://github.com/illuhad/hipSYCL/tree/develop/install/scripts#readme">official hipSYCL installation instructions</a>.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Your mileage may vary with a local installation: building some of the
+dependencies is an <em>extremely</em> time consuming process.  We will <strong>not</strong>
+provide support for local installations during the workshop.</p>
+</div>
+<section id="how-to-follow-along">
+<h2>How to follow along<a class="headerlink" href="#how-to-follow-along" title="Permalink to this heading"></a></h2>
+<p>This training material, including all exercises and solutions, is available on
+<a class="reference external" href="https://github.com/ENCCS/sycl-workshop">GitHub</a>.  To get the most out of it,
+we suggest that you clone it locally:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/ENCCS/sycl-workshop
+</pre></div>
+</div>
+<p>The source code for all exercises and typealongs will then be in the
+<code class="docutils literal notranslate"><span class="pre">content/code</span></code> folder.</p>
+</section>
+<section id="working-on-karolina">
+<h2>Working on Karolina<a class="headerlink" href="#working-on-karolina" title="Permalink to this heading"></a></h2>
+<p>You should have received your username in the days leading up to the workshop.
+If not, please let us know.</p>
+<p>The latest official release of <a class="reference external" href="https://hipsycl.github.io">hipSYCL</a> and suitable versions of CMake are available as modules on
+Karolina:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>module<span class="w"> </span>load<span class="w"> </span>hipSYCL<span class="w"> </span>CMake/3.20.1-GCCcore-10.2.0
+</pre></div>
+</div>
+<p>You can compile on the login node with:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>syclcc<span class="w"> </span>-o<span class="w"> </span>sycl_vadd<span class="w"> </span>sycl_vadd.cpp<span class="w"> </span>-O3<span class="w"> </span>--hipsycl-targets<span class="o">=</span><span class="s2">&quot;omp;cuda:sm_80&quot;</span>
+</pre></div>
+</div>
+<p>However, it will be more convenient to use the CMake scripts we provide with the
+source files:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>cmake<span class="w"> </span>-S.<span class="w"> </span>-Bbuild<span class="w"> </span>-DHIPSYCL_TARGETS<span class="o">=</span><span class="s2">&quot;omp;cuda:sm_80&quot;</span>
+<span class="gp">$ </span>cmake<span class="w"> </span>--build<span class="w"> </span>build
+</pre></div>
+</div>
+<p>You can also request an interactive job with:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>qsub<span class="w"> </span>-A<span class="w"> </span>DD-22-28<span class="w"> </span>-q<span class="w"> </span>qnvidia<span class="w"> </span>-l<span class="w"> </span><span class="k">select</span><span class="o">=</span><span class="m">1</span>,walltime<span class="o">=</span><span class="m">01</span>:00:00<span class="w"> </span>-I
+</pre></div>
+</div>
+<p>where you ask for:</p>
+<ul class="simple">
+<li><p>1 node for 1 hour (<code class="docutils literal notranslate"><span class="pre">-l</span> <span class="pre">select=1,walltime=01:00:00</span></code>)</p></li>
+<li><p>the node is in the <a class="reference external" href="https://docs.it4i.cz/general/resources-allocation-policy/#karolina">GPU partition</a> (<code class="docutils literal notranslate"><span class="pre">-q</span> <span class="pre">qnvidia</span></code>)</p></li>
+<li><p>a bash interactive prompt once the job starts (<code class="docutils literal notranslate"><span class="pre">-I</span></code>)</p></li>
+</ul>
+<p>In general, it is preferable to queue the job using a submission script, like the following:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env bash</span>
+
+<span class="c1">#PBS -q qnvidia</span>
+<span class="c1">#PBS -N test</span>
+<span class="c1">#PBS -l select=1</span>
+<span class="c1">#PBS -A DD-22-28</span>
+
+<span class="nb">set</span><span class="w"> </span>-o<span class="w"> </span>errexit<span class="w">  </span><span class="c1"># Exit the script on any error</span>
+<span class="nb">set</span><span class="w"> </span>-o<span class="w"> </span>nounset<span class="w">  </span><span class="c1"># Treat any unset variables as an error</span>
+
+module<span class="w"> </span>--quiet<span class="w"> </span>purge<span class="w">  </span><span class="c1"># Reset the modules to the system default</span>
+module<span class="w"> </span>load<span class="w"> </span>hipSYCL/0.9.2-gcccuda-2020b
+module<span class="w"> </span>list
+
+<span class="c1"># compile code</span>
+syclcc<span class="w"> </span>-o<span class="w"> </span>sycl_vadd<span class="w"> </span>sycl_vadd.cpp<span class="w"> </span>-O3<span class="w"> </span>--hipsycl-targets<span class="o">=</span><span class="s2">&quot;cuda:sm_80&quot;</span>
+
+<span class="c1"># run executable</span>
+./sycl_vadd
+
+<span class="c1"># we can also use CMake to build</span>
+<span class="c1"># module load CMake/3.18.4-GCCcore-10.2.0</span>
+<span class="c1"># cmake -S$SLURM_SUBMIT_DIR -Bbuild -DHIPSYCL_TARGETS=&quot;cuda:sm_80&quot;</span>
+<span class="c1"># and we run from the build folder</span>
+<span class="c1"># ./build/sycl_vadd</span>
+
+<span class="nb">exit</span><span class="w"> </span><span class="m">0</span>
+</pre></div>
+</div>
+<section id="graphical-sessions-using-vnc">
+<span id="vnc-sessions"></span><h3>Graphical sessions using VNC<a class="headerlink" href="#graphical-sessions-using-vnc" title="Permalink to this heading"></a></h3>
+<p>We will need to use GUI software during the workshop. It is usually enough to
+login with SSH and enable X11 forwarding. However, some GUI programs might be
+too demanding for certain connections and it is then better to use other
+solutions, like virtual network computing (VNC).
+VNC is a graphical desktop-sharing system the remote frame buffer (RFB)
+protocol. Karolina is set up to allow such connections and this is what we will
+use in the workshop.  The <a class="reference external" href="https://docs.it4i.cz/general/accessing-the-clusters/graphical-user-interface/vnc/">VNC help page</a>
+on the Karolina documentation website has an extensive list of examples that you
+can follow. Here we will summarize the most salient points for Linux and macOS
+users:</p>
+<ul class="simple">
+<li><p>Install a VNC client on your local machine. <a class="reference external" href="https://tigervnc.org/">TigerVNC</a> is recommended.</p></li>
+<li><p>Start a VNC server instance on Karolina.</p></li>
+<li><p>Connect to the VNC server through an SSH tunnel.</p></li>
+</ul>
+<p>Here, in detail, how to proceeed:</p>
+<ol class="arabic">
+<li><p>Open <strong>two</strong> terminal windows: one to start the VNC server, the other for the SSH tunnel.</p></li>
+<li><p>In the <strong>first terminal window</strong>:</p>
+<ul>
+<li><p>Login to Karolina with your credentials:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ssh</span> <span class="o">&lt;</span><span class="n">your</span><span class="o">-</span><span class="n">username</span><span class="o">&gt;</span><span class="nd">@karolina</span><span class="o">.</span><span class="n">it4i</span><span class="o">.</span><span class="n">cz</span>
+</pre></div>
+</div>
+</li>
+<li><p>Set a VNC password:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">vncpasswd</span>
+</pre></div>
+</div>
+</li>
+<li><p>Choose an available display number (&lt;=99). The following command will list
+those already in use:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ps</span> <span class="n">aux</span> <span class="o">|</span> <span class="n">grep</span> <span class="n">Xvnc</span> <span class="o">|</span> <span class="n">sed</span> <span class="o">-</span><span class="n">rn</span> <span class="s1">&#39;s/(\s) .*Xvnc (\:[0-9]+) .*/</span><span class="se">\1</span><span class="s1"> </span><span class="se">\2</span><span class="s1">/p&#39;</span>
+</pre></div>
+</div>
+</li>
+<li><p>Start the VNC server:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">vncserver</span> <span class="p">:</span><span class="o">&lt;</span><span class="n">your</span><span class="o">-</span><span class="n">display</span><span class="o">-</span><span class="n">number</span><span class="o">&gt;</span> <span class="o">-</span><span class="n">geometry</span> <span class="mi">1600</span><span class="n">x900</span> <span class="o">-</span><span class="n">depth</span> <span class="mi">16</span>
+</pre></div>
+</div>
+<p>In the output, pay attention to the following line:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">New</span> <span class="s1">&#39;login1.karolina.it4i.cz:61 (it4i-robedr)&#39;</span> <span class="n">desktop</span> <span class="ow">is</span> <span class="n">login1</span><span class="o">.</span><span class="n">karolina</span><span class="o">.</span><span class="n">it4i</span><span class="o">.</span><span class="n">cz</span><span class="p">:</span><span class="mi">61</span>
+</pre></div>
+</div>
+<p>The SSH tunnel needs to be to the <cite>login1</cite> node!</p>
+</li>
+</ul>
+</li>
+<li><p>In the <strong>second terminal window</strong>:</p>
+<ul>
+<li><p>Open an SSH tunnel using as port number <code class="docutils literal notranslate"><span class="pre">5900</span> <span class="pre">+</span> <span class="pre">display</span> <span class="pre">number</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ssh</span> <span class="o">-</span><span class="n">TN</span> <span class="o">-</span><span class="n">f</span> <span class="o">&lt;</span><span class="n">your</span><span class="o">-</span><span class="n">username</span><span class="o">&gt;</span><span class="nd">@login1</span><span class="o">.</span><span class="n">karolina</span><span class="o">.</span><span class="n">it4i</span><span class="o">.</span><span class="n">cz</span> <span class="o">-</span><span class="n">L</span> <span class="mi">5961</span><span class="p">:</span><span class="n">localhost</span><span class="p">:</span><span class="mi">5961</span>
+</pre></div>
+</div>
+</li>
+<li><p>Open the VNC host viewer:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">vncviewer</span> <span class="n">localhost</span><span class="p">:</span><span class="mi">5961</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</li>
+</ol>
+<p>To kill the VNC session:</p>
+<ol class="arabic">
+<li><p>In the <strong>second terminal window</strong>, find the PID of the SSH tunnel and kill the process:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ps</span> <span class="n">aux</span> <span class="o">|</span> <span class="n">grep</span> <span class="n">ssh</span>
+<span class="n">kill</span> <span class="o">&lt;</span><span class="n">PID</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+</li>
+<li><p>In the <strong>first terminal window</strong>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">vncserver</span> <span class="o">-</span><span class="n">kill</span> <span class="p">:</span><span class="mi">61</span>
+</pre></div>
+</div>
+</li>
+</ol>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../" class="btn btn-neutral float-left" title="Heterogeneous programming with SYCL" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../what-is-sycl/" class="btn btn-neutral float-right" title="What is SYCL?" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021, Roberto Di Remigio and individual contributors..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
